@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>it.multicoredev</groupId>
-    <artifactId>LupusInTabula</artifactId>
-    <version>0.0.1</version>
-    <name>LupusInTabula</name>
-    <description>A game of villagers and wolves</description>
-    <url>https://github.com/LoreSchaeffer/LupusInTabula-SoftEng</url>
-    <inceptionYear>2022</inceptionYear>
-    <packaging>pom</packaging>
+    <parent>
+        <groupId>it.multicoredev</groupId>
+        <artifactId>LupusInTabula</artifactId>
+        <version>0.0.1</version>
+    </parent>
+
+    <artifactId>LupusInTabula-Common</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -19,12 +19,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
-
-    <modules>
-        <module>common</module>
-        <module>client</module>
-        <module>server</module>
-    </modules>
 
     <licenses>
         <license>
@@ -50,5 +44,18 @@
             <url>https://github.com/MariRomelli</url>
         </developer>
     </developers>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
