@@ -2,6 +2,8 @@ package it.multicoredev.client.network;
 
 import it.multicoredev.mclib.network.client.ClientSocket;
 import it.multicoredev.mclib.network.client.ServerAddress;
+import it.multicoredev.mclib.network.exceptions.PacketException;
+import it.multicoredev.mclib.network.exceptions.PacketSendException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.network.Packets;
 import it.multicoredev.utils.LitLogger;
@@ -20,7 +22,7 @@ public class ClientNetSocket {
     }
 
     public void connect(@NotNull ServerAddress address) {
-        socket = new ClientSocket(address, new ClientNetHandler(new ClientPacketListener(this)));
+        socket = new ClientSocket(address, new ClientNetHandler(), new ClientPacketListener(this));
 
         connectionThread = new Thread(() -> {
             try {
@@ -38,7 +40,7 @@ public class ClientNetSocket {
             if (socket != null) {
                 if (socket.isConnected()) {
                     //TODO Send disconnect packet
-                    //TODO Add disconnect method
+                    socket.disconnect();
                 }
 
                 socket = null;
@@ -49,12 +51,16 @@ public class ClientNetSocket {
         }
     }
 
-    public void sendPacket(Packet<?> packet) {
-        socket.sendPacket(packet);
+    public UUID getClientId() {
+        return clientId;
     }
 
-    ClientSocket getSocket() {
-        return socket;
+    public boolean isConnected() {
+        return socket != null && socket.isConnected();
+    }
+
+    public void sendPacket(Packet<?> packet) throws PacketSendException {
+        socket.sendPacket(packet);
     }
 
     void changeId(UUID newClientId) {

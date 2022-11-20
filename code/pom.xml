@@ -69,6 +69,12 @@
             <artifactId>annotations</artifactId>
             <version>23.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>it.multicoredev.mclib</groupId>
+            <artifactId>MCLib-Network</artifactId>
+            <version>1.7.2.5</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

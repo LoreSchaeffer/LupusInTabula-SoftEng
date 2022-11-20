@@ -6,10 +6,6 @@ import it.multicoredev.utils.LitLogger;
 
 public class ServerNetHandler extends NetworkHandler {
 
-    public ServerNetHandler(ServerPacketListener listener) {
-        super(listener);
-    }
-
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         LitLogger.get().error(cause.getMessage(), cause);

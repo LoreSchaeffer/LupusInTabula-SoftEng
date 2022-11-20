@@ -45,15 +45,6 @@
         </developer>
     </developers>
 
-    <dependencies>
-        <dependency>
-            <groupId>it.multicoredev.mclib</groupId>
-            <artifactId>MCLib-Network</artifactId>
-            <version>1.7.2.4</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>
