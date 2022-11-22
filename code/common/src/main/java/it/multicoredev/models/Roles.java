@@ -1,24 +1,25 @@
 package it.multicoredev.models;
 
 public enum Roles {
-    VILLAN("villan"),
+    VILLAGER("villager"),
     WEREWOLF("werewolf"),
     SEER("seer"),
     MEDIUM("medium"),
     BODYGUARD("bodyguard"),
     POSSESSED("possessed"),
-    MASON("mason"),
-    HOWL("howl"),
+    FREEMASON("freemason"),
+    OWN_MAN("owl_man"),
     WEREHAMSTER("werehamster"),
-    MITHOMANIAC("mithomaniac");
+    MYTHOMANIAC("mythomaniac");
 
     private final String id;
+    //TODO Add limits and amounts
 
-    Roles(String id){
+    Roles(String id) {
         this.id = id;
     }
 
-    public String getId(){
+    public String getId() {
         return id;
     }
 }

@@ -2,17 +2,21 @@ package it.multicoredev.network;
 
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.mclib.network.protocol.PacketRegistry;
-import it.multicoredev.network.clientbound.S2CHandshakePacket;
-import it.multicoredev.network.serverbound.C2SHandshakePacket;
-import it.multicoredev.network.serverbound.C2SMessagePacket;
+import it.multicoredev.network.clientbound.*;
+import it.multicoredev.network.serverbound.*;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Static;
 
 public enum Packets {
+    C2S_CREATE_GAME(C2SCreateGame.class),
+    C2S_DISCONNECT(C2SDisconnectPacket.class),
     C2S_HANDSHAKE(C2SHandshakePacket.class),
+    C2S_JOIN_GAME(C2SJoinGame.class),
     C2S_MESSAGE(C2SMessagePacket.class),
 
-    S2C_HANDSHAKE(S2CHandshakePacket.class);
+    S2C_DISCONNECT(S2CDisconnectPacket.class),
+    S2C_HANDSHAKE(S2CHandshakePacket.class),
+    S2C_MESSAGE(S2CMessagePacket.class);
 
     private final Class<? extends Packet<?>> packetClass;
 
@@ -29,7 +33,8 @@ public enum Packets {
 
         for (Packets packet : values()) {
             registry.registerPacket(packet.getPacketClass());
-            if (Static.DEBUG) LitLogger.get().info("Registered packet " + packet.getPacketClass().getSimpleName() + " with id " + registry.getPacketId(packet.getPacketClass()));
+            if (Static.DEBUG)
+                LitLogger.get().info("Registered packet " + packet.getPacketClass().getSimpleName() + " with id " + registry.getPacketId(packet.getPacketClass()));
         }
     }
 }

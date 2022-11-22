@@ -2,7 +2,6 @@ package it.multicoredev.client.network;
 
 import it.multicoredev.mclib.network.client.ClientSocket;
 import it.multicoredev.mclib.network.client.ServerAddress;
-import it.multicoredev.mclib.network.exceptions.PacketException;
 import it.multicoredev.mclib.network.exceptions.PacketSendException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.network.Packets;

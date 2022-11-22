@@ -2,7 +2,9 @@ package it.multicoredev.client.network;
 
 import it.multicoredev.mclib.network.NetworkHandler;
 import it.multicoredev.network.IClientPacketListener;
+import it.multicoredev.network.clientbound.S2CDisconnectPacket;
 import it.multicoredev.network.clientbound.S2CHandshakePacket;
+import it.multicoredev.network.clientbound.S2CMessagePacket;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Static;
 
@@ -35,5 +37,15 @@ public class ClientPacketListener implements IClientPacketListener {
             netSocket.changeId(packet.getNewClientId());
             if (Static.DEBUG) LitLogger.get().info("Client id changed to " + packet.getNewClientId());
         }
+    }
+
+    @Override
+    public void handleDisconnect(S2CDisconnectPacket packet) {
+
+    }
+
+    @Override
+    public void handleMessage(S2CMessagePacket packet) {
+
     }
 }
