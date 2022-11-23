@@ -3,28 +3,39 @@ package it.multicoredev.client.ui.registries;
 import it.multicoredev.client.exceptions.GraphicException;
 import it.multicoredev.client.ui.Scene;
 import it.multicoredev.client.ui.scenes.BootstrapScene;
+import it.multicoredev.models.SceneIds;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public enum Scenes {
-    BOOTSTRAP("bootstrap", BootstrapScene.class);
+    BOOTSTRAP(SceneIds.BOOTSTRAP.getId(), BootstrapScene.class);
 
-    private final String name;
+    private final String id;
     private final Class<? extends Scene> sceneClass;
 
-    Scenes(String name, Class<? extends Scene> sceneClass) {
-        this.name = name;
+    Scenes(String id, Class<? extends Scene> sceneClass) {
+        this.id = id;
         this.sceneClass = sceneClass;
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
     public Scene getInstance() throws GraphicException {
         try {
             return sceneClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            throw new GraphicException("Unable to create scene instance of scene '" + name + "'", e);
+            throw new GraphicException("Unable to create scene instance of scene '" + id + "'", e);
         }
     }
 
+    @Nullable
+    public static Scenes getById(@NotNull String id) {
+        for (Scenes scene : values()) {
+            if (scene.getId().equals(id)) return scene;
+        }
+
+        return null;
+    }
 }

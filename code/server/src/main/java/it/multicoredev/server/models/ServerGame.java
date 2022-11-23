@@ -6,8 +6,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class ServerGame extends Game {
 
-    public ServerGame(@NotNull String code) {
+    public ServerGame(@NotNull String code, @NotNull ServerPlayer master) {
         super(code);
+
+        addPlayer(master);
     }
 
     public void start() {

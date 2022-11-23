@@ -2,6 +2,7 @@ package it.multicoredev.client.network;
 
 import it.multicoredev.mclib.network.NetworkHandler;
 import it.multicoredev.network.IClientPacketListener;
+import it.multicoredev.network.clientbound.S2CChangeScenePacket;
 import it.multicoredev.network.clientbound.S2CDisconnectPacket;
 import it.multicoredev.network.clientbound.S2CHandshakePacket;
 import it.multicoredev.network.clientbound.S2CMessagePacket;
@@ -46,6 +47,11 @@ public class ClientPacketListener implements IClientPacketListener {
 
     @Override
     public void handleMessage(S2CMessagePacket packet) {
+
+    }
+
+    @Override
+    public void handleChangeScene(S2CChangeScenePacket packet) {
 
     }
 }

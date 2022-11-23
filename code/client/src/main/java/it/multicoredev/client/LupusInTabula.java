@@ -38,7 +38,7 @@ public class LupusInTabula {
 
     public void start() {
         initConfigs();
-        //window.run();
+        window.run();
 
 
 

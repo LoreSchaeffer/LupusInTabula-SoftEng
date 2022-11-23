@@ -28,7 +28,7 @@ public class C2SDisconnectPacket implements Packet<IServerPacketListener> {
 
     @Override
     public void decode(PacketByteBuf buf) throws DecoderException {
-        reason = DisconnectReason.fromOrdinal(buf.readInt());
+        reason = DisconnectReason.values()[buf.readInt()];
 
         if (reason == null) throw new DecoderException("Reason cannot be null");
     }

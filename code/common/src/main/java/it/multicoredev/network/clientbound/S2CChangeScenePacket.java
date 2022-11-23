@@ -5,36 +5,36 @@ import it.multicoredev.mclib.network.exceptions.DecoderException;
 import it.multicoredev.mclib.network.exceptions.EncoderException;
 import it.multicoredev.mclib.network.exceptions.ProcessException;
 import it.multicoredev.mclib.network.protocol.Packet;
-import it.multicoredev.network.DisconnectReason;
+import it.multicoredev.models.SceneIds;
 import it.multicoredev.network.IClientPacketListener;
 import org.jetbrains.annotations.NotNull;
 
-public class S2CDisconnectPacket implements Packet<IClientPacketListener> {
-    private DisconnectReason reason;
+public class S2CChangeScenePacket implements Packet<IClientPacketListener> {
+    private SceneIds scene;
 
-    public S2CDisconnectPacket(@NotNull DisconnectReason reason) {
-        this.reason = reason;
+    public S2CChangeScenePacket(@NotNull SceneIds scene) {
+        this.scene = scene;
     }
 
-    public S2CDisconnectPacket() {
+    public S2CChangeScenePacket() {
     }
 
     @Override
     public void encode(PacketByteBuf buf) throws EncoderException {
-        if (reason == null) throw new EncoderException("Reason cannot be null");
+        if (scene == null) throw new EncoderException("Scene is null");
 
-        buf.writeInt(reason.ordinal());
+        buf.writeInt(scene.ordinal());
     }
 
     @Override
     public void decode(PacketByteBuf buf) throws DecoderException {
-        reason = DisconnectReason.values()[buf.readInt()];
+        scene = SceneIds.values()[buf.readInt()];
 
-        if (reason == null) throw new DecoderException("Reason cannot be null");
+        if (scene == null) throw new DecoderException("Scene is null");
     }
 
     @Override
     public void processPacket(IClientPacketListener handler) throws ProcessException {
-        handler.handleDisconnect(this);
+        handler.handleChangeScene(this);
     }
 }

@@ -29,6 +29,11 @@ public class Game {
         return players;
     }
 
+    public Game addPlayer(@NotNull Player player) {
+        players.add(player);
+        return this;
+    }
+
     @Nullable
     public Player getPlayer(@NotNull UUID id) {
         return players.stream().filter(p -> p.getUniqueId().equals(id)).findFirst().orElse(null);
