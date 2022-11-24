@@ -6,6 +6,7 @@ import it.multicoredev.client.network.ClientNetSocket;
 import it.multicoredev.client.ui.Window;
 import it.multicoredev.client.utils.ServerAddress;
 import it.multicoredev.mclib.json.GsonHelper;
+import it.multicoredev.network.serverbound.C2SCreateGame;
 import it.multicoredev.network.serverbound.C2SHandshakePacket;
 import it.multicoredev.network.serverbound.C2SMessagePacket;
 import it.multicoredev.utils.LitLogger;
@@ -38,7 +39,7 @@ public class LupusInTabula {
 
     public void start() {
         initConfigs();
-        window.run();
+        //window.run();
 
 
 
@@ -55,8 +56,8 @@ public class LupusInTabula {
         }
         LitLogger.get().info("Connected!");
 
-        netSocket.sendPacket(new C2SHandshakePacket(netSocket.getClientId(), "Test"));
-        netSocket.sendPacket(new C2SMessagePacket("Hello world!"));
+        netSocket.sendPacket(new C2SHandshakePacket(netSocket.getClientId(), "Lorenzo"));
+        netSocket.sendPacket(new C2SCreateGame());
         //TODO End of debug code
     }
 

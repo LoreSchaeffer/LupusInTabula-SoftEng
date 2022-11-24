@@ -36,12 +36,12 @@ public class LupusInTabula {
     }
 
     @Nullable
-    public Game getGame(String code) {
+    public ServerGame getGame(String code) {
         return games.get(code);
     }
 
     @Nullable
-    public Game getGame(Player player) {
+    public ServerGame getGame(Player player) {
         return games.values().stream().filter(g -> g.getPlayers().contains(player)).findFirst().orElse(null);
     }
 
@@ -53,9 +53,13 @@ public class LupusInTabula {
         games.remove(code);
     }
 
-    public void createGame(ServerPlayer master) {
-        ServerGame game = new ServerGame(createCode(), master);
+    public Game createGame(ServerPlayer master) {
+        ServerGame game = new ServerGame(createCode(), master, this);
         addGame(game);
+
+        game.init();
+
+        return game;
     }
 
     private String createCode() {

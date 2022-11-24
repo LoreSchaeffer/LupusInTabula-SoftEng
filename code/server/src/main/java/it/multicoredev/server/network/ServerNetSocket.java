@@ -1,8 +1,10 @@
 package it.multicoredev.server.network;
 
 import it.multicoredev.mclib.network.server.ServerSocket;
+import it.multicoredev.models.Client;
 import it.multicoredev.network.Packets;
 import it.multicoredev.utils.LitLogger;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +13,7 @@ import java.util.UUID;
 public class ServerNetSocket {
     private final ServerSocket socket;
     private Thread connectionThread;
-    private final Map<UUID, ServerNetHandler> clients = new HashMap<>();
+    private final Map<Client, ServerNetHandler> clients = new HashMap<>();
 
     public ServerNetSocket(int port) {
         Packets.registerPackets();
@@ -42,16 +44,25 @@ public class ServerNetSocket {
         }
     }
 
-    void addClient(UUID clientId, ServerNetHandler netHandler) {
-        clients.put(clientId, netHandler);
+    @Nullable
+    Client getClient(ServerNetHandler netHandler) {
+        for (Map.Entry<Client, ServerNetHandler> entry : clients.entrySet()) {
+            if (entry.getValue().equals(netHandler)) return entry.getKey();
+        }
+
+        return null;
     }
 
-    void removeClient(UUID clientId) {
-        clients.remove(clientId);
+    void addClient(Client client, ServerNetHandler netHandler) {
+        clients.put(client, netHandler);
+    }
+
+    void removeClient(Client client) {
+        clients.remove(client);
     }
 
     boolean clientExists(UUID clientId) {
-        return clients.containsKey(clientId);
+        return clients.keySet().stream().filter(client -> client.getUniqueId().equals(clientId)).findFirst().orElse(null) != null;
     }
 
     UUID getNewClientId() {

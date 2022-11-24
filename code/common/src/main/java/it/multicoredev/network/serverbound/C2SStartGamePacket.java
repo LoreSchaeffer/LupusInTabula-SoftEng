@@ -8,36 +8,36 @@ import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.network.IServerPacketListener;
 import org.jetbrains.annotations.NotNull;
 
-public class C2SJoinGame implements Packet<IServerPacketListener> {
-    private String gameCode;
+public class C2SStartGamePacket implements Packet<IServerPacketListener> {
+    private String code;
 
-    public C2SJoinGame(@NotNull String gameCode) {
-        this.gameCode = gameCode;
+    public C2SStartGamePacket(@NotNull String code) {
+        this.code = code;
     }
 
-    public C2SJoinGame() {
+    public C2SStartGamePacket() {
     }
 
     @Override
     public void encode(PacketByteBuf buf) throws EncoderException {
-        if (gameCode == null || gameCode.trim().isEmpty()) throw new EncoderException("Game code cannot be null or empty");
+        if (code == null || code.trim().isEmpty()) throw new EncoderException("Code cannot be null or empty");
 
-        buf.writeString(gameCode);
+        buf.writeString(code);
     }
 
     @Override
     public void decode(PacketByteBuf buf) throws DecoderException {
-        gameCode = buf.readString();
+        code = buf.readString();
 
-        if (gameCode == null || gameCode.trim().isEmpty()) throw new DecoderException("Game code cannot be null or empty");
+        if (code == null || code.trim().isEmpty()) throw new DecoderException("Code cannot be null or empty");
     }
 
     @Override
     public void processPacket(IServerPacketListener handler) throws ProcessException {
-        handler.handleJoinGame(this);
+        handler.handleStartGame(this);
     }
 
     public String getCode() {
-        return gameCode;
+        return code;
     }
 }

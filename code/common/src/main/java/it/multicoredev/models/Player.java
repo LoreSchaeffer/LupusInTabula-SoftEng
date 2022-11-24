@@ -2,33 +2,25 @@ package it.multicoredev.models;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 import java.util.UUID;
 
-public class Player {
-    private final UUID uuid;
-    private final String name;
-    private final boolean gameMaster;
+public class Player extends Client {
+    private final boolean master;
     private Roles role;
     private boolean alive;
 
-    public Player(@NotNull UUID uuid, @NotNull String name, boolean gameMaster) {
-        this.uuid = uuid;
-        this.name = name;
-        this.gameMaster = gameMaster;
+    public Player(@NotNull UUID uuid, @NotNull String name, boolean master) {
+        super(uuid, name);
+        this.master = master;
         this.alive = true;
     }
 
-    public UUID getUniqueId() {
-        return uuid;
+    public Player (@NotNull Client client, boolean master) {
+        this(client.getUniqueId(), client.getName(), master);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public boolean isGameMaster() {
-        return gameMaster;
+    public boolean isMaster() {
+        return master;
     }
 
     public Roles getRole() {
@@ -47,18 +39,5 @@ public class Player {
     public Player kill() {
         alive = false;
         return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Player player = (Player) o;
-        return uuid.equals(player.uuid);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(uuid);
     }
 }

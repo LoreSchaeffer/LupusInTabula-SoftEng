@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public class Game {
     }
 
     public List<Player> getPlayers() {
-        return players;
+        return Collections.unmodifiableList(players);
     }
 
     public Game addPlayer(@NotNull Player player) {
@@ -37,6 +38,10 @@ public class Game {
     @Nullable
     public Player getPlayer(@NotNull UUID id) {
         return players.stream().filter(p -> p.getUniqueId().equals(id)).findFirst().orElse(null);
+    }
+
+    public Player getMater() {
+        return players.stream().filter(Player::isMaster).findFirst().orElse(null);
     }
 
     public GameState getState() {
