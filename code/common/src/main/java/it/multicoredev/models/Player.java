@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class Player extends Client {
-    private final boolean master;
+    private boolean master;
     private Roles role;
     private boolean alive;
 
@@ -21,6 +21,11 @@ public class Player extends Client {
 
     public boolean isMaster() {
         return master;
+    }
+
+    public Player setMaster(boolean master) {
+        this.master = master;
+        return this;
     }
 
     public Roles getRole() {

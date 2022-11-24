@@ -13,8 +13,10 @@ public enum Packets {
     C2S_HANDSHAKE(C2SHandshakePacket.class),
     C2S_JOIN_GAME(C2SJoinGame.class),
     C2S_MESSAGE(C2SMessagePacket.class),
+    C2S_START_GAME(C2SStartGamePacket.class),
 
     S2C_CHANGE_SCENE(S2CChangeScenePacket.class),
+    S2C_COUNTDOWN(S2CCountdownPacket.class),
     S2C_DISCONNECT(S2CDisconnectPacket.class),
     S2C_HANDSHAKE(S2CHandshakePacket.class),
     S2C_MESSAGE(S2CMessagePacket.class);

@@ -10,13 +10,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class LupusInTabula {
+    public static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() * 4);
     private static LupusInTabula instance;
     private static final int CODE_LENGTH = 6;
+    private static final int MAX_GAMES = Integer.MAX_VALUE; //TODO
 
     private final ServerNetSocket netSocket;
     private final Map<String, ServerGame> games = new HashMap<>();
+
+    //TODO Should have: limit game number
 
     private LupusInTabula() {
         netSocket = new ServerNetSocket(12987);

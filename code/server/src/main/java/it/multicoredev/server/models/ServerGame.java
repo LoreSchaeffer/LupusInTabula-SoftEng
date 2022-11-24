@@ -2,7 +2,6 @@ package it.multicoredev.server.models;
 
 import it.multicoredev.models.Game;
 import it.multicoredev.models.GameState;
-import it.multicoredev.models.Player;
 import it.multicoredev.models.SceneIds;
 import it.multicoredev.network.clientbound.S2CChangeScenePacket;
 import it.multicoredev.server.LupusInTabula;
@@ -11,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class ServerGame extends Game {
     private final LupusInTabula lit;
@@ -25,15 +25,20 @@ public class ServerGame extends Game {
 
     public void init() {
         state = GameState.WAITING;
-        getMater().sendPacket(new S2CChangeScenePacket(SceneIds.LOBBY));
     }
 
     public void start() {
         state = GameState.STARTING;
+
+        gameTask = LupusInTabula.SCHEDULER.schedule(this::play, 0, TimeUnit.SECONDS);
     }
 
-    public void loop() {
+    public void play() {
+        // TODO Countdown
+
         state = GameState.RUNNING;
+
+        //TODO Game
     }
 
     public void stop() {

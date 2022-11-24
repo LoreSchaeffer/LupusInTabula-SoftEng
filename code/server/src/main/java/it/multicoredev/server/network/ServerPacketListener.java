@@ -4,7 +4,9 @@ import it.multicoredev.mclib.network.NetworkHandler;
 import it.multicoredev.mclib.network.exceptions.PacketSendException;
 import it.multicoredev.models.Client;
 import it.multicoredev.models.Game;
+import it.multicoredev.models.SceneIds;
 import it.multicoredev.network.IServerPacketListener;
+import it.multicoredev.network.clientbound.S2CChangeScenePacket;
 import it.multicoredev.network.clientbound.S2CHandshakePacket;
 import it.multicoredev.network.serverbound.*;
 import it.multicoredev.server.LupusInTabula;
@@ -69,6 +71,8 @@ public class ServerPacketListener implements IServerPacketListener {
         ServerPlayer player = new ServerPlayer(client, true, netHandler);
         Game game = lit.createGame(player);
 
+        netHandler.sendPacket(new S2CChangeScenePacket(SceneIds.LOBBY));
+
         if (Static.DEBUG)
             LitLogger.get().info(client.getName() + " (" + client.getUniqueId() + ") created game with code " + game.getCode());
     }
@@ -90,6 +94,8 @@ public class ServerPacketListener implements IServerPacketListener {
 
         ServerPlayer player = new ServerPlayer(client, false, netHandler);
         game.addPlayer(player);
+
+        netHandler.sendPacket(new S2CChangeScenePacket(SceneIds.LOBBY));
 
         if (Static.DEBUG)
             LitLogger.get().info(client.getName() + " (" + client.getUniqueId() + ") joined game with code " + game.getCode());
