@@ -53,7 +53,12 @@ public class ClientPacketListener implements IClientPacketListener {
     }
 
     @Override
-    public void handleCountdown(S2CCountdownPacket packet) {
+    public void handleCountdown(S2CGameStartCountdownPacket packet) {
+
+    }
+
+    @Override
+    public void handleAlert(S2CAlertPacket packet) {
 
     }
 }

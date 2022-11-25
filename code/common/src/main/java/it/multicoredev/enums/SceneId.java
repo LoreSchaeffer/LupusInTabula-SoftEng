@@ -1,15 +1,16 @@
-package it.multicoredev.models;
+package it.multicoredev.enums;
 
-public enum SceneIds {
+public enum SceneId {
     BOOTSTRAP("bootstrap"),
     MAIN_MENU("main_menu"),
     LOBBY("lobby"),
+    STARTING("starting"),
     GAME("game"),
     ENDING("ending");
 
     private final String id;
 
-    SceneIds(String id) {
+    SceneId(String id) {
         this.id = id;
     }
 

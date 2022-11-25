@@ -61,6 +61,15 @@ public class ServerNetSocket {
         clients.remove(client);
     }
 
+    void removeClient(ServerNetHandler netHandler) {
+        for (Map.Entry<Client, ServerNetHandler> client : clients.entrySet()) {
+            if (client.getValue().equals(netHandler)) {
+                clients.remove(client.getKey());
+                break;
+            }
+        }
+    }
+
     boolean clientExists(UUID clientId) {
         return clients.keySet().stream().filter(client -> client.getUniqueId().equals(clientId)).findFirst().orElse(null) != null;
     }

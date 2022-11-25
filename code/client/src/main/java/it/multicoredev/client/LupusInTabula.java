@@ -8,7 +8,6 @@ import it.multicoredev.client.utils.ServerAddress;
 import it.multicoredev.mclib.json.GsonHelper;
 import it.multicoredev.network.serverbound.C2SCreateGame;
 import it.multicoredev.network.serverbound.C2SHandshakePacket;
-import it.multicoredev.network.serverbound.C2SMessagePacket;
 import it.multicoredev.utils.LitLogger;
 
 import java.io.File;
@@ -40,7 +39,6 @@ public class LupusInTabula {
     public void start() {
         initConfigs();
         //window.run();
-
 
 
         //TODO Debug code here

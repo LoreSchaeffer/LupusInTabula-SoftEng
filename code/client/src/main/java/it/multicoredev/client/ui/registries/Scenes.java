@@ -3,12 +3,12 @@ package it.multicoredev.client.ui.registries;
 import it.multicoredev.client.exceptions.GraphicException;
 import it.multicoredev.client.ui.Scene;
 import it.multicoredev.client.ui.scenes.BootstrapScene;
-import it.multicoredev.models.SceneIds;
+import it.multicoredev.enums.SceneId;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public enum Scenes {
-    BOOTSTRAP(SceneIds.BOOTSTRAP.getId(), BootstrapScene.class);
+    BOOTSTRAP(SceneId.BOOTSTRAP.getId(), BootstrapScene.class);
 
     private final String id;
     private final Class<? extends Scene> sceneClass;

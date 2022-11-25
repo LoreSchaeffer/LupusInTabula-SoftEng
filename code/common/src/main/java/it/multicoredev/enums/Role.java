@@ -1,6 +1,6 @@
-package it.multicoredev.models;
+package it.multicoredev.enums;
 
-public enum Roles {
+public enum Role {
     VILLAGER("villager"),
     WEREWOLF("werewolf"),
     SEER("seer"),
@@ -15,7 +15,7 @@ public enum Roles {
     private final String id;
     //TODO Add limits and amounts
 
-    Roles(String id) {
+    Role(String id) {
         this.id = id;
     }
 

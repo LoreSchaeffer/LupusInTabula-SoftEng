@@ -1,21 +1,27 @@
 package it.multicoredev.server.network;
 
+import it.multicoredev.enums.DisconnectReason;
+import it.multicoredev.enums.Message;
+import it.multicoredev.enums.SceneId;
 import it.multicoredev.mclib.network.NetworkHandler;
 import it.multicoredev.mclib.network.exceptions.PacketSendException;
 import it.multicoredev.models.Client;
 import it.multicoredev.models.Game;
-import it.multicoredev.models.SceneIds;
 import it.multicoredev.network.IServerPacketListener;
+import it.multicoredev.network.clientbound.S2CAlertPacket;
 import it.multicoredev.network.clientbound.S2CChangeScenePacket;
+import it.multicoredev.network.clientbound.S2CDisconnectPacket;
 import it.multicoredev.network.clientbound.S2CHandshakePacket;
 import it.multicoredev.network.serverbound.*;
 import it.multicoredev.server.LupusInTabula;
 import it.multicoredev.server.models.ServerGame;
 import it.multicoredev.server.models.ServerPlayer;
 import it.multicoredev.utils.LitLogger;
-import it.multicoredev.utils.Static;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+
+import static it.multicoredev.utils.Static.DEBUG;
 
 public class ServerPacketListener implements IServerPacketListener {
     private LupusInTabula lit;
@@ -32,9 +38,9 @@ public class ServerPacketListener implements IServerPacketListener {
 
     @Override
     public void handleHandshake(C2SHandshakePacket packet) {
-        //TODO Check if the client is allowed to connect
+        //TODO Should have: Check if the client is allowed to connect
 
-        ServerNetSocket netSocket = lit.getNetSocket();
+        ServerNetSocket netSocket = lit.netSocket();
 
         UUID newClientId = null;
         if (netSocket.clientExists(packet.getClientId())) newClientId = netSocket.getNewClientId();
@@ -50,12 +56,18 @@ public class ServerPacketListener implements IServerPacketListener {
             //TODO Manage exception
         }
 
-        if (Static.DEBUG)
+        if (DEBUG)
             LitLogger.get().info("Client '" + packet.getUsername() + "' (" + (newClientId != null ? newClientId : packet.getClientId()) + ") connected");
     }
 
+    //TODO
     @Override
     public void handleMessage(C2SMessagePacket packet) {
+        if (client == null) {
+            if (DEBUG) LitLogger.get().error("The client did not perform the handshake. Packet ignored");
+            return;
+        }
+
         //TODO Handle message
         LitLogger.get().info("MSG: " + packet.getMessage());
     }
@@ -63,82 +75,111 @@ public class ServerPacketListener implements IServerPacketListener {
     @Override
     public void handleCreateGame(C2SCreateGame packet) {
         if (client == null) {
-            LitLogger.get().error("Client not found");
-            //TODO Manage exception
+            if (DEBUG) LitLogger.get().error("The client did not perform the handshake. Packet ignored");
             return;
         }
 
         ServerPlayer player = new ServerPlayer(client, true, netHandler);
         Game game = lit.createGame(player);
 
-        netHandler.sendPacket(new S2CChangeScenePacket(SceneIds.LOBBY));
+        try {
+            netHandler.sendPacket(new S2CChangeScenePacket(SceneId.LOBBY));
+        } catch (PacketSendException e) {
+            if (DEBUG) LitLogger.get().error(e.getMessage(), e);
+            return;
+        }
 
-        if (Static.DEBUG)
-            LitLogger.get().info(client.getName() + " (" + client.getUniqueId() + ") created game with code " + game.getCode());
+        if (DEBUG) LitLogger.get().info(client + " created game with code '" + game.getCode() + "'");
     }
 
     @Override
     public void handleJoinGame(C2SJoinGame packet) {
-        ServerGame game = lit.getGame(packet.getCode());
-
-        if (game == null) {
-            //TODO Send game not found packet
+        if (client == null) {
+            if (DEBUG) LitLogger.get().error("The client did not perform the handshake. Packet ignored");
             return;
         }
 
-        if (client == null) {
-            LitLogger.get().error("Client not found");
-            //TODO Manage exception
+        ServerGame game = lit.getGame(packet.getCode());
+
+        if (game == null) {
+            if (DEBUG) LitLogger.get().info(client + " tried to join a non-existent game with code '" + packet.getCode() + "'");
+
+            try {
+                disconnect(DisconnectReason.S2C_GAME_NOT_FOUND);
+            } catch (PacketSendException e) {
+                if (DEBUG) LitLogger.get().error(e.getMessage(), e);
+            }
+
             return;
         }
 
         ServerPlayer player = new ServerPlayer(client, false, netHandler);
         game.addPlayer(player);
 
-        netHandler.sendPacket(new S2CChangeScenePacket(SceneIds.LOBBY));
+        try {
+            netHandler.sendPacket(new S2CChangeScenePacket(SceneId.LOBBY));
+        } catch (PacketSendException e) {
+            if (DEBUG) LitLogger.get().error(e.getMessage(), e);
+            return;
+        }
 
-        if (Static.DEBUG)
-            LitLogger.get().info(client.getName() + " (" + client.getUniqueId() + ") joined game with code " + game.getCode());
+        if (DEBUG) LitLogger.get().info(client + " joined game with code '" + game.getCode() + "'");
     }
 
     @Override
     public void handleDisconnect(C2SDisconnectPacket packet) {
         if (client == null) {
-            LitLogger.get().error("Client not found");
-            //TODO Manage exception
+            lit.netSocket().removeClient(netHandler);
             return;
         }
 
-        lit.getNetSocket().removeClient(client);
-        //TODO Remove player from games
+        lit.netSocket().removeClient(client);
 
-        if (Static.DEBUG) LitLogger.get().info(client.getName() + " (" + client.getUniqueId() + ") disconnected");
+        ServerGame game = lit.getGame(client);
+        if (game != null) game.playerDisconnected(client);
+
+        LitLogger.get().info(client + " disconnected. Reason: " + packet.getReason().name()); //TODO Change enum name to something more readable
     }
 
     @Override
     public void handleStartGame(C2SStartGamePacket packet) {
-        ServerGame game = lit.getGame(packet.getCode());
-        if (game == null) {
-            LitLogger.get().error("Game not found");
-            //TODO Manage exception
+        if (client == null) {
+            if (DEBUG) LitLogger.get().error("The client did not perform the handshake. Packet ignored");
             return;
         }
 
-        if (client == null) {
-            LitLogger.get().error("Client not found");
-            //TODO Manage exception
+        ServerGame game = lit.getGame(packet.getCode());
+        if (game == null) {
+            if (DEBUG) LitLogger.get().warn(client + "tried to start a non-existent game with code '" + packet.getCode() + "'");
             return;
         }
 
         ServerPlayer player = game.getPlayer(client.getUniqueId());
         if (player == null) {
-            LitLogger.get().error("Player not found");
-            //TODO Manage exception
+            if (DEBUG) LitLogger.get().warn(client + "tried to start a game he is not in");
             return;
         }
 
-        if (!player.isMaster()) return;
+        if (!player.isMaster()) {
+            if (DEBUG) LitLogger.get().warn(client + "tried to start a game he is not the master of");
+            return;
+        }
+
+        if (game.getPlayerCount() < Game.MIN_PLAYERS) {
+            if (DEBUG) LitLogger.get().warn(client + "tried to start a game with less than " + Game.MIN_PLAYERS + " players");
+
+            netHandler.sendPacket(new S2CAlertPacket(Message.INSUFFICIENT_PLAYERS));
+
+            return;
+        }
 
         game.start();
+    }
+
+    private void disconnect(@NotNull DisconnectReason reason) throws PacketSendException {
+        netHandler.sendPacket(new S2CDisconnectPacket(reason));
+
+        if (client != null) lit.netSocket().removeClient(client);
+        else lit.netSocket().removeClient(netHandler);
     }
 }

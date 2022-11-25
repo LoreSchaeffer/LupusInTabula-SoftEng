@@ -1,5 +1,6 @@
 package it.multicoredev.models;
 
+import it.multicoredev.enums.GameState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class Game {
+    public static final int MIN_PLAYERS = 8;
     protected final String code;
     protected final List<Player> players = new ArrayList<>();
     protected GameState state;
@@ -42,6 +44,10 @@ public class Game {
 
     public Player getMater() {
         return players.stream().filter(Player::isMaster).findFirst().orElse(null);
+    }
+
+    public int getPlayerCount() {
+        return players.size();
     }
 
     public GameState getState() {

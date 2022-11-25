@@ -1,40 +1,40 @@
 package it.multicoredev.network.clientbound;
 
+import it.multicoredev.enums.Message;
 import it.multicoredev.mclib.network.PacketByteBuf;
 import it.multicoredev.mclib.network.exceptions.DecoderException;
 import it.multicoredev.mclib.network.exceptions.EncoderException;
 import it.multicoredev.mclib.network.exceptions.ProcessException;
 import it.multicoredev.mclib.network.protocol.Packet;
-import it.multicoredev.enums.SceneId;
 import it.multicoredev.network.IClientPacketListener;
 import org.jetbrains.annotations.NotNull;
 
-public class S2CChangeScenePacket implements Packet<IClientPacketListener> {
-    private SceneId scene;
+public class S2CAlertPacket implements Packet<IClientPacketListener> {
+    private Message message;
 
-    public S2CChangeScenePacket(@NotNull SceneId scene) {
-        this.scene = scene;
+    public S2CAlertPacket(@NotNull Message message) {
+        this.message = message;
     }
 
-    public S2CChangeScenePacket() {
+    public S2CAlertPacket() {
     }
 
     @Override
     public void encode(PacketByteBuf buf) throws EncoderException {
-        if (scene == null) throw new EncoderException("Scene is null");
+        if (message == null) throw new EncoderException("Message cannot be null");
 
-        buf.writeInt(scene.ordinal());
+        buf.writeInt(message.ordinal());
     }
 
     @Override
     public void decode(PacketByteBuf buf) throws DecoderException {
-        scene = SceneId.values()[buf.readInt()];
+        message = Message.values()[buf.readInt()];
 
-        if (scene == null) throw new DecoderException("Scene is null");
+        if (message == null) throw new DecoderException("Message cannot be null");
     }
 
     @Override
     public void processPacket(IClientPacketListener handler) throws ProcessException {
-        handler.handleChangeScene(this);
+        handler.handleAlert(this);
     }
 }

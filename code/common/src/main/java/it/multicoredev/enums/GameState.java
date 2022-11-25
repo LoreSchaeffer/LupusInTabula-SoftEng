@@ -1,4 +1,4 @@
-package it.multicoredev.models;
+package it.multicoredev.enums;
 
 import com.google.gson.*;
 import com.google.gson.annotations.JsonAdapter;

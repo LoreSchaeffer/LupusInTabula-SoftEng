@@ -5,7 +5,7 @@ import it.multicoredev.mclib.network.exceptions.DecoderException;
 import it.multicoredev.mclib.network.exceptions.EncoderException;
 import it.multicoredev.mclib.network.exceptions.ProcessException;
 import it.multicoredev.mclib.network.protocol.Packet;
-import it.multicoredev.network.DisconnectReason;
+import it.multicoredev.enums.DisconnectReason;
 import it.multicoredev.network.IServerPacketListener;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,5 +36,9 @@ public class C2SDisconnectPacket implements Packet<IServerPacketListener> {
     @Override
     public void processPacket(IServerPacketListener handler) throws ProcessException {
         handler.handleDisconnect(this);
+    }
+
+    public DisconnectReason getReason() {
+        return reason;
     }
 }

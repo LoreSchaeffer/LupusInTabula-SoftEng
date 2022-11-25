@@ -8,7 +8,7 @@ import it.multicoredev.mclib.network.PacketByteBuf;
 import java.util.UUID;
 
 public class Static {
-    public static final boolean DEBUG = true;
+    public static boolean DEBUG = false;
     public static Gson GSON = new GsonBuilder()
             .disableHtmlEscaping()
             .registerTypeAdapter(UUID.class, new UUIDAdapter())

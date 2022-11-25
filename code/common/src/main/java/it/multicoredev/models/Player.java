@@ -1,12 +1,13 @@
 package it.multicoredev.models;
 
+import it.multicoredev.enums.Role;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public class Player extends Client {
     private boolean master;
-    private Roles role;
+    private Role role;
     private boolean alive;
 
     public Player(@NotNull UUID uuid, @NotNull String name, boolean master) {
@@ -28,11 +29,11 @@ public class Player extends Client {
         return this;
     }
 
-    public Roles getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public Player setRole(@NotNull Roles role) {
+    public Player setRole(@NotNull Role role) {
         this.role = role;
         return this;
     }

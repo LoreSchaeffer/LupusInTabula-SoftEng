@@ -7,14 +7,14 @@ import it.multicoredev.mclib.network.exceptions.ProcessException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.network.IClientPacketListener;
 
-public class S2CCountdownPacket implements Packet<IClientPacketListener> {
+public class S2CGameStartCountdownPacket implements Packet<IClientPacketListener> {
     private int number;
 
-    public S2CCountdownPacket(int number) {
+    public S2CGameStartCountdownPacket(int number) {
         this.number = number;
     }
 
-    public S2CCountdownPacket() {
+    public S2CGameStartCountdownPacket() {
     }
 
     @Override
