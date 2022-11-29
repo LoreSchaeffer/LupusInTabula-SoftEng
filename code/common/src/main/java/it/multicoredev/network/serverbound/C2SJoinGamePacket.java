@@ -8,14 +8,14 @@ import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.network.IServerPacketListener;
 import org.jetbrains.annotations.NotNull;
 
-public class C2SJoinGame implements Packet<IServerPacketListener> {
+public class C2SJoinGamePacket implements Packet<IServerPacketListener> {
     private String gameCode;
 
-    public C2SJoinGame(@NotNull String gameCode) {
+    public C2SJoinGamePacket(@NotNull String gameCode) {
         this.gameCode = gameCode;
     }
 
-    public C2SJoinGame() {
+    public C2SJoinGamePacket() {
     }
 
     @Override

@@ -8,11 +8,13 @@ import it.multicoredev.client.utils.ServerAddress;
 import it.multicoredev.mclib.json.GsonHelper;
 import it.multicoredev.network.serverbound.C2SCreateGame;
 import it.multicoredev.network.serverbound.C2SHandshakePacket;
+import it.multicoredev.network.serverbound.C2SJoinGamePacket;
+import it.multicoredev.network.serverbound.C2SStartGamePacket;
 import it.multicoredev.utils.LitLogger;
+import it.multicoredev.utils.Utils;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class LupusInTabula {
     private static final GsonHelper GSON = new GsonHelper();
@@ -42,20 +44,53 @@ public class LupusInTabula {
 
 
         //TODO Debug code here
-        netSocket.connect(ServerAddress.fromString(config.serverAddress));
+        Scanner scanner = new Scanner(System.in);
 
-        LitLogger.get().info("Waiting for connection...");
-        while (!netSocket.isConnected()) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        String in;
+        while ((in = scanner.nextLine()) != null) {
+            String command;
+            String[] args;
+
+            if (!in.contains(" ")) {
+                command = in;
+                args = new String[0];
+            } else {
+                String[] tmp = in.split(" ");
+                command = tmp[0];
+                args = Arrays.copyOfRange(tmp, 1, tmp.length);
+            }
+
+            switch (command) {
+                case "connect" -> {
+                    if (args.length > 0) netSocket.connect(ServerAddress.fromString(args[0]));
+                    else netSocket.connect(ServerAddress.fromString(config.serverAddress));
+
+                    while (!netSocket.isConnected()) {
+                        Utils.sleep(10);
+                    }
+
+                    netSocket.sendPacket(new C2SHandshakePacket(UUID.randomUUID(), "Player-" + new Random().nextInt(100)));
+                }
+                case "disconnect" -> netSocket.disconnect();
+                case "create" -> netSocket.sendPacket(new C2SCreateGame());
+                case "join" -> {
+                    if (args.length == 0) {
+                        LitLogger.get().error("Missing game code");
+                        break;
+                    }
+
+                    netSocket.sendPacket(new C2SJoinGamePacket(args[0]));
+                }
+                case "start" -> {
+                    if (args.length == 0) {
+                        LitLogger.get().error("Missing game code");
+                        break;
+                    }
+
+                    netSocket.sendPacket(new C2SStartGamePacket());
+                }
             }
         }
-        LitLogger.get().info("Connected!");
-
-        netSocket.sendPacket(new C2SHandshakePacket(netSocket.getClientId(), "Lorenzo"));
-        netSocket.sendPacket(new C2SCreateGame());
         //TODO End of debug code
     }
 

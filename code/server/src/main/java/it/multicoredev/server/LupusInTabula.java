@@ -30,18 +30,19 @@ public class LupusInTabula {
     private final File confDir = new File("conf");
     private Config config;
 
-    private final ServerNetSocket netSocket;
+    private ServerNetSocket netSocket;
     private final Map<String, ServerGame> games = new HashMap<>();
 
     //TODO Should have: limit game number
     //TODO Should have: voice chat
     //TODO Should have: retry sending packets on error
     //TODO Should have: allow master to choose special roles to add
+    //TODO Should have: lobby timeout
+    //TODO Should have: chat censorship
 
     //TODO Must have: update other players when a player join your lobby
 
     private LupusInTabula() {
-        netSocket = new ServerNetSocket(config.port);
     }
 
     public static LupusInTabula get() {
@@ -52,6 +53,7 @@ public class LupusInTabula {
     public void start() {
         initConfigs();
 
+        netSocket = new ServerNetSocket(config.port);
         netSocket.start();
     }
 

@@ -61,4 +61,9 @@ public class ClientPacketListener implements IClientPacketListener {
     public void handleAlert(S2CAlertPacket packet) {
 
     }
+
+    @Override
+    public void handleGame(S2CGamePacket packet) {
+
+    }
 }

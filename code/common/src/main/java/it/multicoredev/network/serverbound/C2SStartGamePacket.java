@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class C2SStartGamePacket implements Packet<IServerPacketListener> {
     private String code;
+    //TODO Remove code (not needed)
 
     public C2SStartGamePacket(@NotNull String code) {
         this.code = code;

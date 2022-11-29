@@ -8,6 +8,7 @@ import it.multicoredev.models.Client;
 import it.multicoredev.models.Game;
 import it.multicoredev.models.Player;
 import it.multicoredev.network.clientbound.S2CChangeScenePacket;
+import it.multicoredev.network.clientbound.S2CGamePacket;
 import it.multicoredev.network.clientbound.S2CGameStartCountdownPacket;
 import it.multicoredev.server.LupusInTabula;
 import it.multicoredev.utils.LitLogger;
@@ -20,7 +21,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class ServerGame extends Game {
-    private static final Random rand = new Random();
     private final LupusInTabula lit;
     private ScheduledFuture<?> gameTask;
 
@@ -43,8 +43,9 @@ public class ServerGame extends Game {
     }
 
     public void play() {
+        broadcast(new S2CChangeScenePacket(SceneId.STARTING));
+
         for (int i = lit.config().gameStartingCountdown; i >= 0; i--) {
-            broadcast(new S2CChangeScenePacket(SceneId.STARTING));
             broadcast(new S2CGameStartCountdownPacket(i));
             Utils.sleep(1000);
         }
@@ -53,6 +54,8 @@ public class ServerGame extends Game {
         LitLogger.get().info("Game " + code + " started!");
 
         assignRoles();
+        broadcast(new S2CGamePacket(this));
+        broadcast(new S2CChangeScenePacket(SceneId.GAME));
 
         //TODO Game
     }
@@ -129,6 +132,10 @@ public class ServerGame extends Game {
             for (int i = 0; i < playerCount - roles.size(); i++) {
                 roles.add(Role.VILLAGER);
             }
+        }
+
+        for (int i = 0; i < playerCount; i++) {
+            mixedPlayers.get(i).setRole(roles.get(i));
         }
     }
 }

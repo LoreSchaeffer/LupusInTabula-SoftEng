@@ -58,6 +58,7 @@ public class ServerPacketListener implements IServerPacketListener {
 
         if (DEBUG)
             LitLogger.get().info("Client '" + packet.getUsername() + "' (" + (newClientId != null ? newClientId : packet.getClientId()) + ") connected");
+        //TODO Change this
     }
 
     //TODO
@@ -93,7 +94,7 @@ public class ServerPacketListener implements IServerPacketListener {
     }
 
     @Override
-    public void handleJoinGame(C2SJoinGame packet) {
+    public void handleJoinGame(C2SJoinGamePacket packet) {
         if (client == null) {
             if (DEBUG) LitLogger.get().error("The client did not perform the handshake. Packet ignored");
             return;
@@ -150,23 +151,23 @@ public class ServerPacketListener implements IServerPacketListener {
 
         ServerGame game = lit.getGame(packet.getCode());
         if (game == null) {
-            if (DEBUG) LitLogger.get().warn(client + "tried to start a non-existent game with code '" + packet.getCode() + "'");
+            if (DEBUG) LitLogger.get().warn(client + " tried to start a non-existent game with code '" + packet.getCode() + "'");
             return;
         }
 
         ServerPlayer player = game.getPlayer(client.getUniqueId());
         if (player == null) {
-            if (DEBUG) LitLogger.get().warn(client + "tried to start a game he is not in");
+            if (DEBUG) LitLogger.get().warn(client + " tried to start a game he is not in");
             return;
         }
 
         if (!player.isMaster()) {
-            if (DEBUG) LitLogger.get().warn(client + "tried to start a game he is not the master of");
+            if (DEBUG) LitLogger.get().warn(client + " tried to start a game he is not the master of");
             return;
         }
 
         if (game.getPlayerCount() < Game.MIN_PLAYERS) {
-            if (DEBUG) LitLogger.get().warn(client + "tried to start a game with less than " + Game.MIN_PLAYERS + " players");
+            if (DEBUG) LitLogger.get().warn(client + " tried to start a game with less than " + Game.MIN_PLAYERS + " players");
 
             netHandler.sendPacket(new S2CAlertPacket(Message.INSUFFICIENT_PLAYERS));
 
