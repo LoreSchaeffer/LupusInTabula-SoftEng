@@ -1,7 +1,9 @@
 .idea/
 target/
+run/
 /code/.idea/
 /code/target/
+/code/run
 
 *.iml
 *.ini

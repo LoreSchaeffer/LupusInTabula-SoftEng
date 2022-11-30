@@ -20,7 +20,9 @@ public enum Packets {
     S2C_GAME(S2CGamePacket.class),
     S2C_GAME_START_COUNTDOWN(S2CGameStartCountdownPacket.class),
     S2C_HANDSHAKE(S2CHandshakePacket.class),
-    S2C_MESSAGE(S2CMessagePacket.class);
+    S2C_MESSAGE(S2CMessagePacket.class),
+    S2C_TIME(S2CTimePacket.class),
+    S2C_TIMER(S2CTimerPacket.class);
 
     private final Class<? extends Packet<?>> packetClass;
 

@@ -24,10 +24,9 @@ public class ClientPacketListener implements IClientPacketListener {
     public void handleHandshake(S2CHandshakePacket packet) {
         if (!packet.isClientAccepted()) {
             netSocket.disconnect();
-            if (Static.DEBUG) LitLogger.get().info("Server rejected the connection: " + packet.getReason());
+            LitLogger.get().info("Server rejected the connection: " + packet.getReason());
 
-            //TODO Handle disconnection
-
+            //TODO Show connection refused alert
             return;
         }
 
@@ -39,31 +38,42 @@ public class ClientPacketListener implements IClientPacketListener {
 
     @Override
     public void handleDisconnect(S2CDisconnectPacket packet) {
+        netSocket.disconnect();
+        LitLogger.get().info("Disconnected from server: " + packet.getReason()); //TODO Change to a more readable form
 
+        //TODO Handle disconnection
     }
 
     @Override
     public void handleMessage(S2CMessagePacket packet) {
-
+        LitLogger.get().info("CHAT: " + packet.getSender() + " > " + packet.getMessage());
     }
 
     @Override
     public void handleChangeScene(S2CChangeScenePacket packet) {
-
+        //TODO Handle scene change
     }
 
     @Override
     public void handleCountdown(S2CGameStartCountdownPacket packet) {
-
+        if (Static.DEBUG) LitLogger.get().info("Game starting in " + packet.getSeconds() + " seconds");
+        //TODO Handle countdown
     }
 
     @Override
     public void handleAlert(S2CAlertPacket packet) {
-
+        LitLogger.get().info("ALERT: " + packet.getMessage().getId());
+        //TODO Handle alert
     }
 
     @Override
     public void handleGame(S2CGamePacket packet) {
+        //TODO Handle game
+        LitLogger.get().info(Static.GSON.toJson(packet.getGame()));
+    }
+
+    @Override
+    public void handleTime(S2CTimePacket packet) {
 
     }
 }

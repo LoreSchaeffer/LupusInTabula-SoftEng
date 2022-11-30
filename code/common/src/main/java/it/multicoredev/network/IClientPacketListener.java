@@ -18,4 +18,8 @@ public interface IClientPacketListener extends PacketListener {
     void handleAlert(S2CAlertPacket packet);
 
     void handleGame(S2CGamePacket packet);
+
+    void handleTime(S2CTimePacket packet);
+
+    void handleTimer(S2CTimerPacket packet);
 }

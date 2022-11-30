@@ -37,4 +37,8 @@ public class S2CDisconnectPacket implements Packet<IClientPacketListener> {
     public void processPacket(IClientPacketListener handler) throws ProcessException {
         handler.handleDisconnect(this);
     }
+
+    public DisconnectReason getReason() {
+        return reason;
+    }
 }

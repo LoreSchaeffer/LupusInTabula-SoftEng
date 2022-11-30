@@ -8,10 +8,10 @@ import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.network.IClientPacketListener;
 
 public class S2CGameStartCountdownPacket implements Packet<IClientPacketListener> {
-    private int number;
+    private int seconds;
 
-    public S2CGameStartCountdownPacket(int number) {
-        this.number = number;
+    public S2CGameStartCountdownPacket(int seconds) {
+        this.seconds = seconds;
     }
 
     public S2CGameStartCountdownPacket() {
@@ -19,16 +19,20 @@ public class S2CGameStartCountdownPacket implements Packet<IClientPacketListener
 
     @Override
     public void encode(PacketByteBuf buf) throws EncoderException {
-        buf.writeInt(number);
+        buf.writeInt(seconds);
     }
 
     @Override
     public void decode(PacketByteBuf buf) throws DecoderException {
-        number = buf.readInt();
+        seconds = buf.readInt();
     }
 
     @Override
     public void processPacket(IClientPacketListener handler) throws ProcessException {
         handler.handleCountdown(this);
+    }
+
+    public int getSeconds() {
+        return seconds;
     }
 }

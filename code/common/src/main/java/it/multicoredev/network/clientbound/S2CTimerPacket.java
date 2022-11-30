@@ -5,42 +5,30 @@ import it.multicoredev.mclib.network.exceptions.DecoderException;
 import it.multicoredev.mclib.network.exceptions.EncoderException;
 import it.multicoredev.mclib.network.exceptions.ProcessException;
 import it.multicoredev.mclib.network.protocol.Packet;
-import it.multicoredev.models.Game;
 import it.multicoredev.network.IClientPacketListener;
-import org.jetbrains.annotations.NotNull;
 
-public class S2CGamePacket implements Packet<IClientPacketListener> {
-    private Game game;
+public class S2CTimerPacket implements Packet<IClientPacketListener> {
+    private int time;
 
-    public S2CGamePacket(@NotNull Game game) {
-        this.game = game;
+    public S2CTimerPacket(int time) {
+        this.time = time;
     }
 
-    public S2CGamePacket() {
+    public S2CTimerPacket() {
     }
 
     @Override
     public void encode(PacketByteBuf buf) throws EncoderException {
-        if (game == null) throw new EncoderException("Game is null");
-
-        buf.writeObject(game);
+        buf.writeInt(time);
     }
 
     @Override
     public void decode(PacketByteBuf buf) throws DecoderException {
-        try {
-            game = buf.readObject(Game.class);
-        } catch (IllegalArgumentException e) {
-            throw new DecoderException("Error while reading game", e);
-        }
+        time = buf.readInt();
     }
 
     @Override
     public void processPacket(IClientPacketListener handler) throws ProcessException {
-        handler.handleGame(this);
-    }
-
-    public Game getGame() {
-        return game;
+        handler.handleTimer(this);
     }
 }

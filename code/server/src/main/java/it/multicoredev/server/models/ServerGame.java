@@ -6,17 +6,20 @@ import it.multicoredev.enums.SceneId;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.models.Client;
 import it.multicoredev.models.Game;
-import it.multicoredev.models.Player;
 import it.multicoredev.network.clientbound.S2CChangeScenePacket;
 import it.multicoredev.network.clientbound.S2CGamePacket;
 import it.multicoredev.network.clientbound.S2CGameStartCountdownPacket;
+import it.multicoredev.network.clientbound.S2CTimerPacket;
 import it.multicoredev.server.LupusInTabula;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -56,6 +59,8 @@ public class ServerGame extends Game {
         assignRoles();
         broadcast(new S2CGamePacket(this));
         broadcast(new S2CChangeScenePacket(SceneId.GAME));
+
+        wait(5);
 
         //TODO Game
     }
@@ -136,6 +141,13 @@ public class ServerGame extends Game {
 
         for (int i = 0; i < playerCount; i++) {
             mixedPlayers.get(i).setRole(roles.get(i));
+        }
+    }
+
+    private void wait(int seconds) {
+        for (int timer = seconds; timer >= 0; timer--) {
+            S2CTimerPacket packet = new S2CTimerPacket(timer);
+            broadcast(packet);
         }
     }
 }

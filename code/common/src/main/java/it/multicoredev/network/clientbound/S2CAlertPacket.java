@@ -37,4 +37,8 @@ public class S2CAlertPacket implements Packet<IClientPacketListener> {
     public void processPacket(IClientPacketListener handler) throws ProcessException {
         handler.handleAlert(this);
     }
+
+    public Message getMessage() {
+        return message;
+    }
 }
