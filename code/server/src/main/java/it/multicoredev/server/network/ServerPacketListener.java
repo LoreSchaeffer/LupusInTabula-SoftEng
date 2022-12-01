@@ -8,10 +8,7 @@ import it.multicoredev.mclib.network.exceptions.PacketSendException;
 import it.multicoredev.models.Client;
 import it.multicoredev.models.Game;
 import it.multicoredev.network.IServerPacketListener;
-import it.multicoredev.network.clientbound.S2CAlertPacket;
-import it.multicoredev.network.clientbound.S2CChangeScenePacket;
-import it.multicoredev.network.clientbound.S2CDisconnectPacket;
-import it.multicoredev.network.clientbound.S2CHandshakePacket;
+import it.multicoredev.network.clientbound.*;
 import it.multicoredev.network.serverbound.*;
 import it.multicoredev.server.LupusInTabula;
 import it.multicoredev.server.models.ServerGame;
@@ -69,8 +66,35 @@ public class ServerPacketListener implements IServerPacketListener {
             return;
         }
 
-        //TODO Handle message
         LitLogger.get().info("MSG: " + packet.getMessage());
+
+        String[] split;
+        if (packet.getMessage().contains(" ")) split = packet.getMessage().split(" ");
+        else split = new String[]{packet.getMessage()};
+
+        for (int i = 0; i < split.length; i++) {
+            String word = split[i];
+
+            if (lit.config().censoredWords.contains(word)) {
+                split[i] = "*".repeat(word.length());
+            }
+        }
+
+        String newMessage = String.join(" ", split);
+
+        ServerGame game = lit.getGame(client);
+        if (game == null) {
+            if (DEBUG) LitLogger.get().warn(client + " tried to send a message while not in a game");
+            return;
+        }
+
+        ServerPlayer player = game.getPlayer(client.getUniqueId());
+        if (player == null) {
+            if (DEBUG) LitLogger.get().warn(client + " tried to send a message while not in a game");
+            return;
+        }
+
+        game.broadcast(new S2CMessagePacket(player.getName(), newMessage));
     }
 
     @Override
@@ -103,7 +127,8 @@ public class ServerPacketListener implements IServerPacketListener {
         ServerGame game = lit.getGame(packet.getCode());
 
         if (game == null) {
-            if (DEBUG) LitLogger.get().info(client + " tried to join a non-existent game with code '" + packet.getCode() + "'");
+            if (DEBUG)
+                LitLogger.get().info(client + " tried to join a non-existent game with code '" + packet.getCode() + "'");
 
             try {
                 disconnect(DisconnectReason.S2C_GAME_NOT_FOUND);
@@ -149,9 +174,9 @@ public class ServerPacketListener implements IServerPacketListener {
             return;
         }
 
-        ServerGame game = lit.getGame(packet.getCode());
+        ServerGame game = lit.getGame(client);
         if (game == null) {
-            if (DEBUG) LitLogger.get().warn(client + " tried to start a non-existent game with code '" + packet.getCode() + "'");
+            if (DEBUG) LitLogger.get().warn(client + " tried to start a game he is not in");
             return;
         }
 
@@ -167,7 +192,8 @@ public class ServerPacketListener implements IServerPacketListener {
         }
 
         if (game.getPlayerCount() < Game.MIN_PLAYERS) {
-            if (DEBUG) LitLogger.get().warn(client + " tried to start a game with less than " + Game.MIN_PLAYERS + " players");
+            if (DEBUG)
+                LitLogger.get().warn(client + " tried to start a game with less than " + Game.MIN_PLAYERS + " players");
 
             netHandler.sendPacket(new S2CAlertPacket(Message.INSUFFICIENT_PLAYERS));
 

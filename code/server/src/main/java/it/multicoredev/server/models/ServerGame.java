@@ -88,7 +88,7 @@ public class ServerGame extends Game {
         //TODO Handle player disconnection
     }
 
-    private void broadcast(Packet<?> packet) {
+    public void broadcast(Packet<?> packet) {
         players.forEach(p -> ((ServerPlayer) p).sendPacket(packet));
     }
 

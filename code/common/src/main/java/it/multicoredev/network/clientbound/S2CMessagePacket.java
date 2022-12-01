@@ -6,7 +6,10 @@ import it.multicoredev.mclib.network.exceptions.EncoderException;
 import it.multicoredev.mclib.network.exceptions.ProcessException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.network.IClientPacketListener;
-import org.jetbrains.annotations.NotNull;
+import it.multicoredev.utils.Encryption;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 public class S2CMessagePacket implements Packet<IClientPacketListener> {
     private String sender;
@@ -26,16 +29,29 @@ public class S2CMessagePacket implements Packet<IClientPacketListener> {
         if (message == null || message.trim().isEmpty()) throw new EncoderException("Message cannot be null or empty");
 
         buf.writeString(sender);
-        buf.writeString(message);
+
+        try {
+            buf.writeString(Encryption.encrypt(message));
+        } catch (GeneralSecurityException | IOException e) {
+            throw new EncoderException(e);
+        }
     }
 
     @Override
     public void decode(PacketByteBuf buf) throws DecoderException {
         sender = buf.readString();
-        message = buf.readString();
+
+        String encrypted = buf.readString();
+        if (encrypted == null) throw new DecoderException("Message cannot be null");
+
+        try {
+            message = Encryption.decrypt(encrypted);
+        } catch (GeneralSecurityException e) {
+            throw new DecoderException(e);
+        }
 
         if (sender == null || sender.isEmpty()) throw new DecoderException("Sender cannot be null or empty");
-        if (message == null || message.trim().isEmpty()) throw new DecoderException("Message cannot be null or empty");
+        if (message.trim().isEmpty()) throw new DecoderException("Message cannot be null or empty");
     }
 
     @Override

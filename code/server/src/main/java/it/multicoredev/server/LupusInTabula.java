@@ -9,12 +9,14 @@ import it.multicoredev.server.models.ServerGame;
 import it.multicoredev.server.models.ServerPlayer;
 import it.multicoredev.server.network.ServerNetSocket;
 import it.multicoredev.server.utils.Utils;
+import it.multicoredev.utils.Encryption;
 import it.multicoredev.utils.LitLogger;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -38,7 +40,6 @@ public class LupusInTabula {
     //TODO Should have: retry sending packets on error
     //TODO Should have: allow master to choose special roles to add
     //TODO Should have: lobby timeout
-    //TODO Should have: chat censorship
 
     //TODO Must have: update other players when a player join your lobby
 
@@ -52,6 +53,8 @@ public class LupusInTabula {
 
     public void start() {
         initConfigs();
+
+        Encryption.setSecret(UUID.randomUUID().toString());
 
         netSocket = new ServerNetSocket(config.port);
         netSocket.start();
