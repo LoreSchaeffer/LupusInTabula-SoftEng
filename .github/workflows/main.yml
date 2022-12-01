@@ -15,7 +15,14 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
+          cache: maven
+      - name: Prepare Dependencies
+        run: |
+          git clone https://github.com/MultiCoreNetwork/MCLib
+          cd MCLib
+          mvn install
+          cd ..
       - name: Package
         run: |
           cd code
