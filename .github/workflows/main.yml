@@ -1,0 +1,45 @@
+name: Package
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build-and-realease:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+      - name: Package
+        run: |
+          cd code
+          mkdir build
+          mvn package -pl "!client"
+          cp server/build/*.jar build/LupusInTabula-Server.jar
+          mvn package -pl server -P lwjgl-natives-windows-amd64
+          cp client/build/*.jar build/LupusInTabula-Windows.jar
+          mvn package -pl server -P lwjgl-natives-linux-amd64
+          cp client/build/*.jar build/LupusInTabula-Linux.jar
+          mvn package -pl server -P lwjgl-natives-macos-x86_64
+          cp client/build/*.jar build/LupusInTabula-MacOS.jar
+      - name: Prepare variables
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      - name: Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: ${{ steps.vars.outputs.sha_short }}
+          prerelease: false
+          title: "Snapshot (v.${{ steps.vars.outputs.sha_short }})"
+          files: |
+            code/build/LupusInTabula-Server.jar
+            code/build/LupusInTabula-Windows.jar
+            code/build/LupusInTabula-Linux.jar
+            code/build/LupusInTabula-MacOS.jar

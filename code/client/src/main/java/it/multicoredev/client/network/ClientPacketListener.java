@@ -76,4 +76,9 @@ public class ClientPacketListener implements IClientPacketListener {
     public void handleTime(S2CTimePacket packet) {
 
     }
+
+    @Override
+    public void handleTimer(S2CTimerPacket packet) {
+
+    }
 }
