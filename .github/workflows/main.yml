@@ -32,11 +32,11 @@ jobs:
           mkdir build
           mvn package -pl "!client"
           cp server/build/*.jar build/LupusInTabula-Server.jar
-          mvn package -pl server -P lwjgl-natives-windows-amd64
+          mvn package -pl "!server,!common" -P lwjgl-natives-windows-amd64
           cp client/build/*.jar build/LupusInTabula-Windows.jar
-          mvn package -pl server -P lwjgl-natives-linux-amd64
+          mvn package -pl "!server,!common" -P lwjgl-natives-linux-amd64
           cp client/build/*.jar build/LupusInTabula-Linux.jar
-          mvn package -pl server -P lwjgl-natives-macos-x86_64
+          mvn package -pl "!server,!common" -P lwjgl-natives-macos-x86_64
           cp client/build/*.jar build/LupusInTabula-MacOS.jar
       - name: Prepare variables
         id: vars
