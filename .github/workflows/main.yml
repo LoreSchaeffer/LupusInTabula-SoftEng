@@ -26,6 +26,9 @@ jobs:
       - name: Package
         run: |
           cd code
+          cd common
+          mvn install
+          cd ..
           mkdir build
           mvn package -pl "!client"
           cp server/build/*.jar build/LupusInTabula-Server.jar
