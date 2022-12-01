@@ -44,6 +44,7 @@ public class LupusInTabula {
     //TODO Must have: update other players when a player join your lobby
 
     private LupusInTabula() {
+
     }
 
     public static LupusInTabula get() {
