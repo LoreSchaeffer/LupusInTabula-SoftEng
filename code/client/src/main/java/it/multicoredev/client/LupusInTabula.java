@@ -11,8 +11,20 @@ import it.multicoredev.network.serverbound.C2SJoinGamePacket;
 import it.multicoredev.network.serverbound.C2SStartGamePacket;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Utils;
+import me.friwi.jcefmaven.CefAppBuilder;
+import me.friwi.jcefmaven.CefInitializationException;
+import me.friwi.jcefmaven.MavenCefAppHandlerAdapter;
+import me.friwi.jcefmaven.UnsupportedPlatformException;
+import me.friwi.jcefmaven.impl.progress.ConsoleProgressHandler;
+import org.cef.CefApp;
+import org.cef.CefClient;
+import org.cef.browser.CefBrowser;
+import org.cef.callback.CefSchemeRegistrar;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class LupusInTabula {
@@ -37,6 +49,53 @@ public class LupusInTabula {
 
     public void start() {
         initConfigs();
+
+        CefAppBuilder cab = new CefAppBuilder();
+        cab.setInstallDir(new File("cef"));
+        cab.setProgressHandler(new ConsoleProgressHandler());
+        cab.getCefSettings().windowless_rendering_enabled = true;
+        cab.setAppHandler(new MavenCefAppHandlerAdapter() {
+            @Override
+            public boolean onBeforeTerminate() {
+                return super.onBeforeTerminate();
+            }
+
+            @Override
+            public void stateHasChanged(CefApp.CefAppState state) {
+                super.stateHasChanged(state);
+            }
+
+            @Override
+            public void onRegisterCustomSchemes(CefSchemeRegistrar registrar) {
+                super.onRegisterCustomSchemes(registrar);
+            }
+
+            @Override
+            public void onContextInitialized() {
+                super.onContextInitialized();
+            }
+
+            @Override
+            public void onScheduleMessagePumpWork(long delay_ms) {
+                super.onScheduleMessagePumpWork(delay_ms);
+            }
+        });
+
+        try {
+            CefApp app = cab.build();
+            CefClient client = app.createClient();
+            CefBrowser browser = client.createBrowser("https://google.com", true, false);
+            Component component = browser.getUIComponent();
+
+            JFrame frame = new JFrame();
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.getContentPane().add(component, BorderLayout.CENTER);
+            frame.setSize(800, 600);
+            frame.setVisible(true);
+
+        } catch (IOException | UnsupportedPlatformException | InterruptedException | CefInitializationException e) {
+            throw new RuntimeException(e);
+        }
 
 
         //TODO Debug code here
