@@ -66,6 +66,7 @@ public class ServerGame extends Game {
     }
 
     public void stop() {
+        gameTask.cancel(true);
         state = GameState.STOPPED;
     }
 
