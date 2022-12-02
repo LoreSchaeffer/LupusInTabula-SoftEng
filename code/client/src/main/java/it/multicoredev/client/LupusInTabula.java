@@ -3,7 +3,6 @@ package it.multicoredev.client;
 import it.multicoredev.client.assets.Config;
 import it.multicoredev.client.assets.Locale;
 import it.multicoredev.client.network.ClientNetSocket;
-import it.multicoredev.client.ui.Window;
 import it.multicoredev.client.utils.ServerAddress;
 import it.multicoredev.mclib.json.GsonHelper;
 import it.multicoredev.network.serverbound.C2SCreateGame;
@@ -25,11 +24,9 @@ public class LupusInTabula {
     private Config config;
     private Map<String, Locale> localizations = new HashMap<>();
 
-    private final Window window;
     private final ClientNetSocket netSocket;
 
     public LupusInTabula() {
-        window = Window.create(1280, 720, "Lupus in Tabula");
         netSocket = new ClientNetSocket();
     }
 
