@@ -52,6 +52,7 @@
         </repository>
     </repositories>
 
+    <!-- TODO Use profiles to include the correct dependencies for the OS -->
     <dependencies>
         <dependency>
             <groupId>it.multicoredev</groupId>
@@ -63,6 +64,24 @@
             <groupId>me.friwi</groupId>
             <artifactId>jcefmaven</artifactId>
             <version>107.1.9.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.friwi</groupId>
+            <artifactId>jcef-natives-windows-amd64</artifactId>
+            <version>jcef-544024e+cef-95.7.14+g9f72f35+chromium-95.0.4638.69</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.friwi</groupId>
+            <artifactId>jcef-natives-linux-amd64</artifactId>
+            <version>jcef-544024e+cef-95.7.14+g9f72f35+chromium-95.0.4638.69</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.friwi</groupId>
+            <artifactId>jcef-natives-macosx-amd64</artifactId>
+            <version>jcef-544024e+cef-95.7.14+g9f72f35+chromium-95.0.4638.69</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

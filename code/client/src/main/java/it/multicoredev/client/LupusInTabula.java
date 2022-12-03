@@ -3,6 +3,7 @@ package it.multicoredev.client;
 import it.multicoredev.client.assets.Config;
 import it.multicoredev.client.assets.Locale;
 import it.multicoredev.client.network.ClientNetSocket;
+import it.multicoredev.client.ui.Gui;
 import it.multicoredev.client.utils.ServerAddress;
 import it.multicoredev.mclib.json.GsonHelper;
 import it.multicoredev.network.serverbound.C2SCreateGame;
@@ -11,20 +12,8 @@ import it.multicoredev.network.serverbound.C2SJoinGamePacket;
 import it.multicoredev.network.serverbound.C2SStartGamePacket;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Utils;
-import me.friwi.jcefmaven.CefAppBuilder;
-import me.friwi.jcefmaven.CefInitializationException;
-import me.friwi.jcefmaven.MavenCefAppHandlerAdapter;
-import me.friwi.jcefmaven.UnsupportedPlatformException;
-import me.friwi.jcefmaven.impl.progress.ConsoleProgressHandler;
-import org.cef.CefApp;
-import org.cef.CefClient;
-import org.cef.browser.CefBrowser;
-import org.cef.callback.CefSchemeRegistrar;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class LupusInTabula {
@@ -36,6 +25,7 @@ public class LupusInTabula {
     private Config config;
     private Map<String, Locale> localizations = new HashMap<>();
 
+    private Gui gui;
     private final ClientNetSocket netSocket;
 
     public LupusInTabula() {
@@ -49,54 +39,16 @@ public class LupusInTabula {
 
     public void start() {
         initConfigs();
-
-        CefAppBuilder cab = new CefAppBuilder();
-        cab.setInstallDir(new File("cef"));
-        cab.setProgressHandler(new ConsoleProgressHandler());
-        cab.getCefSettings().windowless_rendering_enabled = true;
-        cab.setAppHandler(new MavenCefAppHandlerAdapter() {
-            @Override
-            public boolean onBeforeTerminate() {
-                return super.onBeforeTerminate();
-            }
-
-            @Override
-            public void stateHasChanged(CefApp.CefAppState state) {
-                super.stateHasChanged(state);
-            }
-
-            @Override
-            public void onRegisterCustomSchemes(CefSchemeRegistrar registrar) {
-                super.onRegisterCustomSchemes(registrar);
-            }
-
-            @Override
-            public void onContextInitialized() {
-                super.onContextInitialized();
-            }
-
-            @Override
-            public void onScheduleMessagePumpWork(long delay_ms) {
-                super.onScheduleMessagePumpWork(delay_ms);
-            }
-        });
+        extractAssets();
 
         try {
-            CefApp app = cab.build();
-            CefClient client = app.createClient();
-            CefBrowser browser = client.createBrowser("https://google.com", true, false);
-            Component component = browser.getUIComponent();
-
-            JFrame frame = new JFrame();
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.getContentPane().add(component, BorderLayout.CENTER);
-            frame.setSize(800, 600);
-            frame.setVisible(true);
-
-        } catch (IOException | UnsupportedPlatformException | InterruptedException | CefInitializationException e) {
-            throw new RuntimeException(e);
+            gui = Gui.create(1920, 1080);
+            gui.show("https://google.com");
+        } catch (Exception e) {
+            LitLogger.get().error("Failed to start GUI", e);
         }
 
+        gui.setVisible(true);
 
         //TODO Debug code here
         Scanner scanner = new Scanner(System.in);
@@ -222,5 +174,9 @@ public class LupusInTabula {
                 }
             }
         }
+    }
+
+    private void extractAssets() {
+
     }
 }

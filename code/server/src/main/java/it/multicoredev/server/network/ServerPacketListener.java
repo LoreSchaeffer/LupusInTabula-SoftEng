@@ -75,7 +75,7 @@ public class ServerPacketListener implements IServerPacketListener {
         for (int i = 0; i < split.length; i++) {
             String word = split[i];
 
-            if (lit.config().censoredWords.contains(word)) {
+            if (lit.config().censoredWords.contains(word.toLowerCase())) {
                 split[i] = "*".repeat(word.length());
             }
         }

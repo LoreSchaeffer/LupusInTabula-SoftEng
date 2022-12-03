@@ -149,6 +149,7 @@ public class ServerGame extends Game {
         for (int timer = seconds; timer >= 0; timer--) {
             S2CTimerPacket packet = new S2CTimerPacket(timer);
             broadcast(packet);
+            Utils.sleep(1000);
         }
     }
 }
