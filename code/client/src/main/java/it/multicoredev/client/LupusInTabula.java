@@ -3,7 +3,7 @@ package it.multicoredev.client;
 import it.multicoredev.client.assets.Config;
 import it.multicoredev.client.assets.Locale;
 import it.multicoredev.client.network.ClientNetSocket;
-import it.multicoredev.client.ui.Window;
+import it.multicoredev.client.ui.Gui;
 import it.multicoredev.client.utils.ServerAddress;
 import it.multicoredev.mclib.json.GsonHelper;
 import it.multicoredev.network.serverbound.C2SCreateGame;
@@ -25,11 +25,10 @@ public class LupusInTabula {
     private Config config;
     private Map<String, Locale> localizations = new HashMap<>();
 
-    private final Window window;
+    private Gui gui;
     private final ClientNetSocket netSocket;
 
     public LupusInTabula() {
-        window = Window.create(1280, 720, "Lupus in Tabula");
         netSocket = new ClientNetSocket();
     }
 
@@ -40,8 +39,16 @@ public class LupusInTabula {
 
     public void start() {
         initConfigs();
-        //window.run();
+        extractAssets();
 
+        try {
+            gui = Gui.create(1920, 1080);
+            gui.show("https://google.com");
+        } catch (Exception e) {
+            LitLogger.get().error("Failed to start GUI", e);
+        }
+
+        gui.setVisible(true);
 
         //TODO Debug code here
         Scanner scanner = new Scanner(System.in);
@@ -167,5 +174,9 @@ public class LupusInTabula {
                 }
             }
         }
+    }
+
+    private void extractAssets() {
+
     }
 }

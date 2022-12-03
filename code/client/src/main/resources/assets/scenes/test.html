@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+</head>
+<body>
+<h1>Test</h1>
+<p>Questa è una pagina html</p>
+<form>
+    Message: <input type="text" id="message" value="My Message">
+    <br/><input type="button" onclick="sendMessage();" value="Send Message">
+    <br/>You should see the reverse of your message below:
+    <br/><textarea rows="10" cols="40" id="result"></textarea>
+</form>
+<script>
+    function sendMessage() {
+        // Results in a call to the OnQuery method in binding_test.cpp
+        window.cefQuery({
+            request: 'BindingTest:' + document.getElementById("message").value,
+            onSuccess: function(response) {
+                document.getElementById('result').value = 'Response: '+response;
+            },
+            onFailure: function(error_code, error_message) {}
+        });
+    }
+</script>
+</body>
+</html>
