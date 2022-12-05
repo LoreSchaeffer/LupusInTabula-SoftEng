@@ -74,6 +74,12 @@
             <artifactId>MCLib-Network</artifactId>
             <version>1.7.2.5</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jetbrains</groupId>
+                    <artifactId>annotations</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>it.multicoredev.mclib</groupId>
