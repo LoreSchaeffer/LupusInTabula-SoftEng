@@ -5,8 +5,7 @@
 •	Lorenzo Magni, matricola 1073257 <br>
 •	Saif Bouchemal, matricola 1074800 <br>
 •	Marianna Romelli, matricola 1072382 <br>
-## Sommario
-### Il nostro progetto
+## Il nostro progetto
 Si crei un gioco online disponibile su desktop chiamato Lupus in tabula. <br>
 #### I personaggi <br>
 Narratore, Cittadini, Lupi Mannari, Veggente, medium (da 10 giocatori in su), guardia del corpo (da 12 giocatori in su), indemoniato (da 15 giocatori in su), massoni (da 15 giocatori in su), gufo (da 15 giocatori in su), criceto mannaro (da 15 giocatori in su), mitomane (da 15 giocatori in su)
@@ -50,7 +49,7 @@ Il moderatore recupera gli indizi, e dà al giocatore linciato una carta fantasm
 A questo punto il giorno è terminato: si ricomincia con una nuova notte e così via, finché una fazione non vince.  <br>
 
 
-### Project plan
+## Project plan
 Sviluppiamo l’applicativo per una community generica di giocatori. Inizialmente i requisiti li decidiamo noi e nel momento in cui l’applicazione potrà essere disponibile per gli utenti avranno modo di fare proposte di modifiche e miglioramenti tramite varie piattaforme social che potranno essere implementate all’interno dell’applicazione. <br>
 La nostra azienda è una società di sviluppo software costituita da Lorenzo Magni, Saif Bouchemal e Marianna Romelli al fine di progettare l’intera applicazione iniziale, in modo che possa poi essere il prototipo per possibili migliorie richieste dagli utenti o finanziatori. <br>
 Il fine del nostro lavoro è di mettere sul mercato un prototipo del gioco per possibili futuri investitori per ricevere un eventuale finanziamento. <br>
