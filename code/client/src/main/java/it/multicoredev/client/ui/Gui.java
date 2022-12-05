@@ -88,8 +88,7 @@ public class Gui extends JFrame {
 
                 if (event.windows_key_code == 116) {
                     if (Static.DEBUG) {
-                        //browser.reloadIgnoreCache();
-                        loadURL(browser.getURL());
+                        browser.reloadIgnoreCache();
                         return true;
                     }
                 }/* else if (event.windows_key_code == 123) {
