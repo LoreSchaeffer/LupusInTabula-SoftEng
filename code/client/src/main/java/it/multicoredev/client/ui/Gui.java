@@ -15,6 +15,7 @@ import org.cef.browser.CefMessageRouter;
 import org.cef.callback.CefContextMenuParams;
 import org.cef.callback.CefMenuModel;
 import org.cef.handler.CefContextMenuHandler;
+import org.cef.handler.CefDisplayHandler;
 import org.cef.handler.CefKeyboardHandler;
 import org.cef.handler.CefLoadHandler;
 import org.cef.misc.BoolRef;
@@ -83,10 +84,19 @@ public class Gui extends JFrame {
 
             @Override
             public boolean onKeyEvent(CefBrowser browser, CefKeyEvent event) {
+                if (!event.type.equals(CefKeyEvent.EventType.KEYEVENT_KEYUP)) return false;
+
                 if (event.windows_key_code == 116) {
-                    if (Static.DEBUG) browser.reload();
-                    return true;
-                }
+                    if (Static.DEBUG) {
+                        //browser.reloadIgnoreCache();
+                        loadURL(browser.getURL());
+                        return true;
+                    }
+                }/* else if (event.windows_key_code == 123) {
+                    if (Static.DEBUG) {
+
+                    }
+                }*/
 
                 return false;
             }
@@ -116,6 +126,49 @@ public class Gui extends JFrame {
                 if (Static.DEBUG) LitLogger.get().info("Browser loading error: [" + errorCode + "] " + errorText + " (" + failedUrl + ")");
             }
         });
+        client.addDisplayHandler(new CefDisplayHandler() {
+            @Override
+            public void onAddressChange(CefBrowser cefBrowser, CefFrame cefFrame, String s) {
+
+            }
+
+            @Override
+            public void onTitleChange(CefBrowser cefBrowser, String s) {
+
+            }
+
+            @Override
+            public boolean onTooltip(CefBrowser cefBrowser, String s) {
+                return false;
+            }
+
+            @Override
+            public void onStatusMessage(CefBrowser cefBrowser, String s) {
+
+            }
+
+            @Override
+            public boolean onConsoleMessage(CefBrowser cefBrowser, CefSettings.LogSeverity logSeverity, String text, String file, int line) {
+                if (Static.DEBUG) {
+                    String log = "JS: [" + file + ":" + line + "] " +  text;
+
+                    switch (logSeverity) {
+                        case LOGSEVERITY_ERROR, LOGSEVERITY_FATAL -> LitLogger.get().error(log);
+                        case LOGSEVERITY_WARNING -> LitLogger.get().warn(log);
+                        default -> LitLogger.get().info(log);
+                    }
+
+                    return true;
+                }
+
+                return false;
+            }
+
+            @Override
+            public boolean onCursorChange(CefBrowser cefBrowser, int i) {
+                return false;
+            }
+        });
     }
 
     public static Gui create(int width, int height) throws UnsupportedPlatformException, CefInitializationException, IOException, InterruptedException {
@@ -142,7 +195,7 @@ public class Gui extends JFrame {
         setSize(width, height);
         setLocationRelativeTo(null);
 
-        Image image = IconLoader.loadIcon("/assets/icon.png");
+        Image image = IconLoader.loadIcon("assets/icon.png");
         if (image != null) setIconImage(image);
 
         addWindowListener(new WindowAdapter() {

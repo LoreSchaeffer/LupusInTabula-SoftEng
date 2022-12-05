@@ -28,7 +28,7 @@ public class LupusInTabula {
     private Gui gui;
     private final ClientNetSocket netSocket;
 
-    public LupusInTabula() {
+    private LupusInTabula() {
         netSocket = new ClientNetSocket();
     }
 
@@ -43,7 +43,7 @@ public class LupusInTabula {
 
         try {
             gui = Gui.create(1920, 1080);
-            gui.show("https://google.com");
+            gui.show("local://scenes/test.html");
         } catch (Exception e) {
             LitLogger.get().error("Failed to start GUI", e);
         }

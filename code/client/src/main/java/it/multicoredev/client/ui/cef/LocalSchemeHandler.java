@@ -7,14 +7,18 @@ import org.cef.misc.IntRef;
 import org.cef.misc.StringRef;
 import org.cef.network.CefRequest;
 import org.cef.network.CefResponse;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LocalSchemeHandler extends CefResourceHandlerAdapter {
     public static final String SCHEME = "local";
     private static final String PATH = "/assets/";
+    private static final Pattern INCLUDE_PATTERN = Pattern.compile("<!--include\\(.*\\)-->");
 
     private byte[] data;
     private String mimeType;
@@ -48,6 +52,12 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
                     handled = true;
                 }
                 break;
+            case "map":
+                if (loadTextFile(path)) {
+                    mimeType = "application/json";
+                    handled = true;
+                }
+                break;
             case "png":
                 if (loadFile(path)) {
                     mimeType = "image/png";
@@ -75,6 +85,12 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
 
     @Override
     public void getResponseHeaders(CefResponse response, IntRef responseLength, StringRef redirectUrl) {
+        if (data == null || data.length == 0) {
+            response.setStatus(404);
+            responseLength.set(0);
+            return;
+        }
+
         response.setMimeType(mimeType);
         response.setStatus(200);
         responseLength.set(data.length);
@@ -99,29 +115,48 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
         return hasData;
     }
 
-    private boolean loadTextFile(String path) {
+    @Nullable
+    private String readTextFile(String path) {
         File file = new File(path.substring(1));
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.exists() && file.isFile() ? new FileInputStream(file) : Objects.requireNonNull(LocalSchemeHandler.class.getResourceAsStream(path)), StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.exists() && file.isFile() ? new FileInputStream(file) : Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(path)), StandardCharsets.UTF_8))) {
             StringBuilder content = new StringBuilder();
             String line;
 
             while ((line = reader.readLine()) != null) {
+                Matcher matcher = INCLUDE_PATTERN.matcher(line);
+                if (matcher.find()) {
+                    String include = matcher.group();
+                    include = include.substring(include.indexOf("(") + 1, include.indexOf(")"));
+                    include = PATH + (include.startsWith("/") ? include.substring(1) : include);
+
+                    String included = readTextFile(include);
+                    if (included != null) content.append(included).append("\n");
+                    continue;
+                }
+
                 content.append(line).append("\n");
             }
 
-            data = content.toString().getBytes();
-            return true;
+            return content.toString();
         } catch (IOException | NullPointerException e) {
             LitLogger.get().error("Failed to load resource '" + path + "'", e);
-            return false;
+            return null;
         }
+    }
+
+    private boolean loadTextFile(String path) {
+        String content = readTextFile(path);
+        if (content == null) return false;
+
+        data = content.getBytes();
+        return true;
     }
 
     private boolean loadFile(String path) {
         File file = new File(path.substring(1));
 
-        try (InputStream is = file.exists() && file.isFile() ? new FileInputStream(file) : Objects.requireNonNull(getClass().getResourceAsStream(path))) {
+        try (InputStream is = file.exists() && file.isFile() ? new FileInputStream(file) : Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(path))) {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             int readByte;
 
