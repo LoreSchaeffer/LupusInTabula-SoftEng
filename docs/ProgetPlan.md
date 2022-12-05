@@ -88,6 +88,47 @@ Alla fine del meeting ci si accorda su quali sono i punti da portare avanti; sar
 ### 6.	Rischi
 La durata è di 70 giorni e l’obbiettivo è quello di arrivare al termine con tutta la documentazione e il prototipo definito. In particolare, abbiamo stabilito come scadenza il 31 dicembre per la consegna dell’applicazione con le prime funzionalità così che la community possa testarla ed il 15 gennaio per l’applicazione implementata con le modifiche effettuate successivamente dalle richieste degli utenti. <br>
 Essendo questo progetto inizialmente non retribuito abbiamo deciso di utilizzare dei finanziamenti di altri fondi per tale progetto. Tali fondi sono necessari per sostenere i costi dello sviluppo e vi è il rischio che siano perduti in caso di mandato acquisito o finanziamento successivamente alla pubblicazione. <br>
+### 7.	Membri
+Utilizzando una modalità di sviluppo Agile, non c'è una vera e propria distinzione fra i ruoli nel gruppo. Inoltre, i task, decisi in comune accordo con il project manager, verranno inseriti come issue su Github e designati ad un programmatore. Nonostante questo, in una panoramica più generale possiamo definire i seguenti ruoli:  <br>
+○  Project Manager e responsabile della comunicazione: Marianna <br>
+○  Progettista Software: Lorenzo <br>
+○  Back-end e Front-end Developer: Lorenzo e Saif <br>
+○  Tester: Lorenzo, Saif e Marianna <br>
+### 8.	Metodi e tecniche
+Il team inizialmente si incontra per creare lo USE-CASE DIAGRAM in modo da comprendere i passi da svolgere per la nostra applicazione. <br>
+Svolgiamo poi il SEQUENCE DIAGRAM per alcune parti della nostra applicazione per comprendere meglio come dovrà essere implementato il lavoro. Anche per quanto riguarda il STATECHART DIAGRAM lo utilizziamo come base per il nostro lavoro di sviluppo. <br>
+### 9.	Garanzie di qualità
+Il team punta a sviluppare un software che rispetti i parametri di qualità indicati dal modello di McCall:  <br>
+○ Correttezza <br>
+○ Affidabilità <br>
+○ Robustezza <br>
+○ Integrità  <br>
+○ Usabilità <br>
+
+Per garantire la sicurezza utilizziamo librerie moderne e molto diffuse, aggiornate frequentemente e poco inclini ad avere vulnerabilità.  <br>
+Inoltre, dividiamo il lato client da quello server, cosicché in futuro sarà possibile aggiornare separatamente le due parti.  <br>
+Puntiamo a sviluppare un software che, oltre a rispettare i quality assurance, sia anche sicuro. <br>
+Il nostro software non raccoglie dati personali e la chat di gioco sarà criptata end to end. <br>
+### 10.	 Package di lavoro
+Il protocollo di lavoro sarà costituito da tre moduli principali: il lato client, il lato server e una parte comune. In questo modo il modulo relativo all’interfaccia grafica sarà presente nel codice del client, la parte di gestione del modello sul server e il modulo comune sarà sfruttato come libreria sul lato client e server.  <br>
+### 11.	 Risorse
+Le risorse designate al progetto sono un project-manager e due sviluppatori che lo affiancano. Il team utilizza IntelliJ per la scrittura di codice e per condividere con tutto il team il lavoro svolto si utilizza GitHub. Anche per quanto riguarda le issue usiamo Github in modo da avere tutto il lavoro passo a passo insieme. <br>
+Al team vengono forniti 3 computer, una connessione internet, una stanza ed un ufficio per collaborare. Il team può decidere di incontrarsi di persone per discutere del progetto e per collaborare in ufficio oppure si può decidere tranquillamente di svolgere il proprio lavoro da casa collaborando attraverso Discord. <br>
+### 12.	 Budget e pianificazione
+Al momento la pianificazione delle ore è in fase di sviluppo. Verrà riportata in una fase successiva.  <br>
+### 13.	 Cambiamenti
+Oltre alle feature base incluse inizialmente nel prodotto e descritte al punto uno di questo documento, l'obiettivo sarà quello di mettere le basi per ulteriori funzionalità allo scopo di fornire un servizio più completo, in accordo con la community. Queste verranno inserite nelle successive versioni del software e includeranno:  <br>
+-	Altre lingue oltre all’italiano e all’inglese <br>
+-	Guida del gioco per una comprensione migliore <br>
+-	Chat vocale <br>
+-	Dara la possibilità al master del gioco di decidere i ruoli dei giocatori <br>
+### 14.	 Consegna
+Gli incontri sono fissati ogni settimana, il giorno può variare in base agli impegni, ma abbiamo comunque stabilito una frequenza settimanale in modo da rimanere aggiornati con lo sviluppo e concordare insieme i prossimi passi da svolgere. Per quanto riguarda la prima settimana di lavoro abbiamo deciso di trovarci tre volte per concordare come procedere e come suddividere il lavoro. In particolare, ci siamo trovati due volte di persona e una volta online. <br>
+
+
+
+
+
 
 
 
