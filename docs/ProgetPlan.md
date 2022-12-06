@@ -81,7 +81,7 @@ Il team ha deciso di sviluppare un'applicazione per implementare il sistema desc
 ○  Server: gestisce l’andamento di una o più partite/giochi. <br>
 La grafica del Client verrà sviluppato utilizzando OpenGL. <br>
 ### 5.	Attività di gestione
-Abbiamo deciso di organizzarci secondo la filosofia della programmazione estrema, cioè (l’extreme programming).
+Abbiamo deciso di organizzarci secondo la filosofia della programmazione estrema, cioè (l’extreme programming). ). Ad esempio, la lettura del codice da parte dei colleghi, è un metodo di  test  molto  efficace, dunque nel metodo che utilizziamo noi lo si fa: due  programmatori  lavorano  insieme  sullo schermo di un computer. Uno fa la codifica, l'altro guarda alle spalle, dà consigli, nota  piccoli  errori,  fa  domande  e  così  via. In  qualsiasi momento, possiamo cambiare i ruoli. <br>
 Gli incontri saranno settimanali e relativamente brevi, della durata di un'ora circa. Durante gli stessi potranno essere effettuate sessioni di brainstorming per condividere idee e risolvere problemi.  <br>
 Il team di sviluppo si pone l'obiettivo di incontrarsi settimanalmente per aggiornarsi sullo stato dei lavori. In base alle esigenze si decide se effettuare la riunione virtualmente o se è necessario incontrarsi e svolgerla di persona.  <br>
 Ad ogni incontro, i membri del gruppo espongono brevemente quali sono stati i punti portati avanti e quali sono state le problematiche incontrate sul proprio cammino. Mano a mano che si procede nell'esposizione, mediante l’utilizzo di issue, branch e commit teniamo traccia del lavoro svolto.  <br>
