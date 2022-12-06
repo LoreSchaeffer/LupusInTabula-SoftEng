@@ -81,7 +81,7 @@ Il team ha deciso di sviluppare un'applicazione per implementare il sistema desc
 ○  Server: gestisce l’andamento di una o più partite/giochi. <br>
 La grafica del Client verrà sviluppato utilizzando OpenGL. <br>
 ### 5.	Attività di gestione
-Abbiamo deciso di organizzarci secondo la filosofia dello "swat team" (Skilled Workers with Avdanced Tools), gli incontri saranno settimanali e relativamente brevi, della durata di un'ora circa. Durante gli stessi potranno essere effettuate sessioni di brainstorming per condividere idee e risolvere problemi.  <br>
+Abbiamo deciso di organizzarci secondo la filosofia della programmazione estrema, cioè (l’extreme programming), gli incontri saranno settimanali e relativamente brevi, della durata di un'ora circa. Durante gli stessi potranno essere effettuate sessioni di brainstorming per condividere idee e risolvere problemi.  <br>
 Il team di sviluppo si pone l'obiettivo di incontrarsi settimanalmente per aggiornarsi sullo stato dei lavori. In base alle esigenze si decide se effettuare la riunione virtualmente o se è necessario incontrarsi e svolgerla di persona.  <br>
 Ad ogni incontro, i membri del gruppo espongono brevemente quali sono stati i punti portati avanti e quali sono state le problematiche incontrate sul proprio cammino. Mano a mano che si procede nell'esposizione, mediante l’utilizzo di issue, branch e commit teniamo traccia del lavoro svolto.  <br>
 Alla fine del meeting ci si accorda su quali sono i punti da portare avanti; sarà il project manager ad assegnare a ciascun membro del gruppo, se stesso compreso, i compiti che dovranno essere eseguiti prima del prossimo incontro.  <br>
