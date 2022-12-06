@@ -125,13 +125,3 @@ Oltre alle feature base incluse inizialmente nel prodotto e descritte al punto u
 -	Dara la possibilità al master del gioco di decidere i ruoli dei giocatori <br>
 ### 14.	 Consegna
 Gli incontri sono fissati ogni settimana, il giorno può variare in base agli impegni, ma abbiamo comunque stabilito una frequenza settimanale in modo da rimanere aggiornati con lo sviluppo e concordare insieme i prossimi passi da svolgere. Per quanto riguarda la prima settimana di lavoro abbiamo deciso di trovarci tre volte per concordare come procedere e come suddividere il lavoro. In particolare, ci siamo trovati due volte di persona e una volta online. <br>
-
-
-
-
-
-
-
-
-
-
