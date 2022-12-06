@@ -1,4 +1,5 @@
 ![Logo](https://media.salonedellostudente.it/app/uploads/2020/05/07180748/bergamo-logo-700x473-1.png)
+<img style="float: right 100;" src="https://media.salonedellostudente.it/app/uploads/2020/05/07180748/bergamo-logo-700x473-1.png">
 # Progetto di ingegneria del software, anno accademico 2022-2023
 ## Anno accademico 2022-2023
 ### Membri del team
