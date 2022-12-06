@@ -6,7 +6,9 @@ public enum SceneId {
     LOBBY("lobby"),
     STARTING("starting"),
     GAME("game"),
-    ENDING("ending");
+    ENDING("ending"),
+    SETTINGS("settings"),
+    CREDITS("credits");
 
     private final String id;
 

@@ -1,6 +1,7 @@
 package it.multicoredev.client.ui.cef;
 
 import it.multicoredev.utils.LitLogger;
+import it.multicoredev.utils.Static;
 import org.cef.callback.CefCallback;
 import org.cef.handler.CefResourceHandlerAdapter;
 import org.cef.misc.IntRef;
@@ -17,7 +18,7 @@ import java.util.regex.Pattern;
 
 public class LocalSchemeHandler extends CefResourceHandlerAdapter {
     public static final String SCHEME = "local";
-    private static final String PATH = "/assets/";
+    private static final String PATH = "assets/";
     private static final Pattern INCLUDE_PATTERN = Pattern.compile("<!--include\\(.*\\)-->");
 
     private byte[] data;
@@ -26,6 +27,8 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
 
     @Override
     public boolean processRequest(CefRequest request, CefCallback callback) {
+        if (Static.DEBUG) LitLogger.get().info(request.getMethod() + " : " + request.getURL());
+
         boolean handled = false;
         String url = request.getURL().substring(SCHEME.length() + 3);
         if (url.endsWith("/")) url = url.substring(0, url.length() - 1);
@@ -117,9 +120,12 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
 
     @Nullable
     private String readTextFile(String path) {
-        File file = new File(path.substring(1));
+        File file = new File(path);
+        boolean loadFromFile = file.exists() && file.isFile();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.exists() && file.isFile() ? new FileInputStream(file) : Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(path)), StandardCharsets.UTF_8))) {
+        if (Static.DEBUG) LitLogger.get().info("Loading " + path + " from " + (loadFromFile ? "file" : "jar"));
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(loadFromFile ? new FileInputStream(file) : Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(path)), StandardCharsets.UTF_8))) {
             StringBuilder content = new StringBuilder();
             String line;
 
@@ -154,9 +160,12 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
     }
 
     private boolean loadFile(String path) {
-        File file = new File(path.substring(1));
+        File file = new File(path);
+        boolean loadFromFile = file.exists() && file.isFile();
 
-        try (InputStream is = file.exists() && file.isFile() ? new FileInputStream(file) : Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(path))) {
+        if (Static.DEBUG) LitLogger.get().info("Loading " + path + " from " + (loadFromFile ? "file" : "jar"));
+
+        try (InputStream is = loadFromFile ? new FileInputStream(file) : Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(path))) {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             int readByte;
 

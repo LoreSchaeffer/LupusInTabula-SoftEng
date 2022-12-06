@@ -3,6 +3,7 @@ package it.multicoredev.client.ui;
 import it.multicoredev.client.ui.cef.AppHandler;
 import it.multicoredev.client.ui.cef.MessageRouter;
 import it.multicoredev.client.ui.components.CircularProgressBar;
+import it.multicoredev.enums.SceneId;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Static;
 import me.friwi.jcefmaven.*;
@@ -32,15 +33,18 @@ import java.io.IOException;
 public class Gui extends JFrame {
     private final int width;
     private final int height;
+    private final boolean startMaximized;
     private final CefApp app;
     private final CefClient client;
     private CefBrowser browser;
+    private boolean fullscreen = false;
 
     private static Gui instance;
 
-    private Gui(int width, int height) throws UnsupportedPlatformException, CefInitializationException, IOException, InterruptedException {
+    private Gui(int width, int height, boolean startMaximized) throws UnsupportedPlatformException, CefInitializationException, IOException, InterruptedException {
         this.width = width;
         this.height = height;
+        this.startMaximized = startMaximized;
 
         CefAppBuilder cab = new CefAppBuilder();
         cab.setInstallDir(new File("cef"));
@@ -86,16 +90,27 @@ public class Gui extends JFrame {
             public boolean onKeyEvent(CefBrowser browser, CefKeyEvent event) {
                 if (!event.type.equals(CefKeyEvent.EventType.KEYEVENT_KEYUP)) return false;
 
-                if (event.windows_key_code == 116) {
+                if (event.windows_key_code == 116) { // F5
                     if (Static.DEBUG) {
                         browser.reloadIgnoreCache();
                         return true;
                     }
-                }/* else if (event.windows_key_code == 123) {
+                } else if (event.windows_key_code == 122) { // F11
+                    dispose();
+                    setUndecorated(!isUndecorated());
+
+                    if (!fullscreen) setSize(2560, 1440);
+                    else setSize(width, height);
+
+                    setVisible(true);
+                    fullscreen = !fullscreen;
+
+                    return true;
+                } else if (event.windows_key_code == 123) { // F12
                     if (Static.DEBUG) {
 
                     }
-                }*/
+                }
 
                 return false;
             }
@@ -149,7 +164,7 @@ public class Gui extends JFrame {
             @Override
             public boolean onConsoleMessage(CefBrowser cefBrowser, CefSettings.LogSeverity logSeverity, String text, String file, int line) {
                 if (Static.DEBUG) {
-                    String log = "JS: [" + file + ":" + line + "] " +  text;
+                    String log = "JS: [" + file + ":" + line + "] " + text;
 
                     switch (logSeverity) {
                         case LOGSEVERITY_ERROR, LOGSEVERITY_FATAL -> LitLogger.get().error(log);
@@ -170,9 +185,9 @@ public class Gui extends JFrame {
         });
     }
 
-    public static Gui create(int width, int height) throws UnsupportedPlatformException, CefInitializationException, IOException, InterruptedException {
+    public static Gui create(int width, int height, boolean startMaximized) throws UnsupportedPlatformException, CefInitializationException, IOException, InterruptedException {
         if (instance != null) throw new IllegalStateException("Gui already created");
-        instance = new Gui(width, height);
+        instance = new Gui(width, height, startMaximized);
 
         return instance;
     }
@@ -182,10 +197,10 @@ public class Gui extends JFrame {
         return instance;
     }
 
-    public void show(@NotNull String url) {
+    public void show(@NotNull Scene scene) {
         if (browser != null) throw new IllegalStateException("Browser already created");
 
-        browser = client.createBrowser(url, true, false);
+        browser = client.createBrowser(scene.getUrl(), true, false);
 
         Component browserUI = browser.getUIComponent();
         getContentPane().add(browserUI, BorderLayout.CENTER);
@@ -193,6 +208,7 @@ public class Gui extends JFrame {
         pack();
         setSize(width, height);
         setLocationRelativeTo(null);
+        if (startMaximized) setExtendedState(MAXIMIZED_BOTH);
 
         Image image = IconLoader.loadIcon("assets/icon.png");
         if (image != null) setIconImage(image);
@@ -209,8 +225,18 @@ public class Gui extends JFrame {
         setVisible(true);
     }
 
-    public void loadURL(String url) {
+    public void loadURL(@NotNull String url) {
         browser.loadURL(url);
+    }
+
+    public void setScene(@NotNull Scene scene) {
+        loadURL(scene.getUrl());
+    }
+
+    public void setScene(@NotNull SceneId id) {
+        Scene scene = Scene.fromId(id);
+        if (scene == null) throw new IllegalArgumentException("Invalid scene id: " + id);
+        setScene(scene);
     }
 
     private static class ProgressHandler implements IProgressHandler {

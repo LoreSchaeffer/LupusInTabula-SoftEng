@@ -4,17 +4,14 @@ import it.multicoredev.client.assets.Config;
 import it.multicoredev.client.assets.Locale;
 import it.multicoredev.client.network.ClientNetSocket;
 import it.multicoredev.client.ui.Gui;
-import it.multicoredev.client.utils.ServerAddress;
+import it.multicoredev.client.ui.Scene;
 import it.multicoredev.mclib.json.GsonHelper;
-import it.multicoredev.network.serverbound.C2SCreateGame;
-import it.multicoredev.network.serverbound.C2SHandshakePacket;
-import it.multicoredev.network.serverbound.C2SJoinGamePacket;
-import it.multicoredev.network.serverbound.C2SStartGamePacket;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Utils;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LupusInTabula {
     private static final GsonHelper GSON = new GsonHelper();
@@ -27,6 +24,10 @@ public class LupusInTabula {
 
     private Gui gui;
     private final ClientNetSocket netSocket;
+    // Placeholder vars
+    public int bootstrapProgress = 0;
+
+    //TODO Automatic update
 
     private LupusInTabula() {
         netSocket = new ClientNetSocket();
@@ -42,69 +43,17 @@ public class LupusInTabula {
         extractAssets();
 
         try {
-            gui = Gui.create(1920, 1080);
-            gui.show("local://scenes/test.html");
+            gui = Gui.create(1920, 1080, false);
+            gui.show(Scene.BOOTSTRAP);
         } catch (Exception e) {
             LitLogger.get().error("Failed to start GUI", e);
         }
 
         gui.setVisible(true);
-
-        //TODO Debug code here
-        Scanner scanner = new Scanner(System.in);
-
-        String in;
-        while ((in = scanner.nextLine()) != null) {
-            String command;
-            String[] args;
-
-            if (!in.contains(" ")) {
-                command = in;
-                args = new String[0];
-            } else {
-                String[] tmp = in.split(" ");
-                command = tmp[0];
-                args = Arrays.copyOfRange(tmp, 1, tmp.length);
-            }
-
-            switch (command) {
-                case "connect" -> {
-                    if (args.length > 0) netSocket.connect(ServerAddress.fromString(args[0]));
-                    else netSocket.connect(ServerAddress.fromString(config.serverAddress));
-
-                    while (!netSocket.isConnected()) {
-                        Utils.sleep(10);
-                    }
-
-                    netSocket.sendPacket(new C2SHandshakePacket(UUID.randomUUID(), "Player-" + new Random().nextInt(100)));
-                }
-                case "disconnect" -> netSocket.disconnect();
-                case "create" -> netSocket.sendPacket(new C2SCreateGame());
-                case "join" -> {
-                    if (args.length == 0) {
-                        LitLogger.get().error("Missing game code");
-                        break;
-                    }
-
-                    netSocket.sendPacket(new C2SJoinGamePacket(args[0]));
-                }
-                case "start" -> {
-                    if (args.length == 0) {
-                        LitLogger.get().error("Missing game code");
-                        break;
-                    }
-
-                    netSocket.sendPacket(new C2SStartGamePacket());
-                }
-            }
-        }
-        //TODO End of debug code
     }
 
     public void stop() {
-        if (netSocket != null) {
-            netSocket.disconnect();
-        }
+        if (netSocket.isConnected()) netSocket.disconnect();
     }
 
     private void initConfigs() {
@@ -177,6 +126,15 @@ public class LupusInTabula {
     }
 
     private void extractAssets() {
+        //TODO Assets can be extracted
+    }
 
+    private void checkForUpdates() {
+        //TODO Check for updates
+        // Placeholder code
+        for (int i = 0; i < 100; i++) {
+            Utils.sleep(100);
+            bootstrapProgress = i;
+        }
     }
 }
