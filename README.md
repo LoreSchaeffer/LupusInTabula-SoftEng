@@ -1,7 +1,9 @@
 # Lupus in Tabula<br>Progetto di ingegneria del software
 ## Anno accademico 2022-2023
-[![GitHub version](https://img.shields.io/badge/snapshot-0.0.1-blue)](#)
-[![GitHub issues](https://img.shields.io/github/issues/LoreSchaeffer/LupusInTabula-SoftEng)](https://github.com/LoreSchaeffer/LupusInTabula-SoftEng/issues)
+![GitHub version](https://img.shields.io/badge/snapshot-0.0.1-blue)
+![GitHub issues](https://img.shields.io/github/issues/LoreSchaeffer/LupusInTabula-SoftEng)
+![Last commit](https://img.shields.io/github/last-commit/LoreSchaeffer/LupusInTabula-SoftEng)
+
 
 ### Membri del team
 - Lorenzo Magni, matricola 1073257 <br>
