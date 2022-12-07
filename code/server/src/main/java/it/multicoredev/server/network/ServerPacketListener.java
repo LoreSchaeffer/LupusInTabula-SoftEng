@@ -2,6 +2,7 @@ package it.multicoredev.server.network;
 
 import it.multicoredev.enums.DisconnectReason;
 import it.multicoredev.enums.Message;
+import it.multicoredev.enums.MessageChannel;
 import it.multicoredev.enums.SceneId;
 import it.multicoredev.mclib.network.NetworkHandler;
 import it.multicoredev.mclib.network.exceptions.PacketSendException;
@@ -94,7 +95,7 @@ public class ServerPacketListener implements IServerPacketListener {
             return;
         }
 
-        game.broadcast(new S2CMessagePacket(player.getName(), newMessage));
+        game.broadcast(new S2CMessagePacket(player.getName(), newMessage, MessageChannel.ALL)); //TODO
     }
 
     @Override
