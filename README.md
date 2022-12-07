@@ -1,5 +1,6 @@
-# Lupus in Tabula<br>Progetto di ingegneria del software
-## Anno accademico 2022-2023
+# Lupus in Tabula
+## Progetto di ingegneria del software
+### Anno accademico 2022-2023
 ![GitHub version](https://img.shields.io/badge/snapshot-0.0.1-blue)
 ![GitHub issues](https://img.shields.io/github/issues/LoreSchaeffer/LupusInTabula-SoftEng)
 ![Last commit](https://img.shields.io/github/last-commit/LoreSchaeffer/LupusInTabula-SoftEng)
