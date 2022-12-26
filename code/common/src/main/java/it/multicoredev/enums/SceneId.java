@@ -8,7 +8,7 @@ public enum SceneId {
     GAME("game"),
     ENDING("ending"),
     SETTINGS("settings"),
-    CREDITS("credits");
+    HELP("help");
 
     private final String id;
 

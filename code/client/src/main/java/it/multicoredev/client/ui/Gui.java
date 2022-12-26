@@ -34,10 +34,12 @@ public class Gui extends JFrame {
     private final int width;
     private final int height;
     private final boolean startMaximized;
+    private Image icon;
     private final CefApp app;
     private final CefClient client;
     private CefBrowser browser;
     private boolean fullscreen = false;
+    private JDialog devToolsDialog;
 
     private static Gui instance;
 
@@ -52,6 +54,7 @@ public class Gui extends JFrame {
 
         cab.getCefSettings().windowless_rendering_enabled = true;
         cab.getCefSettings().log_severity = CefSettings.LogSeverity.LOGSEVERITY_ERROR;
+        cab.addJcefArgs("--disable-web-security");
 
         cab.setAppHandler(new MavenCefAppHandlerAdapter() {
             @Override
@@ -108,7 +111,23 @@ public class Gui extends JFrame {
                     return true;
                 } else if (event.windows_key_code == 123) { // F12
                     if (Static.DEBUG) {
-
+                        if (devToolsDialog == null) {
+                            devToolsDialog = new JDialog();
+                            devToolsDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                            devToolsDialog.setSize(800, 600);
+                            devToolsDialog.add(browser.getDevTools().getUIComponent());
+                            if (icon != null) devToolsDialog.setIconImage(icon);
+                            devToolsDialog.addWindowListener(new WindowAdapter() {
+                                @Override
+                                public void windowClosed(WindowEvent e) {
+                                    devToolsDialog = null;
+                                }
+                            });
+                            devToolsDialog.setVisible(true);
+                        } else {
+                            devToolsDialog.dispose();
+                            devToolsDialog = null;
+                        }
                     }
                 }
 
@@ -210,8 +229,8 @@ public class Gui extends JFrame {
         setLocationRelativeTo(null);
         if (startMaximized) setExtendedState(MAXIMIZED_BOTH);
 
-        Image image = IconLoader.loadIcon("assets/icon.png");
-        if (image != null) setIconImage(image);
+        icon = IconLoader.loadIcon("assets/icon.png");
+        if (icon != null) setIconImage(icon);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -237,6 +256,17 @@ public class Gui extends JFrame {
         Scene scene = Scene.fromId(id);
         if (scene == null) throw new IllegalArgumentException("Invalid scene id: " + id);
         setScene(scene);
+    }
+
+    public void executeFrontendCode(String message) {
+        if (browser == null) throw new IllegalStateException("Browser not created");
+
+        browser.executeJavaScript("onMessage(" + message + ")", browser.getURL(), 0);
+    }
+
+    public void close() {
+        if (browser != null) browser.close(true);
+        dispose();
     }
 
     private static class ProgressHandler implements IProgressHandler {

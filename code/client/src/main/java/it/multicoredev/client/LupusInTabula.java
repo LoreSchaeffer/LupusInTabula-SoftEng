@@ -9,6 +9,7 @@ import it.multicoredev.mclib.json.GsonHelper;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Utils;
 
+import java.awt.*;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,17 +44,37 @@ public class LupusInTabula {
         extractAssets();
 
         try {
-            gui = Gui.create(1920, 1080, false);
+            int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+
+            int[] dimensions;
+            if (screenHeight <= 1080) dimensions = new int[]{1280, 720};
+            else dimensions = new int[]{1920, 1080};
+
+            gui = Gui.create(dimensions[0], dimensions[1], false);
             gui.show(Scene.BOOTSTRAP);
         } catch (Exception e) {
             LitLogger.get().error("Failed to start GUI", e);
         }
 
         gui.setVisible(true);
+
+        //TODO Test code
+        Utils.sleep(1000);
+
+        for (int i = 0; i < 101; i++) {
+            gui.executeFrontendCode("{\"type\":\"bootstrap\",\"data\": " + i + "}");
+            bootstrapProgress++;
+            Utils.sleep(5);
+        }
+        //TODO End of test code
+
+        gui.setScene(Scene.MAIN_MENU);
     }
 
     public void stop() {
         if (netSocket.isConnected()) netSocket.disconnect();
+        gui.close();
+        System.exit(0);
     }
 
     private void initConfigs() {

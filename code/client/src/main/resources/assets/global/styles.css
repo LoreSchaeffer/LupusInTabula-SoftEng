@@ -1,3 +1,46 @@
 :root {
     --background: #212121;
+    --btn-primary: #008a44;
+    --btn-primary-hover: #0a964f;
+    --btn-secondary: #e3e3e3;
+    --btn-secondary-hover: #ffffff;
+    --light-gray: #bcbcbc;
+}
+
+body {
+    background-color: var(--background);
+    user-select: none;
+}
+
+#mainContainer {
+    width: 100vw;
+    height: 100vh;
+}
+
+.blur-background {
+    backdrop-filter: blur(8px);
+}
+
+.btn-primary {
+    background-color: var(--btn-primary);
+    border: 2px solid transparent;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--btn-primary-hover);
+    border: 2px solid transparent;
+}
+
+.btn-primary:active {
+    border: 2px solid black !important;
+    background-color: var(--btn-primary-hover) !important;
+}
+
+.form-control:focus,
+.form-control:active {
+    outline: none !important;
+    box-shadow: none;
 }

@@ -3,6 +3,7 @@ package it.multicoredev.client.ui.cef;
 import it.multicoredev.client.LupusInTabula;
 import it.multicoredev.client.ui.Gui;
 import it.multicoredev.client.ui.InternalMessage;
+import it.multicoredev.client.ui.Scene;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Static;
 import org.cef.browser.CefBrowser;
@@ -32,6 +33,29 @@ public class MessageRouter extends CefMessageRouterHandlerAdapter {
         }
 
         switch (msg.getType()) {
+            case "close":
+                lit.stop();
+            case "set_scene":
+                if (!msg.hasData()) {
+                    if (Static.DEBUG) LitLogger.get().error("Set scene request has no data");
+                    return false;
+                }
+
+                String sceneId;
+                try {
+                    sceneId = (String) msg.getData().get(0);
+                } catch (ClassCastException ignored) {
+                    if (Static.DEBUG) LitLogger.get().error("Set scene request has invalid data");
+                    return false;
+                }
+
+                Scene scene = Scene.fromId(sceneId);
+                if (scene == null) {
+                    if (Static.DEBUG) LitLogger.get().error("Set scene request has invalid scene id");
+                    return false;
+                }
+
+                gui.setScene(scene);
             case "bootstrap":
                 callback.success(String.valueOf(lit.bootstrapProgress));
                 return true;

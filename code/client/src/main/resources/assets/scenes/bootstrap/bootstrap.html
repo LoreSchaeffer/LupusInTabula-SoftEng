@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <title>Bootstrap</title>
     <!--include(/global/components/head.html)-->
-    <link rel="stylesheet" href="local://scenes/bootstrap/bootstrap.css">
+    <link rel="stylesheet" href="local://assets/scenes/bootstrap/bootstrap.css">
 </head>
 <body>
-<div class="progress">
-    <div class="progress-bar w-75" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+<div id="mainContainer" class="container-fluid">
+    <img id="splash" class="img-fluid" src="local://assets/images/splash.png" alt="Splash">
+    <div class="progress">
+        <div id="progressBar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
 </div>
 <!--include(/global/components/tail.html)-->
-<script type="text/javascript" src="local://scenes/bootstrap/bootstrap.js"></script>
+<script type="text/javascript" src="local://assets/scenes/bootstrap/bootstrap.js"></script>
 </body>
 </html>

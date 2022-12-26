@@ -34,7 +34,7 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
         if (url.endsWith("/")) url = url.substring(0, url.length() - 1);
         String extension = url.substring(url.lastIndexOf(".") + 1);
 
-        String path = PATH + url;
+        String path = url;
 
         switch (extension) {
             case "html":
@@ -70,6 +70,23 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
             case "jpg":
                 if (loadFile(path)) {
                     mimeType = "image/jpg";
+                    handled = true;
+                }
+                break;
+            case "svg":
+                if (loadTextFile(path)) {
+                    mimeType = "image/svg+xml";
+                    handled = true;
+                }
+            case "ttf":
+                if (loadFile(path)) {
+                    mimeType = "application/octet-stream";
+                    handled = true;
+                }
+                break;
+            case "woff2":
+                if (loadFile(path)) {
+                    mimeType = "application/octet-stream";
                     handled = true;
                 }
                 break;

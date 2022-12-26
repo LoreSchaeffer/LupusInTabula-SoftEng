@@ -18,4 +18,8 @@ public class InternalMessage {
     public List<Object> getData() {
         return data;
     }
+
+    public boolean hasData() {
+        return data != null && !data.isEmpty();
+    }
 }
