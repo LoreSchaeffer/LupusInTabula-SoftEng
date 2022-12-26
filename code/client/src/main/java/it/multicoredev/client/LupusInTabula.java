@@ -5,7 +5,12 @@ import it.multicoredev.client.assets.Locale;
 import it.multicoredev.client.network.ClientNetSocket;
 import it.multicoredev.client.ui.Gui;
 import it.multicoredev.client.ui.Scene;
+import it.multicoredev.client.utils.ServerAddress;
+import it.multicoredev.enums.SceneId;
 import it.multicoredev.mclib.json.GsonHelper;
+import it.multicoredev.models.Game;
+import it.multicoredev.network.serverbound.C2SCreateGame;
+import it.multicoredev.network.serverbound.C2SHandshakePacket;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Utils;
 
@@ -24,14 +29,19 @@ public class LupusInTabula {
     private Map<String, Locale> localizations = new HashMap<>();
 
     private Gui gui;
-    private final ClientNetSocket netSocket;
+    private final ClientNetSocket net;
+    private String currentGameCode;
+    private Game currentGame;
+
     // Placeholder vars
     public int bootstrapProgress = 0;
 
     //TODO Automatic update
 
     private LupusInTabula() {
-        netSocket = new ClientNetSocket();
+        net = new ClientNetSocket();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
     }
 
     public static LupusInTabula get() {
@@ -64,7 +74,7 @@ public class LupusInTabula {
         for (int i = 0; i < 101; i++) {
             gui.executeFrontendCode("{\"type\":\"bootstrap\",\"data\": " + i + "}");
             bootstrapProgress++;
-            Utils.sleep(5);
+            Utils.sleep(1);
         }
         //TODO End of test code
 
@@ -72,9 +82,55 @@ public class LupusInTabula {
     }
 
     public void stop() {
-        if (netSocket.isConnected()) netSocket.disconnect();
+        if (net.isConnected()) net.disconnect();
         gui.close();
         System.exit(0);
+    }
+
+    public void setScene(Scene scene) {
+        gui.setScene(scene);
+    }
+
+    public void setScene(SceneId scene) {
+        gui.setScene(scene);
+    }
+
+    public void showModal(String id, String content, boolean large) {
+        gui.executeFrontendCode("{'type': 'show_modal', 'data': {'id': '" + id + "', 'content': '" + content + "'" + (large ? ", 'size': 'modal-lg'" : "") + "}}");
+    }
+
+    public void showModal(String id, String content) {
+        showModal(id, content, false);
+    }
+
+    public void createGame() {
+        if (!connectToServer()) {
+            LitLogger.get().info("Connection to server " + config.serverAddress + " failed");
+            return;
+        }
+
+        LitLogger.get().info("Connected to server " + config.serverAddress);
+        net.sendPacket(new C2SCreateGame());
+    }
+
+    public void joinGame(String code) {
+        //gui.executeFrontendCode("{'type': 'show_modal', 'data': {'id': 'game_not_found', 'content': '<h1>Game not found</h1><p>A game with that code does not exists<p>'}}");
+    }
+
+    public void setCurrentGameCode(String code) {
+        currentGameCode = code;
+    }
+
+    public String getCurrentGameCode() {
+        return currentGameCode;
+    }
+
+    public void setCurrentGame(Game game) {
+        currentGame = game;
+    }
+
+    public Game getCurrentGame() {
+        return currentGame;
     }
 
     private void initConfigs() {
@@ -157,5 +213,27 @@ public class LupusInTabula {
             Utils.sleep(100);
             bootstrapProgress = i;
         }
+    }
+
+    private boolean connectToServer() {
+        net.connect(ServerAddress.fromString(config.serverAddress));
+
+        // Maximum wait time 3 seconds
+        for (int i = 0; i < 60; i++) {
+            if (net.isConnected()) {
+                net.sendPacket(new C2SHandshakePacket(net.getClientId(), System.getProperty("user.name"))); //TODO Make the user choose his name
+
+                for (int j = i; j < 60; j++) {
+                    if (net.isHandshakeDone()) {
+                        return true;
+                    }
+
+                    Utils.sleep(50);
+                }
+            }
+            Utils.sleep(50);
+        }
+
+        return false;
     }
 }

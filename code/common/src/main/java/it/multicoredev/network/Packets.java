@@ -18,6 +18,7 @@ public enum Packets {
     S2C_CHANGE_SCENE(S2CChangeScenePacket.class),
     S2C_DISCONNECT(S2CDisconnectPacket.class),
     S2C_GAME(S2CGamePacket.class),
+    S2C_GAME_CREATED(S2CGameCreatedPacket.class),
     S2C_GAME_START_COUNTDOWN(S2CGameStartCountdownPacket.class),
     S2C_HANDSHAKE(S2CHandshakePacket.class),
     S2C_MESSAGE(S2CMessagePacket.class),

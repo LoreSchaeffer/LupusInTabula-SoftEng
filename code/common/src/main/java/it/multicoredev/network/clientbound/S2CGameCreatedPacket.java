@@ -5,40 +5,39 @@ import it.multicoredev.mclib.network.exceptions.DecoderException;
 import it.multicoredev.mclib.network.exceptions.EncoderException;
 import it.multicoredev.mclib.network.exceptions.ProcessException;
 import it.multicoredev.mclib.network.protocol.Packet;
-import it.multicoredev.enums.SceneId;
 import it.multicoredev.network.IClientPacketListener;
 import org.jetbrains.annotations.NotNull;
 
-public class S2CChangeScenePacket implements Packet<IClientPacketListener> {
-    private SceneId scene;
+public class S2CGameCreatedPacket implements Packet<IClientPacketListener> {
+    private String code;
 
-    public S2CChangeScenePacket(@NotNull SceneId scene) {
-        this.scene = scene;
+    public S2CGameCreatedPacket(@NotNull String code) {
+        this.code = code;
     }
 
-    public S2CChangeScenePacket() {
+    public S2CGameCreatedPacket() {
     }
 
     @Override
     public void encode(PacketByteBuf buf) throws EncoderException {
-        if (scene == null) throw new EncoderException("Scene is null");
+        if (code == null || code.trim().isEmpty()) throw new EncoderException("Code cannot be null or empty");
 
-        buf.writeInt(scene.ordinal());
+        buf.writeString(code);
     }
 
     @Override
     public void decode(PacketByteBuf buf) throws DecoderException {
-        scene = SceneId.values()[buf.readInt()];
+        code = buf.readString();
 
-        if (scene == null) throw new DecoderException("Scene is null");
+        if (code == null || code.trim().isEmpty()) throw new DecoderException("Code cannot be null or empty");
     }
 
     @Override
     public void processPacket(IClientPacketListener handler) throws ProcessException {
-        handler.handleChangeScene(this);
+        handler.handleGameCreated(this);
     }
 
-    public SceneId getScene() {
-        return scene;
+    public String getCode() {
+        return code;
     }
 }

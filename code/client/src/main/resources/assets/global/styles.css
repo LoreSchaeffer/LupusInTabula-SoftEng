@@ -44,3 +44,40 @@ body {
     outline: none !important;
     box-shadow: none;
 }
+
+.modal-lg {
+    min-width: 80vw;
+}
+
+.modal-content {
+    background-color: #212121f5;
+    min-height: 200px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 500;
+}
+
+.modal-header {
+    border-bottom: none;
+    padding-top: 8px;
+    padding-bottom: 6px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.modal-header i {
+    font-size: 20px;
+    color: var(--light-gray);
+}
+
+.modal-header i:hover,
+.modal-header i:focus {
+    color: white;
+}
+
+.modal-body {
+    padding: 0 10px 10px;
+}

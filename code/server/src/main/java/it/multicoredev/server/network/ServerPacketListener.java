@@ -94,7 +94,7 @@ public class ServerPacketListener implements IServerPacketListener {
             return;
         }
 
-        game.broadcast(new S2CMessagePacket(player.getName(), newMessage));
+        game.broadcast(new S2CMessagePacket(player.getName(), newMessage, null)); //TODO TO fix
     }
 
     @Override
@@ -108,6 +108,7 @@ public class ServerPacketListener implements IServerPacketListener {
         Game game = lit.createGame(player);
 
         try {
+            netHandler.sendPacket(new S2CGameCreatedPacket(game.getCode()));
             netHandler.sendPacket(new S2CChangeScenePacket(SceneId.LOBBY));
         } catch (PacketSendException e) {
             if (DEBUG) LitLogger.get().error(e.getMessage(), e);

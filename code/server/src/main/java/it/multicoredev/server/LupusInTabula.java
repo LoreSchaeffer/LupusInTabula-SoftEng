@@ -32,7 +32,7 @@ public class LupusInTabula {
     private final File confDir = new File("conf");
     private Config config;
 
-    private ServerNetSocket netSocket;
+    private ServerNetSocket network;
     private final Map<String, ServerGame> games = new HashMap<>();
 
     //TODO Should have: limit game number
@@ -57,12 +57,12 @@ public class LupusInTabula {
 
         Encryption.setSecret(UUID.randomUUID().toString());
 
-        netSocket = new ServerNetSocket(config.port);
-        netSocket.start();
+        network = new ServerNetSocket(config.port);
+        network.start();
     }
 
     public ServerNetSocket netSocket() {
-        return netSocket;
+        return network;
     }
 
     public Config config() {

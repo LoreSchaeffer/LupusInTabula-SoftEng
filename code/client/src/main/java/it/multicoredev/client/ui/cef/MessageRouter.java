@@ -56,6 +56,26 @@ public class MessageRouter extends CefMessageRouterHandlerAdapter {
                 }
 
                 gui.setScene(scene);
+                return true;
+            case "new_game":
+                lit.createGame();
+                return true;
+            case "join_game":
+                if (!msg.hasData()) {
+                    if (Static.DEBUG) LitLogger.get().error("Join game request has no data");
+                    return false;
+                }
+
+                String code;
+                try {
+                    code = (String) msg.getData().get(0);
+                } catch (ClassCastException ignored) {
+                    if (Static.DEBUG) LitLogger.get().error("Join game request has invalid data");
+                    return false;
+                }
+
+                lit.joinGame(code);
+                return true;
             case "bootstrap":
                 callback.success(String.valueOf(lit.bootstrapProgress));
                 return true;

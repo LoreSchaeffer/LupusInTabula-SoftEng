@@ -1,5 +1,6 @@
 package it.multicoredev.client.network;
 
+import it.multicoredev.client.LupusInTabula;
 import it.multicoredev.mclib.network.NetworkHandler;
 import it.multicoredev.network.IClientPacketListener;
 import it.multicoredev.network.clientbound.*;
@@ -7,11 +8,13 @@ import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Static;
 
 public class ClientPacketListener implements IClientPacketListener {
-    private final ClientNetSocket netSocket;
+    private final ClientNetSocket net;
+    private final LupusInTabula lit;
     private ClientNetHandler netHandler;
 
-    public ClientPacketListener(ClientNetSocket netSocket) {
-        this.netSocket = netSocket;
+    public ClientPacketListener(ClientNetSocket net) {
+        this.net = net;
+        this.lit = LupusInTabula.get();
     }
 
     @Override
@@ -23,22 +26,24 @@ public class ClientPacketListener implements IClientPacketListener {
     @Override
     public void handleHandshake(S2CHandshakePacket packet) {
         if (!packet.isClientAccepted()) {
-            netSocket.disconnect();
+            net.disconnect();
             LitLogger.get().info("Server rejected the connection: " + packet.getReason());
 
-            //TODO Show connection refused alert
+            lit.showModal("connection_rejected", "<h1>Connection rejected</h1><p>" + packet.getReason() + "</p>"); //TODO Change message
             return;
         }
 
         if (packet.getNewClientId() != null) {
-            netSocket.changeId(packet.getNewClientId());
+            net.changeId(packet.getNewClientId());
             if (Static.DEBUG) LitLogger.get().info("Client id changed to " + packet.getNewClientId());
         }
+
+        net.setHandshakeDone();
     }
 
     @Override
     public void handleDisconnect(S2CDisconnectPacket packet) {
-        netSocket.disconnect();
+        net.disconnect();
         LitLogger.get().info("Disconnected from server: " + packet.getReason()); //TODO Change to a more readable form
 
         //TODO Handle disconnection
@@ -51,7 +56,7 @@ public class ClientPacketListener implements IClientPacketListener {
 
     @Override
     public void handleChangeScene(S2CChangeScenePacket packet) {
-        //TODO Handle scene change
+        lit.setScene(packet.getScene());
     }
 
     @Override
@@ -80,5 +85,11 @@ public class ClientPacketListener implements IClientPacketListener {
     @Override
     public void handleTimer(S2CTimerPacket packet) {
 
+    }
+
+    @Override
+    public void handleGameCreated(S2CGameCreatedPacket packet) {
+        LitLogger.get().info("Game created: " + packet.getCode());
+        lit.setCurrentGameCode(packet.getCode());
     }
 }

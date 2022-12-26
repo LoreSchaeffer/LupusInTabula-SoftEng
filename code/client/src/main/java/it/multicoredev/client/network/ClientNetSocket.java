@@ -14,6 +14,7 @@ public class ClientNetSocket {
     private ClientSocket socket;
     private Thread connectionThread;
     private UUID clientId;
+    private boolean handshakeDone = false;
 
     public ClientNetSocket() {
         clientId = UUID.randomUUID();
@@ -48,10 +49,20 @@ public class ClientNetSocket {
             connectionThread.interrupt();
             connectionThread = null;
         }
+
+        handshakeDone = false;
     }
 
     public UUID getClientId() {
         return clientId;
+    }
+
+    public void setHandshakeDone() {
+        handshakeDone = true;
+    }
+
+    public boolean isHandshakeDone() {
+        return handshakeDone;
     }
 
     public boolean isConnected() {
