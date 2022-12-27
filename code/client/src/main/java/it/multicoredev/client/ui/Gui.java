@@ -54,7 +54,6 @@ public class Gui extends JFrame {
 
         cab.getCefSettings().windowless_rendering_enabled = true;
         cab.getCefSettings().log_severity = CefSettings.LogSeverity.LOGSEVERITY_ERROR;
-        cab.addJcefArgs("--disable-web-security");
 
         cab.setAppHandler(new MavenCefAppHandlerAdapter() {
             @Override

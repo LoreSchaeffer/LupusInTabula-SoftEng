@@ -34,6 +34,7 @@ public class LupusInTabula {
     private Game currentGame;
 
     // Placeholder vars
+    private String username = System.getProperty("user.name"); //TODO Make the user choose his name
     public int bootstrapProgress = 0;
 
     //TODO Automatic update
@@ -71,11 +72,11 @@ public class LupusInTabula {
         //TODO Test code
         Utils.sleep(1000);
 
-        for (int i = 0; i < 101; i++) {
-            gui.executeFrontendCode("{\"type\":\"bootstrap\",\"data\": " + i + "}");
-            bootstrapProgress++;
-            Utils.sleep(1);
-        }
+//        for (int i = 0; i < 101; i++) {
+//            gui.executeFrontendCode("{\"type\":\"bootstrap\",\"data\": " + i + "}");
+//            bootstrapProgress++;
+//            Utils.sleep(100);
+//        }
         //TODO End of test code
 
         gui.setScene(Scene.MAIN_MENU);
@@ -131,6 +132,10 @@ public class LupusInTabula {
 
     public Game getCurrentGame() {
         return currentGame;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     private void initConfigs() {
@@ -209,10 +214,7 @@ public class LupusInTabula {
     private void checkForUpdates() {
         //TODO Check for updates
         // Placeholder code
-        for (int i = 0; i < 100; i++) {
-            Utils.sleep(100);
-            bootstrapProgress = i;
-        }
+
     }
 
     private boolean connectToServer() {
@@ -221,7 +223,7 @@ public class LupusInTabula {
         // Maximum wait time 3 seconds
         for (int i = 0; i < 60; i++) {
             if (net.isConnected()) {
-                net.sendPacket(new C2SHandshakePacket(net.getClientId(), System.getProperty("user.name"))); //TODO Make the user choose his name
+                net.sendPacket(new C2SHandshakePacket(net.getClientId(), username));
 
                 for (int j = i; j < 60; j++) {
                     if (net.isHandshakeDone()) {

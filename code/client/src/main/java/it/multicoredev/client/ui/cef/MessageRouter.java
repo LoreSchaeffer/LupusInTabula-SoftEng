@@ -76,6 +76,12 @@ public class MessageRouter extends CefMessageRouterHandlerAdapter {
 
                 lit.joinGame(code);
                 return true;
+            case "get_game_code":
+                callback.success(lit.getCurrentGameCode());
+                return true;
+            case "get_players":
+                callback.success(lit.getUsername());
+                return true;
             case "bootstrap":
                 callback.success(String.valueOf(lit.bootstrapProgress));
                 return true;

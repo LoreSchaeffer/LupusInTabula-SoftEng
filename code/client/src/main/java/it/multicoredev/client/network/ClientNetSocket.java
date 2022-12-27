@@ -6,6 +6,7 @@ import it.multicoredev.mclib.network.exceptions.PacketSendException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.network.Packets;
 import it.multicoredev.utils.LitLogger;
+import it.multicoredev.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -41,6 +42,11 @@ public class ClientNetSocket {
                 if (socket.isConnected()) {
                     //TODO Send disconnect packet
                     socket.disconnect();
+
+                    //TODO To test
+                    while(socket.isConnected()) {
+                        Utils.sleep(10);
+                    }
                 }
 
                 socket = null;
