@@ -1,5 +1,6 @@
 package it.multicoredev.client.ui;
 
+import it.multicoredev.client.LupusInTabula;
 import it.multicoredev.client.ui.cef.AppHandler;
 import it.multicoredev.client.ui.cef.MessageRouter;
 import it.multicoredev.client.ui.components.CircularProgressBar;
@@ -40,6 +41,7 @@ public class Gui extends JFrame {
     private CefBrowser browser;
     private boolean fullscreen = false;
     private JDialog devToolsDialog;
+    private boolean ready = false;
 
     private static Gui instance;
 
@@ -54,13 +56,7 @@ public class Gui extends JFrame {
 
         cab.getCefSettings().windowless_rendering_enabled = true;
         cab.getCefSettings().log_severity = CefSettings.LogSeverity.LOGSEVERITY_ERROR;
-
-        cab.setAppHandler(new MavenCefAppHandlerAdapter() {
-            @Override
-            public void stateHasChanged(CefApp.CefAppState state) {
-                if (state == CefApp.CefAppState.TERMINATED) System.exit(0);
-            }
-        });
+        cab.getCefSettings().log_file = "cef.log";
 
         CefApp.addAppHandler(new AppHandler(new String[0]));
         app = cab.build();
@@ -141,6 +137,7 @@ public class Gui extends JFrame {
             @Override
             public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
                 if (Static.DEBUG) LitLogger.get().info("Browser loading state changed to : " + isLoading);
+                ready = !isLoading;
             }
 
             @Override
@@ -234,20 +231,24 @@ public class Gui extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                CefApp.getInstance().dispose();
-                dispose();
-                System.exit(0);
+                LupusInTabula.get().stop();
             }
         });
 
         setVisible(true);
     }
 
+    public boolean isReady() {
+        return ready;
+    }
+
     public void loadURL(@NotNull String url) {
+        ready = false;
         browser.loadURL(url);
     }
 
     public void setScene(@NotNull Scene scene) {
+        ready = false;
         loadURL(scene.getUrl());
     }
 
@@ -259,13 +260,16 @@ public class Gui extends JFrame {
 
     public void executeFrontendCode(String message) {
         if (browser == null) throw new IllegalStateException("Browser not created");
+        if (Static.DEBUG) LitLogger.get().info("Executing frontend code: " + message);
 
         browser.executeJavaScript("onMessage(" + message + ")", browser.getURL(), 0);
     }
 
     public void close() {
         if (browser != null) browser.close(true);
-        dispose();
+        if (client != null) client.dispose();
+        if (app != null) app.dispose();
+        CefApp.getInstance().dispose();
     }
 
     private static class ProgressHandler implements IProgressHandler {

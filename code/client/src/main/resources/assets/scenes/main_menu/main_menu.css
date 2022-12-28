@@ -1,0 +1,97 @@
+#mainContainer {
+    background: url("local://assets/images/menu_bg.jpg") center center no-repeat;
+    padding: 0;
+}
+
+#menuItems {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#splash {
+    max-width: 85vw;
+    margin-top: 2em;
+}
+
+.btn-primary {
+    min-width: 600px;
+    min-height: 70px;
+    font-size: 35px;
+    line-height: 35px;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+#joinGame {
+    max-width: 600px;
+    min-height: 70px;
+    font-size: 35px;
+    line-height: 35px;
+    background-color: #212121dc;
+    border: none;
+    color: white;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+#joinGame::placeholder {
+    color: var(--light-gray);
+    opacity: 1;
+}
+
+.btn-icon {
+    font-size: 50px;
+    cursor: pointer;
+    color: var(--btn-secondary);
+    text-shadow: 2px 0 transparent, -2px 0 transparent, 0 2px transparent, 0 -2px transparent,
+    1px 1px transparent, -1px -1px transparent, 1px -1px transparent, -1px 1px transparent;
+}
+
+.btn-icon:hover {
+    color: var(--btn-secondary-hover);
+}
+
+.btn-icon:active {
+    color: var(--btn-secondary-hover);
+    text-shadow: 2px 0 black, -2px 0 black, 0 2px black, 0 -2px black,
+    1px 1px black, -1px -1px black, 1px -1px black, -1px 1px black;
+}
+
+#settingsBtn {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+}
+
+#helpBtn {
+    position: absolute;
+    bottom: 12px;
+    right: 86px;
+}
+
+#version {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    font-size: 24px;
+    margin: 0;
+    color: white;
+    cursor: pointer;
+}
+
+#username_selection h2 {
+    text-align: center;
+}
+
+#nameSelector {
+    min-height: 70px;
+    font-size: 35px;
+    line-height: 35px;
+    background-color: transparent;
+    border: 2px solid var(--light-gray);
+    color: white;
+    text-align: center;
+}

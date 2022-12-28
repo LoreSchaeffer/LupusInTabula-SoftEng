@@ -1,0 +1,54 @@
+#mainContainer {
+    background: url("local://assets/images/menu_bg.jpg") center center no-repeat;
+    padding: 0;
+}
+
+#lobbyContent {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    padding-left: 12px;
+    padding-right: 12px;
+    background-color: #00000040;
+}
+
+#gameCode {
+    position: absolute;
+    bottom: 12px;
+    margin-bottom: 0;
+    left: 50%;
+    transform: translate(-50%);
+    font-weight: bold;
+}
+
+.btn-primary {
+    min-height: 60px;
+    font-size: 30px;
+    line-height: 30px;
+}
+
+#startGame {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+}
+
+#mainContainer h1 {
+    text-transform: uppercase;
+    text-shadow: 0 0 5px black;
+}
+
+#mainContainer h2 {
+    text-align: center;
+    text-shadow: 0 0 5px black;
+    margin-top: 1em
+}
+
+.row h1 {
+    text-align: center;
+}
+
+#players {
+    height: 100vh;
+    background-color: #00000050;
+}

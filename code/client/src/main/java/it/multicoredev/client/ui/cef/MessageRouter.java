@@ -82,6 +82,22 @@ public class MessageRouter extends CefMessageRouterHandlerAdapter {
             case "get_players":
                 callback.success(lit.getUsername());
                 return true;
+            case "set_username":
+                if (!msg.hasData()) {
+                    if (Static.DEBUG) LitLogger.get().error("Set username request has no data");
+                    return false;
+                }
+
+                String username;
+                try {
+                    username = (String) msg.getData().get(0);
+                } catch (ClassCastException ignored) {
+                    if (Static.DEBUG) LitLogger.get().error("Set username request has invalid data");
+                    return false;
+                }
+
+                lit.setUsername(username);
+                return true;
             case "bootstrap":
                 callback.success(String.valueOf(lit.bootstrapProgress));
                 return true;

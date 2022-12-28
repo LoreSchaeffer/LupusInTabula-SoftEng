@@ -7,6 +7,10 @@
     --light-gray: #bcbcbc;
 }
 
+p, h1, h2, h3, h4, h5 {
+    color: white;
+}
+
 body {
     background-color: var(--background);
     user-select: none;
@@ -37,6 +41,12 @@ body {
 .btn-primary:active {
     border: 2px solid black !important;
     background-color: var(--btn-primary-hover) !important;
+}
+
+.btn-primary:disabled {
+    background-color: var(--btn-primary);
+    border: 2px solid transparent;
+    opacity: 0.5;
 }
 
 .form-control:focus,

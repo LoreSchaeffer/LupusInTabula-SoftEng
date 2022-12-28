@@ -13,6 +13,7 @@ import it.multicoredev.network.serverbound.C2SCreateGame;
 import it.multicoredev.network.serverbound.C2SHandshakePacket;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Utils;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.io.File;
@@ -34,7 +35,6 @@ public class LupusInTabula {
     private Game currentGame;
 
     // Placeholder vars
-    private String username = System.getProperty("user.name"); //TODO Make the user choose his name
     public int bootstrapProgress = 0;
 
     //TODO Automatic update
@@ -42,7 +42,7 @@ public class LupusInTabula {
     private LupusInTabula() {
         net = new ClientNetSocket();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }
 
     public static LupusInTabula get() {
@@ -70,7 +70,7 @@ public class LupusInTabula {
         gui.setVisible(true);
 
         //TODO Test code
-        Utils.sleep(1000);
+//        Utils.sleep(1000);
 
 //        for (int i = 0; i < 101; i++) {
 //            gui.executeFrontendCode("{\"type\":\"bootstrap\",\"data\": " + i + "}");
@@ -80,11 +80,15 @@ public class LupusInTabula {
         //TODO End of test code
 
         gui.setScene(Scene.MAIN_MENU);
+        if (config.username == null || config.username.trim().isEmpty()) {
+            while (!gui.isReady()) {
+                Utils.sleep(10);
+            }
+            showModal("username_selection", "<h2>Choose your name</h2><input id=\"nameSelector\" class=\"form-control form-control-lg\" type=\"text\">");
+        }
     }
 
     public void stop() {
-        if (net.isConnected()) net.disconnect();
-        gui.close();
         System.exit(0);
     }
 
@@ -135,7 +139,12 @@ public class LupusInTabula {
     }
 
     public String getUsername() {
-        return username;
+        return config.username;
+    }
+
+    public void setUsername(@NotNull String username) {
+        config.username = username;
+        saveConfig();
     }
 
     private void initConfigs() {
@@ -207,6 +216,16 @@ public class LupusInTabula {
         }
     }
 
+    private void saveConfig() {
+        new Thread(() -> {
+            try {
+                GSON.save(config, new File("conf", "config.json"));
+            } catch (Exception e) {
+                LitLogger.get().error("Cannot save config file!", e);
+            }
+        }).start();
+    }
+
     private void extractAssets() {
         //TODO Assets can be extracted
     }
@@ -223,7 +242,7 @@ public class LupusInTabula {
         // Maximum wait time 3 seconds
         for (int i = 0; i < 60; i++) {
             if (net.isConnected()) {
-                net.sendPacket(new C2SHandshakePacket(net.getClientId(), username));
+                net.sendPacket(new C2SHandshakePacket(net.getClientId(), config.username));
 
                 for (int j = i; j < 60; j++) {
                     if (net.isHandshakeDone()) {
@@ -237,5 +256,10 @@ public class LupusInTabula {
         }
 
         return false;
+    }
+
+    private void shutdown() {
+        if (net.isConnected()) net.disconnect();
+        if (gui != null) gui.close();
     }
 }

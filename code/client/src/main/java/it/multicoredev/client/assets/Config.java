@@ -6,6 +6,7 @@ import it.multicoredev.mclib.json.JsonConfig;
 public class Config extends JsonConfig {
     @SerializedName("server_address")
     public String serverAddress;
+    public String username;
 
     @Override
     public Config init() {
