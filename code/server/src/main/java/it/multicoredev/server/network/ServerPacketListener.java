@@ -108,7 +108,7 @@ public class ServerPacketListener implements IServerPacketListener {
         Game game = lit.createGame(player);
 
         try {
-            netHandler.sendPacket(new S2CGameCreatedPacket(game.getCode()));
+            netHandler.sendPacket(new S2CGameCreatedPacket(game));
             netHandler.sendPacket(new S2CChangeScenePacket(SceneId.LOBBY));
         } catch (PacketSendException e) {
             if (DEBUG) LitLogger.get().error(e.getMessage(), e);

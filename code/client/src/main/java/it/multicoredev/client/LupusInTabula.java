@@ -11,6 +11,7 @@ import it.multicoredev.mclib.json.GsonHelper;
 import it.multicoredev.models.Game;
 import it.multicoredev.network.serverbound.C2SCreateGame;
 import it.multicoredev.network.serverbound.C2SHandshakePacket;
+import it.multicoredev.network.serverbound.C2SJoinGamePacket;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Utils;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +20,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class LupusInTabula {
     private static final GsonHelper GSON = new GsonHelper();
@@ -27,11 +29,10 @@ public class LupusInTabula {
     private final File confDir = new File("conf");
     private final File localizationsDir = new File(confDir, "localizations");
     private Config config;
-    private Map<String, Locale> localizations = new HashMap<>();
+    private final Map<String, Locale> localizations = new HashMap<>();
 
     private Gui gui;
     private final ClientNetSocket net;
-    private String currentGameCode;
     private Game currentGame;
 
     // Placeholder vars
@@ -111,23 +112,23 @@ public class LupusInTabula {
     public void createGame() {
         if (!connectToServer()) {
             LitLogger.get().info("Connection to server " + config.serverAddress + " failed");
+            showModal("connection_error", "<h2>Connection error</h2><p>Failed to connect to server</p>");
             return;
         }
-
         LitLogger.get().info("Connected to server " + config.serverAddress);
+
         net.sendPacket(new C2SCreateGame());
     }
 
     public void joinGame(String code) {
-        //gui.executeFrontendCode("{'type': 'show_modal', 'data': {'id': 'game_not_found', 'content': '<h1>Game not found</h1><p>A game with that code does not exists<p>'}}");
-    }
+        if (!connectToServer()) {
+            LitLogger.get().info("Connection to server " + config.serverAddress + " failed");
+            showModal("connection_error", "<h2>Connection error</h2><p>Failed to connect to server</p>");
+            return;
+        }
+        LitLogger.get().info("Connected to server " + config.serverAddress);
 
-    public void setCurrentGameCode(String code) {
-        currentGameCode = code;
-    }
-
-    public String getCurrentGameCode() {
-        return currentGameCode;
+        net.sendPacket(new C2SJoinGamePacket(code));
     }
 
     public void setCurrentGame(Game game) {
@@ -136,6 +137,10 @@ public class LupusInTabula {
 
     public Game getCurrentGame() {
         return currentGame;
+    }
+
+    public UUID getClientId() {
+        return net.getClientId();
     }
 
     public String getUsername() {

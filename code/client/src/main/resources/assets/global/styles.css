@@ -4,7 +4,48 @@
     --btn-primary-hover: #0a964f;
     --btn-secondary: #e3e3e3;
     --btn-secondary-hover: #ffffff;
-    --light-gray: #bcbcbc;
+    --dark-blue: #0D47A1;
+    --blue: #4285F4;
+    --indigo: #283593;
+    --purple: #4527A0;
+    --pink: #E91E63;
+    --pure-red: #ff0000;
+    --red: #DB4437;
+    --dark-red: #B71C1C;
+    --orange: #FB8C00;
+    --yellow: #F4B400;
+    --light-yellow: #FFEB3B;
+    --green: #008a44;
+    --teal: #009688;
+    --cyan: #00ACC1;
+    --white: #FFFFFF;
+    --light: #F8F9FA;
+    --light-gray: #BCBCBC;
+    --gray: #757575;
+    --gray-dark: #424242;
+    --almost-black: #212121;
+    --black: #000000;
+    --bluish-gray: #CFD8DC;
+    --primary: #007BFF;
+    --secondary: #9E9E9E;
+    --success: #28A745;
+    --info: #17A2B8;
+    --warning: #FFC107;
+    --danger: #DC3545;
+    --dark: #212121;
+    --multicore-light: #2196F3;
+    --multicore-dark: #2962FF;
+    --d-blue: #64B5F6;
+    --d-indigo: #7986CB;
+    --d-purple: #9575CD;
+    --d-pink: #F06292;
+    --d-red: #E57373;
+    --d-orange: #FFB74D;
+    --d-yellow: #FFD54F;
+    --d-green: #81C784;
+    --d-teal: #80CBC4;
+    --d-cyan: #4DD0E1;
+    --blurple: #7289DA;
 }
 
 p, h1, h2, h3, h4, h5 {
@@ -90,4 +131,14 @@ body {
 
 .modal-body {
     padding: 0 10px 10px;
+}
+
+.btn-close {
+    background: none;
+}
+
+.btn-close:focus,
+.btn-close:active {
+    outline: none !important;
+    box-shadow: none;
 }

@@ -2,7 +2,7 @@ package it.multicoredev.client.ui;
 
 import it.multicoredev.client.LupusInTabula;
 import it.multicoredev.client.ui.cef.AppHandler;
-import it.multicoredev.client.ui.cef.MessageRouter;
+import it.multicoredev.client.ui.comms.MessageRouter;
 import it.multicoredev.client.ui.components.CircularProgressBar;
 import it.multicoredev.enums.SceneId;
 import it.multicoredev.utils.LitLogger;

@@ -1,10 +1,12 @@
 package it.multicoredev.client.network;
 
+import it.multicoredev.enums.DisconnectReason;
 import it.multicoredev.mclib.network.client.ClientSocket;
 import it.multicoredev.mclib.network.client.ServerAddress;
 import it.multicoredev.mclib.network.exceptions.PacketSendException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.network.Packets;
+import it.multicoredev.network.serverbound.C2SDisconnectPacket;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Utils;
 import org.jetbrains.annotations.NotNull;
@@ -36,15 +38,18 @@ public class ClientNetSocket {
         connectionThread.start();
     }
 
-    public void disconnect() {
+    public void disconnect(boolean forced, DisconnectReason reason) {
         if (connectionThread != null) {
             if (socket != null) {
                 if (socket.isConnected()) {
-                    //TODO Send disconnect packet
+                    if (!forced) {
+                        if (reason == null) reason = DisconnectReason.C2S_QUIT_GAME;
+                        socket.sendPacket(new C2SDisconnectPacket(reason));
+                    }
                     socket.disconnect();
 
                     //TODO To test
-                    while(socket.isConnected()) {
+                    while (socket.isConnected()) {
                         Utils.sleep(10);
                     }
                 }
@@ -57,6 +62,18 @@ public class ClientNetSocket {
         }
 
         handshakeDone = false;
+    }
+
+    public void disconnect(@NotNull DisconnectReason reason) {
+        disconnect(false, reason);
+    }
+
+    public void disconnect(boolean forced) {
+        disconnect(forced, null);
+    }
+
+    public void disconnect() {
+        disconnect(DisconnectReason.C2S_QUIT_GAME);
     }
 
     public UUID getClientId() {

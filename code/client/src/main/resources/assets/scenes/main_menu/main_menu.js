@@ -1,16 +1,12 @@
 const allowedCodeChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
 const allowedNameChars = 'ABCDEFGHIJKLMNOPQRTSUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
-const tooltips = $('[data-bs-toggle="tooltip"]')
-tooltips.each((idx, elem) => {
-    new bootstrap.Tooltip(elem);
-});
 
 $('#newGame').on('click', () => {
     toBackend({type: 'new_game'});
 });
 
 $('#joinGame').on('keydown', (event) => {
-    if (event.which === 13) toBackend({type: 'join_game', data: [event.target.value.toUpperCase()]});
+    if (event.which === 13) toBackend({type: 'join_game', code: event.target.value.toUpperCase()});
 });
 
 $('#joinGame').on('input', (event) => {
@@ -28,11 +24,11 @@ $('#version').on('click', () => {
 });
 
 $('#settingsBtn').on('click', () => {
-    toBackend({type: 'set_scene', data: ['settings']});
+    toBackend({type: 'set_scene', scene: 'settings'});
 });
 
 $('#helpBtn').on('click', () => {
-    toBackend({type: 'set_scene', data: ['help']});
+    toBackend({type: 'set_scene', scene: 'help'});
 });
 
 $(document).on('shown.bs.modal', () => {
@@ -42,7 +38,7 @@ $(document).on('shown.bs.modal', () => {
             console.log(value);
             if (value.length < 0) return;
 
-            toBackend({type: 'set_username', data: [event.target.value]});
+            toBackend({type: 'set_username', username: event.target.value});
             bootstrap.Modal.getInstance($('#username_selection')).hide();
         }
     });

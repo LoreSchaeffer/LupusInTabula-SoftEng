@@ -1,5 +1,9 @@
 package it.multicoredev.server.models;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.annotations.JsonAdapter;
 import it.multicoredev.mclib.network.exceptions.PacketSendException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.models.Client;
@@ -7,8 +11,10 @@ import it.multicoredev.models.Player;
 import it.multicoredev.server.network.ServerNetHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
 import java.util.UUID;
 
+@JsonAdapter(ServerPlayer.Adapter.class)
 public class ServerPlayer extends Player {
     private final ServerNetHandler netHandler;
 
@@ -34,5 +40,13 @@ public class ServerPlayer extends Player {
 
     public void disconnect() {
         netHandler.disconnect();
+    }
+
+    public static class Adapter implements JsonSerializer<ServerPlayer> {
+
+        @Override
+        public JsonElement serialize(ServerPlayer player, Type type, JsonSerializationContext ctx) {
+            return ctx.serialize(player, Player.class);
+        }
     }
 }

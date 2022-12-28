@@ -1,5 +1,9 @@
 package it.multicoredev.server.models;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.annotations.JsonAdapter;
 import it.multicoredev.enums.GameState;
 import it.multicoredev.enums.Role;
 import it.multicoredev.enums.SceneId;
@@ -16,6 +20,7 @@ import it.multicoredev.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +28,7 @@ import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+@JsonAdapter(ServerGame.Adapter.class)
 public class ServerGame extends Game {
     private final LupusInTabula lit;
     private ScheduledFuture<?> gameTask;
@@ -150,6 +156,14 @@ public class ServerGame extends Game {
             S2CTimerPacket packet = new S2CTimerPacket(timer);
             broadcast(packet);
             Utils.sleep(1000);
+        }
+    }
+
+    public static class Adapter implements JsonSerializer<ServerGame> {
+
+        @Override
+        public JsonElement serialize(ServerGame game, Type type, JsonSerializationContext ctx) {
+            return ctx.serialize(game, Game.class);
         }
     }
 }

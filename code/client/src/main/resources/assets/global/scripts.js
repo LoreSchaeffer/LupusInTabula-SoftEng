@@ -30,7 +30,8 @@ function showModal(data) {
 
     const modal = new bootstrap.Modal(modalComponent);
 
-    $(`#close-${data['id']}`).on('click', () => {
+    $('.modal-close').on('click', () => {
+        console.log("Closing modal");
         modal.hide();
     });
 
@@ -43,11 +44,16 @@ function showModal(data) {
 }
 listeners['show_modal'] = showModal;
 
+const tooltips = $('[data-bs-toggle="tooltip"]')
+tooltips.each((idx, elem) => {
+    new bootstrap.Tooltip(elem);
+});
+
 const modalFragment = `<div class="modal fade" id="{id}" tabindex="-1" role="dialog" aria-labelledby="{id}" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered {size}">
     <div class="modal-content">
       <div class="modal-header">
-        <a id="close-{id}" type="button" data-dismiss="modal"><i class="fa-solid fa-xmark"></i></a>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
         {content}

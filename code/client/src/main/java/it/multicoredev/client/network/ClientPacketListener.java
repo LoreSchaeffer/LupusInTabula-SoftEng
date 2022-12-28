@@ -1,6 +1,7 @@
 package it.multicoredev.client.network;
 
 import it.multicoredev.client.LupusInTabula;
+import it.multicoredev.enums.DisconnectReason;
 import it.multicoredev.mclib.network.NetworkHandler;
 import it.multicoredev.network.IClientPacketListener;
 import it.multicoredev.network.clientbound.*;
@@ -43,8 +44,12 @@ public class ClientPacketListener implements IClientPacketListener {
 
     @Override
     public void handleDisconnect(S2CDisconnectPacket packet) {
-        net.disconnect();
+        net.disconnect(true);
         LitLogger.get().info("Disconnected from server: " + packet.getReason()); //TODO Change to a more readable form
+
+        if (packet.getReason().equals(DisconnectReason.S2C_GAME_NOT_FOUND)) {
+            lit.showModal("game_not_found", "<h1>Game not found</h1><p>The game you tried to join does not exist.</p>"); //TODO Change message
+        }
 
         //TODO Handle disconnection
     }
@@ -89,7 +94,7 @@ public class ClientPacketListener implements IClientPacketListener {
 
     @Override
     public void handleGameCreated(S2CGameCreatedPacket packet) {
-        LitLogger.get().info("Game created: " + packet.getCode());
-        lit.setCurrentGameCode(packet.getCode());
+        LitLogger.get().info("Game created: " + packet.getGame().getCode());
+        lit.setCurrentGame(packet.getGame());
     }
 }
