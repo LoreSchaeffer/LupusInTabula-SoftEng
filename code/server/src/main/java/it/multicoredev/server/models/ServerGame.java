@@ -10,10 +10,8 @@ import it.multicoredev.enums.SceneId;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.models.Client;
 import it.multicoredev.models.Game;
-import it.multicoredev.network.clientbound.S2CChangeScenePacket;
-import it.multicoredev.network.clientbound.S2CGamePacket;
-import it.multicoredev.network.clientbound.S2CGameStartCountdownPacket;
-import it.multicoredev.network.clientbound.S2CTimerPacket;
+import it.multicoredev.models.Player;
+import it.multicoredev.network.clientbound.*;
 import it.multicoredev.server.LupusInTabula;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Utils;
@@ -27,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @JsonAdapter(ServerGame.Adapter.class)
 public class ServerGame extends Game {
@@ -74,6 +73,7 @@ public class ServerGame extends Game {
     public void stop() {
         gameTask.cancel(true);
         state = GameState.STOPPED;
+        lit.removeGame(this.code);
     }
 
     public void end() {
@@ -91,8 +91,29 @@ public class ServerGame extends Game {
         return (ServerPlayer) super.getMater();
     }
 
+    public List<ServerPlayer> getOnlinePlayers() {
+        return players.stream().map(p -> (ServerPlayer) p).filter(ServerPlayer::isConnected).collect(Collectors.toList());
+    }
+
     public void playerDisconnected(Client client) {
         //TODO Handle player disconnection
+
+        Player player = getPlayer(client.getUniqueId());
+        if (player == null) return;
+
+        if (player.isMaster()) player.setMaster(false);
+        for (ServerPlayer p : getOnlinePlayers()) {
+            if (p.equals(player)) continue;
+            p.setMaster(true);
+            return;
+        }
+
+        // Differentiate behaviour based on game state
+
+
+        if (getOnlinePlayers().isEmpty()) stop();
+
+        broadcast(new S2CPlayerLeavePacket(client.getUniqueId(), players.size() >= MIN_PLAYERS));
     }
 
     public void broadcast(Packet<?> packet) {

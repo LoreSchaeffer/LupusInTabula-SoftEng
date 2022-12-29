@@ -1,18 +1,17 @@
-package it.multicoredev.client.ui.comms.messages;
+package it.multicoredev.client.ui.comms.messages.f2b;
 
 import it.multicoredev.client.LupusInTabula;
 import it.multicoredev.client.ui.Gui;
-import it.multicoredev.client.ui.comms.InternalMessage;
 import it.multicoredev.models.Game;
 import it.multicoredev.models.Player;
 import org.cef.callback.CefQueryCallback;
 
 import static it.multicoredev.utils.Static.GSON;
 
-public class GetSelfMessage extends InternalMessage {
+public class GetPlayersMessage extends F2BMessage {
 
-    public GetSelfMessage() {
-        super("get_self");
+    public GetPlayersMessage() {
+        super("get_players");
     }
 
     @Override
@@ -22,12 +21,7 @@ public class GetSelfMessage extends InternalMessage {
             return false;
         }
 
-        Player player = game.getPlayer(lit.getClientId());
-        if (player == null) {
-            return false;
-        }
-
-        callback.success(GSON.toJson(player));
+        callback.success(GSON.toJson(game.getPlayers()));
         return true;
     }
 }

@@ -1,16 +1,15 @@
-package it.multicoredev.client.ui.comms.messages;
+package it.multicoredev.client.ui.comms.messages.f2b;
 
 import com.google.gson.annotations.SerializedName;
 import it.multicoredev.client.LupusInTabula;
 import it.multicoredev.client.ui.Gui;
 import it.multicoredev.client.ui.Scene;
-import it.multicoredev.client.ui.comms.InternalMessage;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Static;
 import org.cef.callback.CefQueryCallback;
 import org.jetbrains.annotations.NotNull;
 
-public class SetSceneMessage extends InternalMessage {
+public class SetSceneMessage extends F2BMessage {
     @SerializedName("scene")
     private final String sceneId;
 

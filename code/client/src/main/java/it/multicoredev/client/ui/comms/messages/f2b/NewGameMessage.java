@@ -1,19 +1,18 @@
-package it.multicoredev.client.ui.comms.messages;
+package it.multicoredev.client.ui.comms.messages.f2b;
 
 import it.multicoredev.client.LupusInTabula;
 import it.multicoredev.client.ui.Gui;
-import it.multicoredev.client.ui.comms.InternalMessage;
 import org.cef.callback.CefQueryCallback;
 
-public class CloseMessage extends InternalMessage {
+public class NewGameMessage extends F2BMessage {
 
-    public CloseMessage() {
-        super("close");
+    public NewGameMessage() {
+        super("new_game");
     }
 
     @Override
     public boolean process(LupusInTabula lit, Gui gui, CefQueryCallback callback) {
-        lit.stop();
+        lit.createGame();
         return true;
     }
 }

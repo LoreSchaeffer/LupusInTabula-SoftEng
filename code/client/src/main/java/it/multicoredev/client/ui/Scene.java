@@ -21,6 +21,10 @@ public enum Scene {
         this.url = url;
     }
 
+    public SceneId getId() {
+        return id;
+    }
+
     public String getUrl() {
         return url;
     }

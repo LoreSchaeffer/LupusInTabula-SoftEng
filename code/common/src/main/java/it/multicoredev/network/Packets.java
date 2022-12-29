@@ -19,9 +19,12 @@ public enum Packets {
     S2C_DISCONNECT(S2CDisconnectPacket.class),
     S2C_GAME(S2CGamePacket.class),
     S2C_GAME_CREATED(S2CGameCreatedPacket.class),
+    S2C_GAME_JOINED(S2CGameJoinedPacket.class),
     S2C_GAME_START_COUNTDOWN(S2CGameStartCountdownPacket.class),
     S2C_HANDSHAKE(S2CHandshakePacket.class),
     S2C_MESSAGE(S2CMessagePacket.class),
+    S2C_PLAYER_JOIN(S2CPlayerJoinPacket.class),
+    S2C_PLAYER_LEAVE(S2CPlayerLeavePacket.class),
     S2C_TIME(S2CTimePacket.class),
     S2C_TIMER(S2CTimerPacket.class);
 

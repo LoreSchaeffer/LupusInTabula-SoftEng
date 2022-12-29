@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class Game {
-    public static final int MIN_PLAYERS = 8;
+    public static final int MIN_PLAYERS = 2;
     protected final String code;
     protected final List<Player> players = new ArrayList<>();
     protected GameState state;
@@ -34,6 +34,11 @@ public class Game {
 
     public Game addPlayer(@NotNull Player player) {
         players.add(player);
+        return this;
+    }
+
+    public Game removePlayer(@NotNull Player player) {
+        players.remove(player);
         return this;
     }
 

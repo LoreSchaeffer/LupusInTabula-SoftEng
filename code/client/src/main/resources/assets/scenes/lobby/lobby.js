@@ -10,22 +10,37 @@ $(window).on('load', () => {
 
     window.cefQuery({
         request: JSON.stringify({type: 'get_self'}),
-        onSuccess: (response) => {
-            response = JSON.parse(response);
-            addPlayer(response['uuid'], response['name'], true, response['master']);
+        onSuccess: (player) => {
+            player = JSON.parse(player);
+            addPlayer(player, true);
+
+            if (!player['master']) {
+                window.cefQuery({
+                    request: JSON.stringify({type: 'get_players'}),
+                    onSuccess: (players) => {
+                        players = JSON.parse(players);
+
+                        for (const p of players) {
+                            if (player['uuid'] == p['uuid']) continue;
+                            addPlayer(p, false);
+                        }
+                    }
+                });
+            }
         }
     });
 });
 
-function addPlayer(id, name, self, master) {
-    const fragment = master ? playerMasterFragment : playerFragment;
-    const player = $(fragment.replaceAll('{id}', id).replaceAll('{name}', name));
-    if (self) player.addClass('self');
-    playerlist.append(player);
+function addPlayer(player, self) {
+    const fragment = player['master'] ? playerMasterFragment : playerFragment;
+    const p = $(fragment.replaceAll('{id}', player['uuid'])
+        .replaceAll('{name}', player['name']));
+    if (self) p.addClass('self');
+    playerlist.append(p);
 }
 
 function removePlayer(id) {
-    playerlist.remove($('#' + id));
+    $('#' + id).remove();
 }
 
 $('#exitBtn').on('click', () => {
@@ -45,12 +60,17 @@ $('#gameCode').on('click', () => {
     input.remove();
 });
 
-listeners['player_joined_lobby'] = (data) => {
-    addPlayer(data['uuid'], data['name'], false, data['master']);
+listeners['player_join'] = (data) => {
+    addPlayer(data['player'], false);
 }
 
-listeners['player_left_lobby'] = (data) => {
-    removePlayer(data['uuid']);
+listeners['player_leave'] = (data) => {
+    removePlayer(data['client_id']);
+}
+
+listeners['ready_to_start'] = (ready) => {
+    if (ready) $('#startGame').removeAttr('disabled');
+    else $('#startGame').attr('disabled', 'true');
 }
 
 const playerFragment = `<div id="{id}" class="player">

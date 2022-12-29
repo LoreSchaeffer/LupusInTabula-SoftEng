@@ -2,6 +2,7 @@ package it.multicoredev.client.ui.comms;
 
 import it.multicoredev.client.LupusInTabula;
 import it.multicoredev.client.ui.Gui;
+import it.multicoredev.client.ui.comms.messages.f2b.F2BMessage;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Static;
 import org.cef.browser.CefBrowser;
@@ -20,10 +21,10 @@ public class MessageRouter extends CefMessageRouterHandlerAdapter {
         if (lit == null) lit = LupusInTabula.get();
         if (gui == null) gui = Gui.get();
 
-        InternalMessage msg;
+        F2BMessage msg;
 
         try {
-            msg = GSON.fromJson(request, InternalMessage.class);
+            msg = GSON.fromJson(request, F2BMessage.class);
             if (msg == null || msg.getType() == null) throw new NullPointerException();
         } catch (Exception ignored) {
             if (Static.DEBUG) LitLogger.get().warn("Unknown message: " + request);

@@ -1,14 +1,13 @@
-package it.multicoredev.client.ui.comms.messages;
+package it.multicoredev.client.ui.comms.messages.f2b;
 
 import it.multicoredev.client.LupusInTabula;
 import it.multicoredev.client.ui.Gui;
-import it.multicoredev.client.ui.comms.InternalMessage;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Static;
 import org.cef.callback.CefQueryCallback;
 import org.jetbrains.annotations.NotNull;
 
-public class JoinGameMessage extends InternalMessage {
+public class JoinGameMessage extends F2BMessage {
     private final String code;
 
     public JoinGameMessage(@NotNull String code) {

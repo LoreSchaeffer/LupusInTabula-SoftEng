@@ -1,8 +1,12 @@
 package it.multicoredev.client.network;
 
 import it.multicoredev.client.LupusInTabula;
+import it.multicoredev.client.ui.comms.messages.b2f.PlayerJoinMessage;
+import it.multicoredev.client.ui.comms.messages.b2f.PlayerLeaveMessage;
+import it.multicoredev.client.ui.comms.messages.b2f.ReadyToStartMessage;
 import it.multicoredev.enums.DisconnectReason;
 import it.multicoredev.mclib.network.NetworkHandler;
+import it.multicoredev.models.Player;
 import it.multicoredev.network.IClientPacketListener;
 import it.multicoredev.network.clientbound.*;
 import it.multicoredev.utils.LitLogger;
@@ -30,7 +34,7 @@ public class ClientPacketListener implements IClientPacketListener {
             net.disconnect();
             LitLogger.get().info("Server rejected the connection: " + packet.getReason());
 
-            lit.showModal("connection_rejected", "<h1>Connection rejected</h1><p>" + packet.getReason() + "</p>"); //TODO Change message
+            lit.showModal("connection_rejected", "Connection rejected", packet.getReason()); //TODO Localize
             return;
         }
 
@@ -48,7 +52,7 @@ public class ClientPacketListener implements IClientPacketListener {
         LitLogger.get().info("Disconnected from server: " + packet.getReason()); //TODO Change to a more readable form
 
         if (packet.getReason().equals(DisconnectReason.S2C_GAME_NOT_FOUND)) {
-            lit.showModal("game_not_found", "<h1>Game not found</h1><p>The game you tried to join does not exist.</p>"); //TODO Change message
+            lit.showModal("game_not_found", "Game not found", "The game you tried to join does not exists"); //TODO Localize
         }
 
         //TODO Handle disconnection
@@ -96,5 +100,33 @@ public class ClientPacketListener implements IClientPacketListener {
     public void handleGameCreated(S2CGameCreatedPacket packet) {
         LitLogger.get().info("Game created: " + packet.getGame().getCode());
         lit.setCurrentGame(packet.getGame());
+    }
+
+    @Override
+    public void handleGameJoined(S2CGameJoinedPacket packet) {
+        LitLogger.get().info("Game joined: " + packet.getGame().getCode());
+        lit.setCurrentGame(packet.getGame());
+    }
+
+    @Override
+    public void handlePlayerJoin(S2CPlayerJoinPacket packet) {
+        lit.getCurrentGame().addPlayer(packet.getPlayer());
+        lit.executeFrontendCode(new PlayerJoinMessage(packet.getPlayer()));
+        if (packet.isReadyToStart() && lit.getCurrentGame().getPlayer(lit.getClientId()).isMaster()) lit.executeFrontendCode(new ReadyToStartMessage(true));
+
+        LitLogger.get().info("Player joined: " + packet.getPlayer().getName());
+    }
+
+    @Override
+    public void handlePlayerLeave(S2CPlayerLeavePacket packet) {
+        if (lit.getCurrentGame() == null) return;
+
+        Player player = lit.getCurrentGame().getPlayer(packet.getClientId());
+        if (player != null) lit.getCurrentGame().removePlayer(player);
+        lit.executeFrontendCode(new PlayerLeaveMessage(packet.getClientId()));
+        if (!packet.isReadyToStart() && lit.getCurrentGame().getPlayer(lit.getClientId()).isMaster()) lit.executeFrontendCode(new ReadyToStartMessage(false));
+
+        if (player != null) LitLogger.get().info("Player left: " + player.getName());
+        else LitLogger.get().info("Player left: " + packet.getClientId());
     }
 }

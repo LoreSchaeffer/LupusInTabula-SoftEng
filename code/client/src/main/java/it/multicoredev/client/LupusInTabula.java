@@ -5,9 +5,13 @@ import it.multicoredev.client.assets.Locale;
 import it.multicoredev.client.network.ClientNetSocket;
 import it.multicoredev.client.ui.Gui;
 import it.multicoredev.client.ui.Scene;
+import it.multicoredev.client.ui.comms.messages.b2f.B2FMessage;
+import it.multicoredev.client.ui.comms.messages.b2f.ShowModalMessage;
 import it.multicoredev.client.utils.ServerAddress;
+import it.multicoredev.enums.DisconnectReason;
 import it.multicoredev.enums.SceneId;
 import it.multicoredev.mclib.json.GsonHelper;
+import it.multicoredev.mclib.network.exceptions.PacketSendException;
 import it.multicoredev.models.Game;
 import it.multicoredev.network.serverbound.C2SCreateGame;
 import it.multicoredev.network.serverbound.C2SHandshakePacket;
@@ -80,12 +84,17 @@ public class LupusInTabula {
 //        }
         //TODO End of test code
 
-        gui.setScene(Scene.MAIN_MENU);
+        setScene(Scene.MAIN_MENU);
         if (config.username == null || config.username.trim().isEmpty()) {
             while (!gui.isReady()) {
                 Utils.sleep(10);
             }
-            showModal("username_selection", "<h2>Choose your name</h2><input id=\"nameSelector\" class=\"form-control form-control-lg\" type=\"text\">");
+            showModal(
+                    "username_selection",
+                    "Choose your name",
+                    "<input id=\"nameSelector\" class=\"form-control form-control-lg\" type=\"text\">",
+                    true
+            ); //TODO Localize
         }
     }
 
@@ -101,18 +110,30 @@ public class LupusInTabula {
         gui.setScene(scene);
     }
 
-    public void showModal(String id, String content, boolean large) {
-        gui.executeFrontendCode("{'type': 'show_modal', 'data': {'id': '" + id + "', 'content': '" + content + "'" + (large ? ", 'size': 'modal-lg'" : "") + "}}");
+    public SceneId getCurrentScene() {
+        return gui.getCurrentScene();
     }
 
-    public void showModal(String id, String content) {
-        showModal(id, content, false);
+    public void executeFrontendCode(@NotNull B2FMessage msg) {
+        gui.executeFrontendCode(msg);
+    }
+
+    public void showModal(String id, String title, String body, boolean large, boolean custom) {
+        gui.executeFrontendCode(new ShowModalMessage(id, title, body, large, custom));
+    }
+
+    public void showModal(String id, String title, String body, boolean custom) {
+        showModal(id, title, body, false, custom);
+    }
+
+    public void showModal(String id, String title, String body) {
+        showModal(id, title, body, false, false);
     }
 
     public void createGame() {
         if (!connectToServer()) {
             LitLogger.get().info("Connection to server " + config.serverAddress + " failed");
-            showModal("connection_error", "<h2>Connection error</h2><p>Failed to connect to server</p>");
+            showModal("connection_error", "Connection error", "Failed to connect to server"); //TODO Localize
             return;
         }
         LitLogger.get().info("Connected to server " + config.serverAddress);
@@ -123,12 +144,25 @@ public class LupusInTabula {
     public void joinGame(String code) {
         if (!connectToServer()) {
             LitLogger.get().info("Connection to server " + config.serverAddress + " failed");
-            showModal("connection_error", "<h2>Connection error</h2><p>Failed to connect to server</p>");
+            showModal("connection_error", "Connection error", "Failed to connect to server"); //TODO Localize
             return;
         }
         LitLogger.get().info("Connected to server " + config.serverAddress);
 
         net.sendPacket(new C2SJoinGamePacket(code));
+    }
+
+    public void leaveGame() {
+        if (currentGame == null) return;
+
+        try {
+            net.disconnect(DisconnectReason.C2S_QUIT_GAME);
+        } catch (PacketSendException e) {
+            LitLogger.get().error("Failed to send quit game packet", e);
+        }
+
+        currentGame = null;
+        setScene(Scene.MAIN_MENU);
     }
 
     public void setCurrentGame(Game game) {
@@ -141,10 +175,6 @@ public class LupusInTabula {
 
     public UUID getClientId() {
         return net.getClientId();
-    }
-
-    public String getUsername() {
-        return config.username;
     }
 
     public void setUsername(@NotNull String username) {

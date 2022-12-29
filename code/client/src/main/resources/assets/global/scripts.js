@@ -6,12 +6,12 @@ function onMessage(msg) {
         return;
     }
 
-    if (!msg.type in listeners) {
+    if (!msg['type'] in listeners) {
         console.log(`No listeners for type ${msg.type}`);
         return;
     }
 
-    listeners[msg.type](msg.data);
+    listeners[msg.type](msg);
 }
 
 function toBackend(data) {
@@ -23,9 +23,11 @@ function toBackend(data) {
 const mainContainer = $('#mainContainer');
 
 function showModal(data) {
-    const modalComponent = $(modalFragment.replaceAll("{size}", 'size' in data ? data.size : '')
-        .replaceAll("{id}", data['id'])
-        .replaceAll("{content}", data['content']));
+    const modalComponent = $(modalFragment
+        .replaceAll('{id}', data['id'])
+        .replaceAll('{title}' , data['title'])
+        .replaceAll('{body}', data['custom'] ? data['body'] : `<p>${data['body']}</p>`)
+        .replaceAll('{size}', 'size' in data && data['size'] ? 'modal-lg' : ''));
     mainContainer.append();
 
     const modal = new bootstrap.Modal(modalComponent);
@@ -56,7 +58,8 @@ const modalFragment = `<div class="modal fade" id="{id}" tabindex="-1" role="dia
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        {content}
+        <h2>{title}</h2>
+        {body}
       </div>
     </div>
   </div>

@@ -1,11 +1,10 @@
-package it.multicoredev.client.ui.comms.messages;
+package it.multicoredev.client.ui.comms.messages.f2b;
 
 import it.multicoredev.client.LupusInTabula;
 import it.multicoredev.client.ui.Gui;
-import it.multicoredev.client.ui.comms.InternalMessage;
 import org.cef.callback.CefQueryCallback;
 
-public class GetGameCodeMessage extends InternalMessage {
+public class GetGameCodeMessage extends F2BMessage {
 
     public GetGameCodeMessage() {
         super("get_game_code");

@@ -3,6 +3,7 @@ package it.multicoredev.client.ui;
 import it.multicoredev.client.LupusInTabula;
 import it.multicoredev.client.ui.cef.AppHandler;
 import it.multicoredev.client.ui.comms.MessageRouter;
+import it.multicoredev.client.ui.comms.messages.b2f.B2FMessage;
 import it.multicoredev.client.ui.components.CircularProgressBar;
 import it.multicoredev.enums.SceneId;
 import it.multicoredev.utils.LitLogger;
@@ -42,6 +43,7 @@ public class Gui extends JFrame {
     private boolean fullscreen = false;
     private JDialog devToolsDialog;
     private boolean ready = false;
+    private SceneId currentScene;
 
     private static Gui instance;
 
@@ -223,6 +225,7 @@ public class Gui extends JFrame {
         pack();
         setSize(width, height);
         setLocationRelativeTo(null);
+        setTitle("Lupus In Tabula");
         if (startMaximized) setExtendedState(MAXIMIZED_BOTH);
 
         icon = IconLoader.loadIcon("assets/icon.png");
@@ -249,6 +252,7 @@ public class Gui extends JFrame {
 
     public void setScene(@NotNull Scene scene) {
         ready = false;
+        currentScene = scene.getId();
         loadURL(scene.getUrl());
     }
 
@@ -258,11 +262,17 @@ public class Gui extends JFrame {
         setScene(scene);
     }
 
-    public void executeFrontendCode(String message) {
-        if (browser == null) throw new IllegalStateException("Browser not created");
-        if (Static.DEBUG) LitLogger.get().info("Executing frontend code: " + message);
+    public SceneId getCurrentScene() {
+        return currentScene;
+    }
 
+    public void executeFrontendCode(@NotNull B2FMessage msg) {
+        if (browser == null) throw new IllegalStateException("Browser not created");
+
+        String message = Static.GSON.toJson(msg);
         browser.executeJavaScript("onMessage(" + message + ")", browser.getURL(), 0);
+
+        if (Static.DEBUG) LitLogger.get().info("Executing frontend code: " + message);
     }
 
     public void close() {

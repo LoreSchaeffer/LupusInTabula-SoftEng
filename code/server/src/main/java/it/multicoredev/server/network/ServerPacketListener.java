@@ -144,10 +144,17 @@ public class ServerPacketListener implements IServerPacketListener {
         game.addPlayer(player);
 
         try {
+            netHandler.sendPacket(new S2CGameJoinedPacket(game));
             netHandler.sendPacket(new S2CChangeScenePacket(SceneId.LOBBY));
         } catch (PacketSendException e) {
             if (DEBUG) LitLogger.get().error(e.getMessage(), e);
             return;
+        }
+
+        try {
+            game.broadcast(new S2CPlayerJoinPacket(player, game.getOnlinePlayers().size() >= Game.MIN_PLAYERS));
+        } catch (PacketSendException e) {
+            if (DEBUG) LitLogger.get().error(e.getMessage(), e);
         }
 
         if (DEBUG) LitLogger.get().info(client + " joined game with code '" + game.getCode() + "'");
