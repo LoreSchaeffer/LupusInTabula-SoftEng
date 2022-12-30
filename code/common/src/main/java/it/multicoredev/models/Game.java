@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class Game {
-    public static final int MIN_PLAYERS = 2;
+    public static final int MIN_PLAYERS = 8;
     protected final String code;
     protected final List<Player> players = new ArrayList<>();
     protected GameState state;

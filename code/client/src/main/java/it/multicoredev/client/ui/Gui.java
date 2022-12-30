@@ -224,6 +224,7 @@ public class Gui extends JFrame {
 
         pack();
         setSize(width, height);
+        setMinimumSize(new Dimension(1280, 720));
         setLocationRelativeTo(null);
         setTitle("Lupus In Tabula");
         if (startMaximized) setExtendedState(MAXIMIZED_BOTH);

@@ -74,7 +74,7 @@ public class ServerNetSocket {
         return clients.keySet().stream().filter(client -> client.getUniqueId().equals(clientId)).findFirst().orElse(null) != null;
     }
 
-    UUID getNewClientId() {
+    public UUID getNewClientId() {
         UUID newId;
         do {
             newId = UUID.randomUUID();

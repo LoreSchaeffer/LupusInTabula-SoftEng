@@ -13,7 +13,8 @@ public enum F2BMessageRegistry {
     LEAVE_GAME(LeaveGameMessage.class),
     NEW_GAME(NewGameMessage.class),
     SET_SCENE(SetSceneMessage.class),
-    SET_USERNAME(SetUsernameMessage.class);
+    SET_USERNAME(SetUsernameMessage.class),
+    START_GAME(StartGameMessage.class);
 
     private final Class<? extends F2BMessage> clazz;
 

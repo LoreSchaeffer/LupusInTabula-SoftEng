@@ -14,6 +14,7 @@ import it.multicoredev.server.LupusInTabula;
 import it.multicoredev.server.models.ServerGame;
 import it.multicoredev.server.models.ServerPlayer;
 import it.multicoredev.utils.LitLogger;
+import it.multicoredev.utils.Static;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -152,7 +153,7 @@ public class ServerPacketListener implements IServerPacketListener {
         }
 
         try {
-            game.broadcast(new S2CPlayerJoinPacket(player, game.getOnlinePlayers().size() >= Game.MIN_PLAYERS));
+            game.broadcast(new S2CPlayerJoinPacket(player, Static.DEBUG || game.getOnlinePlayers().size() >= Game.MIN_PLAYERS));
         } catch (PacketSendException e) {
             if (DEBUG) LitLogger.get().error(e.getMessage(), e);
         }
@@ -199,11 +200,11 @@ public class ServerPacketListener implements IServerPacketListener {
             return;
         }
 
-        if (game.getPlayerCount() < Game.MIN_PLAYERS) {
+        if (!Static.DEBUG && game.getPlayerCount() < Game.MIN_PLAYERS) {
             if (DEBUG)
                 LitLogger.get().warn(client + " tried to start a game with less than " + Game.MIN_PLAYERS + " players");
 
-            netHandler.sendPacket(new S2CAlertPacket(Message.INSUFFICIENT_PLAYERS));
+            netHandler.sendPacket(new S2CModalPacket("insufficient_players", Message.MODAL_TITLE_INSUFFICIENT_PLAYERS, Message.MODAL_BODY_INSUFFICIENT_PLAYERS));
 
             return;
         }

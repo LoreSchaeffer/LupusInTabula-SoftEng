@@ -14,6 +14,7 @@ import it.multicoredev.models.Player;
 import it.multicoredev.network.clientbound.*;
 import it.multicoredev.server.LupusInTabula;
 import it.multicoredev.utils.LitLogger;
+import it.multicoredev.utils.Static;
 import it.multicoredev.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,13 +48,26 @@ public class ServerGame extends Game {
     public void start() {
         state = GameState.STARTING;
         LitLogger.get().info("Game " + code + " starting in seconds...");
+
+        if (Static.DEBUG) {
+            LitLogger.get().info("Adding fake players...");
+
+            for (int i = players.size() + 1; i <= MIN_PLAYERS; i++) {
+                ServerPlayer p = new ServerPlayer(lit.getNewClientId(), "Player " + i, false, null);
+                addPlayer(p);
+                LitLogger.get().info("Added player " + Static.GSON.toJson(p));
+            }
+
+        }
+
         gameTask = LupusInTabula.SCHEDULER.schedule(this::play, 0, TimeUnit.SECONDS);
     }
 
     public void play() {
         broadcast(new S2CChangeScenePacket(SceneId.STARTING));
+        Utils.sleep(200);
 
-        for (int i = lit.config().gameStartingCountdown; i >= 0; i--) {
+        for (int i = lit.config().gameStartingCountdown; i > 0; i--) {
             broadcast(new S2CGameStartCountdownPacket(i));
             Utils.sleep(1000);
         }
@@ -113,7 +127,7 @@ public class ServerGame extends Game {
 
         if (getOnlinePlayers().isEmpty()) stop();
 
-        broadcast(new S2CPlayerLeavePacket(client.getUniqueId(), players.size() >= MIN_PLAYERS));
+        broadcast(new S2CPlayerLeavePacket(client.getUniqueId(), Static.DEBUG || players.size() >= MIN_PLAYERS));
     }
 
     public void broadcast(Packet<?> packet) {
@@ -132,9 +146,7 @@ public class ServerGame extends Game {
             roles.add(Role.WEREWOLF);
             roles.add(Role.SEER);
 
-            for (int i = 0; i < playerCount - roles.size(); i++) {
-                roles.add(Role.VILLAGER);
-            }
+            while (roles.size() < playerCount) roles.add(Role.VILLAGER);
         } else if (playerCount < 16) {
             roles.add(Role.WEREWOLF);
             roles.add(Role.WEREWOLF);
@@ -145,9 +157,7 @@ public class ServerGame extends Game {
             roles.add(Role.FREEMASON);
             roles.add(Role.OWN_MAN);
 
-            for (int i = 0; i < playerCount - roles.size(); i++) {
-                roles.add(Role.VILLAGER);
-            }
+            while (roles.size() < playerCount) roles.add(Role.VILLAGER);
         } else {
             roles.add(Role.WEREWOLF);
             roles.add(Role.WEREWOLF);
@@ -162,9 +172,7 @@ public class ServerGame extends Game {
             roles.add(Role.WEREHAMSTER);
             roles.add(Role.MYTHOMANIAC);
 
-            for (int i = 0; i < playerCount - roles.size(); i++) {
-                roles.add(Role.VILLAGER);
-            }
+            while (roles.size() < playerCount) roles.add(Role.VILLAGER);
         }
 
         for (int i = 0; i < playerCount; i++) {

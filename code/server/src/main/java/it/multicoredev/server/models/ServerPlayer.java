@@ -18,7 +18,8 @@ import java.util.UUID;
 public class ServerPlayer extends Player {
     private final ServerNetHandler netHandler;
 
-    public ServerPlayer(@NotNull UUID uuid, @NotNull String name, boolean gameMaster, @NotNull ServerNetHandler netHandler) {
+    // ServerNetHandler is null only for fake players
+    public ServerPlayer(@NotNull UUID uuid, @NotNull String name, boolean gameMaster, ServerNetHandler netHandler) {
         super(uuid, name, gameMaster);
 
         this.netHandler = netHandler;
@@ -31,6 +32,7 @@ public class ServerPlayer extends Player {
     }
 
     public void sendPacket(@NotNull Packet<?> packet) throws PacketSendException {
+        if (netHandler == null) return;
         netHandler.sendPacket(packet);
     }
 

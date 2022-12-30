@@ -23,6 +23,7 @@ public enum Packets {
     S2C_GAME_START_COUNTDOWN(S2CGameStartCountdownPacket.class),
     S2C_HANDSHAKE(S2CHandshakePacket.class),
     S2C_MESSAGE(S2CMessagePacket.class),
+    S2C_MODAL(S2CModalPacket.class),
     S2C_PLAYER_JOIN(S2CPlayerJoinPacket.class),
     S2C_PLAYER_LEAVE(S2CPlayerLeavePacket.class),
     S2C_TIME(S2CTimePacket.class),

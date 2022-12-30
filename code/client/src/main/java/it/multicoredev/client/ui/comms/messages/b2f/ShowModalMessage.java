@@ -1,5 +1,7 @@
 package it.multicoredev.client.ui.comms.messages.b2f;
 
+import org.jetbrains.annotations.NotNull;
+
 public class ShowModalMessage extends B2FMessage {
     private final String id;
     private final String title;
@@ -7,7 +9,7 @@ public class ShowModalMessage extends B2FMessage {
     private final Boolean large;
     private final boolean custom;
 
-    public ShowModalMessage(String id, String title, String body, boolean large, boolean custom) {
+    public ShowModalMessage(@NotNull String id, @NotNull String title, @NotNull String body, boolean large, boolean custom) {
         super("show_modal");
         this.id = id;
         this.title = title;

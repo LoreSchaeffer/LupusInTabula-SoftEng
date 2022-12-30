@@ -1,6 +1,7 @@
 package it.multicoredev.client.network;
 
 import it.multicoredev.client.LupusInTabula;
+import it.multicoredev.client.ui.comms.messages.b2f.GameStartCountdownMessage;
 import it.multicoredev.client.ui.comms.messages.b2f.PlayerJoinMessage;
 import it.multicoredev.client.ui.comms.messages.b2f.PlayerLeaveMessage;
 import it.multicoredev.client.ui.comms.messages.b2f.ReadyToStartMessage;
@@ -70,20 +71,19 @@ public class ClientPacketListener implements IClientPacketListener {
 
     @Override
     public void handleCountdown(S2CGameStartCountdownPacket packet) {
+        lit.executeFrontendCode(new GameStartCountdownMessage(packet.getSeconds()));
         if (Static.DEBUG) LitLogger.get().info("Game starting in " + packet.getSeconds() + " seconds");
-        //TODO Handle countdown
     }
 
     @Override
-    public void handleAlert(S2CAlertPacket packet) {
-        LitLogger.get().info("ALERT: " + packet.getMessage().getId());
-        //TODO Handle alert
+    public void handleModal(S2CModalPacket packet) {
+        lit.showModal(packet.getId(), packet.getTitle().getPath(), packet.getBody().getPath(), packet.isLarge(), false); //TODO Localize
     }
 
     @Override
     public void handleGame(S2CGamePacket packet) {
-        //TODO Handle game
-        LitLogger.get().info(Static.GSON.toJson(packet.getGame()));
+        lit.setCurrentGame(packet.getGame());
+        if (Static.DEBUG) LitLogger.get().info(Static.GSON.toJson(packet.getGame()));
     }
 
     @Override

@@ -16,6 +16,7 @@ import it.multicoredev.models.Game;
 import it.multicoredev.network.serverbound.C2SCreateGame;
 import it.multicoredev.network.serverbound.C2SHandshakePacket;
 import it.multicoredev.network.serverbound.C2SJoinGamePacket;
+import it.multicoredev.network.serverbound.C2SStartGamePacket;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Utils;
 import org.jetbrains.annotations.NotNull;
@@ -163,6 +164,14 @@ public class LupusInTabula {
 
         currentGame = null;
         setScene(Scene.MAIN_MENU);
+    }
+
+    public void startGame() {
+        try {
+            net.sendPacket(new C2SStartGamePacket());
+        } catch (PacketSendException e) {
+            LitLogger.get().warn("Failed to send start game packet", e);
+        }
     }
 
     public void setCurrentGame(Game game) {
