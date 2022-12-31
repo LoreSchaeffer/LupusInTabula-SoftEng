@@ -163,7 +163,7 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
 
             return content.toString();
         } catch (IOException | NullPointerException e) {
-            LitLogger.get().error("Failed to load resource '" + path + "'", e);
+            LitLogger.get().error("Failed to load resource '" + path + "': " + e.getMessage());
             return null;
         }
     }
