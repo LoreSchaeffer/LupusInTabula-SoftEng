@@ -96,3 +96,97 @@
     color: var(--light-gray);
     opacity: 1;
 }
+
+.chat-channel {
+    margin-right: 4px;
+    color: var(--yellow);
+    font-weight: bold;
+}
+
+.chat-channel::after {
+    content: "•";
+    margin-left: 4px;
+    color: var(--light-gray);
+}
+
+.chat-sender {
+    color: var(--light-yellow);
+    font-weight: bold;
+    margin-right: 3px;
+}
+
+.chat-sender::after {
+    content: ">";
+    margin-left: 3px;
+    color: var(--light-gray);
+}
+
+#playersContainer {
+    height: calc(100vh - (100vh / 4.5));
+    margin: 0 0 0 400px;
+}
+
+.col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 6px 6px 20px;
+    width: fit-content;
+    max-width: 116px;
+    height: fit-content;
+    border-radius: 12px;
+    background-color: var(--d-yellow);
+    box-shadow: 0 0 6px 5px rgba(0,0,0,0.2);
+    transition: background-color 250ms ease-in-out;
+}
+
+.player.dead {
+    background-color: var(--danger);
+}
+
+.player.dead:hover {
+    background-color: var(--dark-red);
+}
+
+.player.dead .player-icon {
+    border-color: var(--dark-red);
+}
+
+.player.active {
+    border: 4px solid var(--success);
+    transition: background-color 250ms ease-in-out;
+}
+
+.player:hover {
+    background-color: #ffbd14;
+}
+
+.player p {
+    color: var(--almost-black);
+    margin: 0;
+    text-align: center;
+}
+
+.player-icon {
+    max-width: 100px;
+    border-radius: 12px;
+    margin-bottom: 4px;
+    border: 1px solid var(--yellow);
+}
+
+.player-name {
+    font-size: 110%;
+    font-weight: 500;
+}
+
+.player-role {
+    font-variant: small-caps;
+    line-height: 100%;
+    margin-top: 4px;
+}
