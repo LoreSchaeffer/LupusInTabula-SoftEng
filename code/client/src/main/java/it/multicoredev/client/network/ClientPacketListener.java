@@ -1,15 +1,13 @@
 package it.multicoredev.client.network;
 
 import it.multicoredev.client.LupusInTabula;
-import it.multicoredev.client.ui.comms.messages.b2f.GameStartCountdownMessage;
-import it.multicoredev.client.ui.comms.messages.b2f.PlayerJoinMessage;
-import it.multicoredev.client.ui.comms.messages.b2f.PlayerLeaveMessage;
-import it.multicoredev.client.ui.comms.messages.b2f.ReadyToStartMessage;
+import it.multicoredev.client.ui.comms.messages.b2f.*;
 import it.multicoredev.enums.DisconnectReason;
 import it.multicoredev.mclib.network.NetworkHandler;
 import it.multicoredev.models.Player;
 import it.multicoredev.network.IClientPacketListener;
 import it.multicoredev.network.clientbound.*;
+import it.multicoredev.utils.Encryption;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Static;
 
@@ -44,6 +42,8 @@ public class ClientPacketListener implements IClientPacketListener {
             if (Static.DEBUG) LitLogger.get().info("Client id changed to " + packet.getNewClientId());
         }
 
+        Encryption.setSecret(packet.getSecret());
+
         net.setHandshakeDone();
     }
 
@@ -61,7 +61,8 @@ public class ClientPacketListener implements IClientPacketListener {
 
     @Override
     public void handleMessage(S2CMessagePacket packet) {
-        LitLogger.get().info("CHAT: " + packet.getSender() + " > " + packet.getMessage());
+        lit.executeFrontendCode(new ChatMessageMessage(packet.getChannel().name(), packet.getSender(), packet.getMessage()));
+        LitLogger.get().info("CHAT: " + packet.getChannel().name() + " - " + packet.getSender() + " > " + packet.getMessage());
     }
 
     @Override

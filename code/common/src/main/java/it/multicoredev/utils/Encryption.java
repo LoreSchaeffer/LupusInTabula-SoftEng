@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import java.util.Base64;
 
 public class Encryption {
     private static final byte[] salt = {(byte) 0x44, (byte) 0x65, (byte) 0x32, (byte) 0xc4, (byte) 0x7a, (byte) 0x3f, (byte) 0x9c, (byte) 0x12};
@@ -48,7 +49,7 @@ public class Encryption {
 
         encData = cipher.doFinal(decData);
 
-        return new String(encData);
+        return Base64.getEncoder().encodeToString(encData);
     }
 
     public static String decrypt(@NotNull String input) throws GeneralSecurityException {
@@ -56,7 +57,7 @@ public class Encryption {
         byte[] decData;
         Cipher cipher = makeCipher(false, secret);
 
-        encData = input.getBytes();
+        encData = Base64.getDecoder().decode(input.getBytes());
 
         decData = cipher.doFinal(encData);
 

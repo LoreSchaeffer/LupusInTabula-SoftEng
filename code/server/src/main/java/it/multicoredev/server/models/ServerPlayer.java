@@ -37,6 +37,7 @@ public class ServerPlayer extends Player {
     }
 
     public boolean isConnected() {
+        if (netHandler == null) return false;
         return netHandler.isConnected();
     }
 

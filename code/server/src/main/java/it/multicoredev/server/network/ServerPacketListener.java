@@ -67,8 +67,6 @@ public class ServerPacketListener implements IServerPacketListener {
             return;
         }
 
-        LitLogger.get().info("MSG: " + packet.getMessage());
-
         String[] split;
         if (packet.getMessage().contains(" ")) split = packet.getMessage().split(" ");
         else split = new String[]{packet.getMessage()};
@@ -95,7 +93,9 @@ public class ServerPacketListener implements IServerPacketListener {
             return;
         }
 
-        game.broadcast(new S2CMessagePacket(player.getName(), newMessage, null)); //TODO TO fix
+        game.broadcast(new S2CMessagePacket(player.getName(), newMessage, packet.getChannel()));
+
+        LitLogger.get().info("CHAT: " + packet.getChannel().name() + " - " + player + " > " + packet.getMessage());
     }
 
     @Override

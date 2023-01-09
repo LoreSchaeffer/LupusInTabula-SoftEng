@@ -20,6 +20,10 @@ function toBackend(data) {
     });
 }
 
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 const mainContainer = $('#mainContainer');
 
 function showModal(data) {

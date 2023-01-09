@@ -12,7 +12,9 @@ import it.multicoredev.enums.DisconnectReason;
 import it.multicoredev.enums.SceneId;
 import it.multicoredev.mclib.json.GsonHelper;
 import it.multicoredev.mclib.network.exceptions.PacketSendException;
+import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.models.Game;
+import it.multicoredev.models.Player;
 import it.multicoredev.network.serverbound.C2SCreateGame;
 import it.multicoredev.network.serverbound.C2SHandshakePacket;
 import it.multicoredev.network.serverbound.C2SJoinGamePacket;
@@ -20,6 +22,7 @@ import it.multicoredev.network.serverbound.C2SStartGamePacket;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Utils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.io.File;
@@ -178,8 +181,17 @@ public class LupusInTabula {
         currentGame = game;
     }
 
+    @Nullable
     public Game getCurrentGame() {
         return currentGame;
+    }
+
+    @Nullable
+    public Player getPlayer() {
+        Game game = getCurrentGame();
+        if (game == null) return null;
+
+        return game.getPlayer(getClientId());
     }
 
     public UUID getClientId() {
@@ -189,6 +201,10 @@ public class LupusInTabula {
     public void setUsername(@NotNull String username) {
         config.username = username;
         saveConfig();
+    }
+
+    public void sendPacket(Packet<?> packet) throws PacketSendException {
+        net.sendPacket(packet);
     }
 
     private void initConfigs() {

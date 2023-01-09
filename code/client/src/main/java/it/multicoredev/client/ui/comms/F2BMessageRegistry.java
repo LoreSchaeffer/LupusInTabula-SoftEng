@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public enum F2BMessageRegistry {
+    CHAT_MESSAGE(ChatMessageMessage.class),
     CLOSE(CloseMessage.class),
     GET_GAME_CODE(GetGameCodeMessage.class),
     GET_PLAYERS(GetPlayersMessage.class),
