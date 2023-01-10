@@ -84,7 +84,7 @@
         <dependency>
             <groupId>it.multicoredev.mclib</groupId>
             <artifactId>MCLib-Configurations</artifactId>
-            <version>1.7.2.5</version>
+            <version>1.7.2.6</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
