@@ -30,4 +30,6 @@ public interface IClientPacketListener extends PacketListener {
     void handleGameJoined(S2CGameJoinedPacket packet);
 
     void handlePlayerJoin(S2CPlayerJoinPacket packet);
+
+    void handleTurn(S2CTurnPacket packet);
 }

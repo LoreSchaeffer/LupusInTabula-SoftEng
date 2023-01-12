@@ -27,7 +27,8 @@ public enum Packets {
     S2C_PLAYER_JOIN(S2CPlayerJoinPacket.class),
     S2C_PLAYER_LEAVE(S2CPlayerLeavePacket.class),
     S2C_TIME(S2CTimePacket.class),
-    S2C_TIMER(S2CTimerPacket.class);
+    S2C_TIMER(S2CTimerPacket.class),
+    S2C_TURN_PACKET(S2CTurnPacket.class);
 
     private final Class<? extends Packet<?>> packetClass;
 

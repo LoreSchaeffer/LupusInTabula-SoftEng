@@ -7,32 +7,35 @@ import it.multicoredev.mclib.network.exceptions.ProcessException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.network.IClientPacketListener;
 
-public class S2CTimerPacket implements Packet<IClientPacketListener> {
-    private int time;
+public class S2CTurnPacket implements Packet<IClientPacketListener> {
+    public static final S2CTurnPacket START = new S2CTurnPacket(true);
+    public static final S2CTurnPacket END = new S2CTurnPacket(false);
 
-    public S2CTimerPacket(int time) {
-        this.time = time;
+    private boolean turnStart;
+
+    public S2CTurnPacket(boolean turnStart) {
+        this.turnStart = turnStart;
     }
 
-    public S2CTimerPacket() {
+    public S2CTurnPacket() {
     }
 
     @Override
     public void encode(PacketByteBuf buf) throws EncoderException {
-        buf.writeInt(time);
+        buf.writeBoolean(turnStart);
     }
 
     @Override
     public void decode(PacketByteBuf buf) throws DecoderException {
-        time = buf.readInt();
+        turnStart = buf.readBoolean();
     }
 
     @Override
     public void processPacket(IClientPacketListener handler) throws ProcessException {
-        handler.handleTimer(this);
+        handler.handleTurn(this);
     }
 
-    public int getTime() {
-        return time;
+    public boolean isTurnStart() {
+        return turnStart;
     }
 }

@@ -8,7 +8,7 @@ public enum Role {
     BODYGUARD("bodyguard"),
     POSSESSED("possessed"),
     FREEMASON("freemason"),
-    OWN_MAN("owl_man"),
+    OWL_MAN("owl_man"),
     WEREHAMSTER("werehamster"),
     MYTHOMANIAC("mythomaniac");
 

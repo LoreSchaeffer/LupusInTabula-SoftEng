@@ -12,6 +12,10 @@ public class Config extends JsonConfig {
 
     @SerializedName("game_starting_countdown")
     public Integer gameStartingCountdown;
+    @SerializedName("game_turn_duration")
+    public Integer gameTurnDuration;
+    @SerializedName("game_turn_duration_group")
+    public Integer gameTurnDurationGroup;
 
     @SerializedName("censored_words")
     public List<String> censoredWords;
@@ -21,6 +25,8 @@ public class Config extends JsonConfig {
         if (port == null) port = 12987;
 
         if (gameStartingCountdown == null) gameStartingCountdown = 5;
+        if (gameTurnDuration == null) gameTurnDuration = 20;
+        if (gameTurnDurationGroup == null) gameTurnDurationGroup = 30;
 
         if (censoredWords == null) censoredWords = new ArrayList<>();
         else censoredWords.replaceAll(String::toLowerCase);

@@ -84,6 +84,9 @@ public class ClientPacketListener implements IClientPacketListener {
     @Override
     public void handleGame(S2CGamePacket packet) {
         lit.setCurrentGame(packet.getGame());
+
+        //TODO Update gui
+
         if (Static.DEBUG) LitLogger.get().info(Static.GSON.toJson(packet.getGame()));
     }
 
@@ -94,7 +97,7 @@ public class ClientPacketListener implements IClientPacketListener {
 
     @Override
     public void handleTimer(S2CTimerPacket packet) {
-
+        lit.executeFrontendCode(new TimerMessage(packet.getTime()));
     }
 
     @Override
@@ -116,6 +119,11 @@ public class ClientPacketListener implements IClientPacketListener {
         if (packet.isReadyToStart() && lit.getCurrentGame().getPlayer(lit.getClientId()).isMaster()) lit.executeFrontendCode(new ReadyToStartMessage(true));
 
         LitLogger.get().info("Player joined: " + packet.getPlayer().getName());
+    }
+
+    @Override
+    public void handleTurn(S2CTurnPacket packet) {
+        //lit.executeFrontendCode(); Change active card
     }
 
     @Override

@@ -5,23 +5,28 @@ import it.multicoredev.enums.MessageChannel;
 import it.multicoredev.enums.Role;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class Player extends Client {
-    private boolean master;
-    private Role role;
-    private boolean alive;
+    protected boolean master;
+    protected Role role;
+    protected boolean alive;
     @SerializedName("message_channel")
-    private MessageChannel messageChannel;
+    protected MessageChannel messageChannel;
+    @SerializedName("role_known_by")
+    protected Set<UUID> roleKnownBy;
 
     public Player(@NotNull UUID uuid, @NotNull String name, boolean master) {
         super(uuid, name);
         this.master = master;
         this.alive = true;
-        messageChannel = MessageChannel.ALL;
+        this.messageChannel = MessageChannel.ALL;
+        this.roleKnownBy = new HashSet<>();
     }
 
-    public Player (@NotNull Client client, boolean master) {
+    public Player(@NotNull Client client, boolean master) {
         this(client.getUniqueId(), client.getName(), master);
     }
 
@@ -58,6 +63,15 @@ public class Player extends Client {
 
     public Player setMessageChannel(MessageChannel messageChannel) {
         this.messageChannel = messageChannel;
+        return this;
+    }
+
+    public boolean knowsRole(@NotNull UUID uuid) {
+        return roleKnownBy != null && roleKnownBy.contains(uuid);
+    }
+
+    public Player addRoleKnownBy(@NotNull Player player) {
+        roleKnownBy.add(player.getUniqueId());
         return this;
     }
 }

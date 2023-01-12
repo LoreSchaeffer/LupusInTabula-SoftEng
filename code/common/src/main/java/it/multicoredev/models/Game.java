@@ -1,6 +1,7 @@
 package it.multicoredev.models;
 
 import it.multicoredev.enums.GameState;
+import it.multicoredev.enums.Role;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Game {
     public static final int MIN_PLAYERS = 8;
@@ -47,7 +49,16 @@ public class Game {
         return players.stream().filter(p -> p.getUniqueId().equals(id)).findFirst().orElse(null);
     }
 
-    public Player getMater() {
+    public List<Player> getPlayersByRole(@NotNull Role role) {
+        return players.stream().filter(p -> role.equals(p.getRole())).collect(Collectors.toList());
+    }
+
+    @Nullable
+    public Player getPlayerByRole(@NotNull Role role) {
+        return getPlayersByRole(role).get(0);
+    }
+
+    public Player getMaster() {
         return players.stream().filter(Player::isMaster).findFirst().orElse(null);
     }
 
@@ -63,17 +74,13 @@ public class Game {
         return day;
     }
 
-    public int nextDay() {
-        day++;
-        return day;
-    }
-
     public boolean isNight() {
         return night;
     }
 
     public Game setDay() {
         night = false;
+        day++;
         return this;
     }
 
@@ -82,7 +89,11 @@ public class Game {
         return this;
     }
 
-    protected void setState(GameState state) {
+    protected void setState(@NotNull GameState state) {
         this.state = state;
+    }
+
+    protected boolean roleExists(@NotNull Role role) {
+        return players.stream().anyMatch(p -> role.equals(p.getRole()));
     }
 }
