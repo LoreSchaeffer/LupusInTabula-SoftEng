@@ -1,28 +1,28 @@
 package it.multicoredev.network.clientbound;
 
-import it.multicoredev.enums.Message;
 import it.multicoredev.mclib.network.PacketByteBuf;
 import it.multicoredev.mclib.network.exceptions.DecoderException;
 import it.multicoredev.mclib.network.exceptions.EncoderException;
 import it.multicoredev.mclib.network.exceptions.ProcessException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.network.IClientPacketListener;
+import it.multicoredev.text.BaseText;
 import org.jetbrains.annotations.NotNull;
 
 public class S2CModalPacket implements Packet<IClientPacketListener> {
     private String id;
-    private Message title;
-    private Message body;
+    private BaseText title;
+    private BaseText body;
     private boolean large;
 
-    public S2CModalPacket(@NotNull String id, @NotNull Message title, @NotNull Message body, boolean large) {
+    public S2CModalPacket(@NotNull String id, @NotNull BaseText title, @NotNull BaseText body, boolean large) {
         this.id = id;
         this.title = title;
         this.body = body;
         this.large = large;
     }
 
-    public S2CModalPacket(@NotNull String id, @NotNull Message title, @NotNull Message body) {
+    public S2CModalPacket(@NotNull String id, @NotNull BaseText title, @NotNull BaseText body) {
         this(id, title, body, false);
     }
 
@@ -36,16 +36,16 @@ public class S2CModalPacket implements Packet<IClientPacketListener> {
         if (body == null) throw new EncoderException("body is null");
 
         buf.writeString(id);
-        buf.writeInt(title.ordinal());
-        buf.writeInt(body.ordinal());
+        buf.writeObject(title);
+        buf.writeObject(body);
         buf.writeBoolean(large);
     }
 
     @Override
     public void decode(PacketByteBuf buf) throws DecoderException {
         id = buf.readString();
-        title = Message.values()[buf.readInt()];
-        body = Message.values()[buf.readInt()];
+        title = buf.readObject(BaseText.class);
+        body = buf.readObject(BaseText.class);
         large = buf.readBoolean();
 
         if (id == null || id.trim().isEmpty()) throw new DecoderException("id is null or empty");
@@ -62,11 +62,11 @@ public class S2CModalPacket implements Packet<IClientPacketListener> {
         return id;
     }
 
-    public Message getTitle() {
+    public BaseText getTitle() {
         return title;
     }
 
-    public Message getBody() {
+    public BaseText getBody() {
         return body;
     }
 

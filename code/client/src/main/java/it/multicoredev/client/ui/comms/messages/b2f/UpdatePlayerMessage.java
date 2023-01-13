@@ -5,9 +5,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class UpdatePlayerMessage extends B2FMessage {
     private final Player player;
-    private final boolean active;
+    private final Boolean active;
 
-    public UpdatePlayerMessage(@NotNull Player player, boolean active) {
+    public UpdatePlayerMessage(@NotNull Player player, Boolean active) {
         super("update_player");
         this.player = player;
         this.active = active;

@@ -1,7 +1,6 @@
 package it.multicoredev.server.network;
 
 import it.multicoredev.enums.DisconnectReason;
-import it.multicoredev.enums.Message;
 import it.multicoredev.enums.SceneId;
 import it.multicoredev.mclib.network.NetworkHandler;
 import it.multicoredev.mclib.network.exceptions.PacketSendException;
@@ -13,6 +12,8 @@ import it.multicoredev.network.serverbound.*;
 import it.multicoredev.server.LupusInTabula;
 import it.multicoredev.server.models.ServerGame;
 import it.multicoredev.server.models.ServerPlayer;
+import it.multicoredev.text.StaticText;
+import it.multicoredev.text.Text;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Static;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +60,6 @@ public class ServerPacketListener implements IServerPacketListener {
         //TODO Change this
     }
 
-    //TODO
     @Override
     public void handleMessage(C2SMessagePacket packet) {
         if (client == null) {
@@ -79,7 +79,7 @@ public class ServerPacketListener implements IServerPacketListener {
             }
         }
 
-        String newMessage = String.join(" ", split);
+        String censoredMessage = String.join(" ", split);
 
         ServerGame game = lit.getGame(client);
         if (game == null) {
@@ -87,15 +87,15 @@ public class ServerPacketListener implements IServerPacketListener {
             return;
         }
 
-        ServerPlayer player = game.getPlayer(client.getUniqueId());
-        if (player == null) {
+        ServerPlayer sender = game.getPlayer(client.getUniqueId());
+        if (sender == null) {
             if (DEBUG) LitLogger.get().warn(client + " tried to send a message while not in a game");
             return;
         }
 
-        game.broadcast(new S2CMessagePacket(player.getName(), newMessage, packet.getChannel()));
+        game.broadcastMessage(new S2CMessagePacket(new StaticText(sender.getName()), new StaticText(censoredMessage), packet.getChannel()), sender);
 
-        LitLogger.get().info("CHAT: " + packet.getChannel().name() + " - " + player + " > " + packet.getMessage());
+        LitLogger.get().info("CHAT: " + packet.getChannel().name() + " - " + sender + " > " + packet.getMessage());
     }
 
     @Override
@@ -204,7 +204,7 @@ public class ServerPacketListener implements IServerPacketListener {
             if (DEBUG)
                 LitLogger.get().warn(client + " tried to start a game with less than " + Game.MIN_PLAYERS + " players");
 
-            netHandler.sendPacket(new S2CModalPacket("insufficient_players", Message.MODAL_TITLE_INSUFFICIENT_PLAYERS, Message.MODAL_BODY_INSUFFICIENT_PLAYERS));
+            netHandler.sendPacket(new S2CModalPacket("insufficient_players", Text.MODAL_TITLE_INSUFFICIENT_PLAYERS.getText(), Text.MODAL_BODY_INSUFFICIENT_PLAYERS.getText()));
 
             return;
         }

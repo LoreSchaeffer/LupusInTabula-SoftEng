@@ -1,12 +1,17 @@
 package it.multicoredev.client.network;
 
 import it.multicoredev.client.LupusInTabula;
+import it.multicoredev.client.assets.Locale;
 import it.multicoredev.client.ui.comms.messages.b2f.*;
 import it.multicoredev.enums.DisconnectReason;
 import it.multicoredev.mclib.network.NetworkHandler;
 import it.multicoredev.models.Player;
 import it.multicoredev.network.IClientPacketListener;
 import it.multicoredev.network.clientbound.*;
+import it.multicoredev.text.BaseText;
+import it.multicoredev.text.StaticText;
+import it.multicoredev.text.Text;
+import it.multicoredev.text.TranslatableText;
 import it.multicoredev.utils.Encryption;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Static;
@@ -61,8 +66,22 @@ public class ClientPacketListener implements IClientPacketListener {
 
     @Override
     public void handleMessage(S2CMessagePacket packet) {
-        lit.executeFrontendCode(new ChatMessageMessage(packet.getChannel().name(), packet.getSender(), packet.getMessage()));
-        LitLogger.get().info("CHAT: " + packet.getChannel().name() + " - " + packet.getSender() + " > " + packet.getMessage());
+        Locale locale = lit.getLocale();
+
+        BaseText sender = packet.getSender();
+        BaseText message = packet.getMessage();
+
+        String senderText = sender instanceof StaticText ? sender.getText() : ((TranslatableText) sender).setLocalization(locale).getText();
+        String messageText = message instanceof StaticText ? message.getText() : ((TranslatableText) message).setLocalization(locale).getText();
+
+
+        lit.executeFrontendCode(new ChatMessageMessage(
+                new TranslatableText(Text.byPath("channel." + packet.getChannel().getId()).getPath()).setLocalization(locale).getText(),
+                senderText,
+                messageText
+        ));
+
+        LitLogger.get().info("CHAT: " + packet.getChannel().name() + " - " + packet.getSender().getText() + " > " + packet.getMessage().getText());
     }
 
     @Override
@@ -78,14 +97,25 @@ public class ClientPacketListener implements IClientPacketListener {
 
     @Override
     public void handleModal(S2CModalPacket packet) {
-        lit.showModal(packet.getId(), packet.getTitle().getPath(), packet.getBody().getPath(), packet.isLarge(), false); //TODO Localize
+        Locale locale = lit.getLocale();
+
+        BaseText title = packet.getTitle();
+        BaseText body = packet.getBody();
+
+        lit.showModal(
+                packet.getId(),
+                title instanceof StaticText ? title.getText() : ((TranslatableText) title).setLocalization(locale).getText(),
+                body instanceof StaticText ? body.getText() : ((TranslatableText) body).setLocalization(locale).getText(),
+                packet.isLarge(),
+                false
+        );
     }
 
     @Override
     public void handleGame(S2CGamePacket packet) {
         lit.setCurrentGame(packet.getGame());
-
-        //TODO Update gui
+        lit.executeFrontendCode(new GameUpdateMessage(packet.getGame()));
+        packet.getGame().getPlayers().forEach(player -> lit.executeFrontendCode(new UpdatePlayerMessage(player, null)));
 
         if (Static.DEBUG) LitLogger.get().info(Static.GSON.toJson(packet.getGame()));
     }
@@ -116,14 +146,18 @@ public class ClientPacketListener implements IClientPacketListener {
     public void handlePlayerJoin(S2CPlayerJoinPacket packet) {
         lit.getCurrentGame().addPlayer(packet.getPlayer());
         lit.executeFrontendCode(new PlayerJoinMessage(packet.getPlayer()));
-        if (packet.isReadyToStart() && lit.getCurrentGame().getPlayer(lit.getClientId()).isMaster()) lit.executeFrontendCode(new ReadyToStartMessage(true));
+        if (packet.isReadyToStart() && lit.getCurrentGame().getPlayer(lit.getClientId()).isMaster())
+            lit.executeFrontendCode(new ReadyToStartMessage(true));
 
         LitLogger.get().info("Player joined: " + packet.getPlayer().getName());
     }
 
     @Override
     public void handleTurn(S2CTurnPacket packet) {
-        //lit.executeFrontendCode(); Change active card
+        Player player = lit.getPlayer();
+        if (player == null) return;
+
+        lit.executeFrontendCode(new UpdatePlayerMessage(player, packet.isTurnStart()));
     }
 
     @Override
@@ -133,7 +167,8 @@ public class ClientPacketListener implements IClientPacketListener {
         Player player = lit.getCurrentGame().getPlayer(packet.getClientId());
         if (player != null) lit.getCurrentGame().removePlayer(player);
         lit.executeFrontendCode(new PlayerLeaveMessage(packet.getClientId()));
-        if (!packet.isReadyToStart() && lit.getCurrentGame().getPlayer(lit.getClientId()).isMaster()) lit.executeFrontendCode(new ReadyToStartMessage(false));
+        if (!packet.isReadyToStart() && lit.getCurrentGame().getPlayer(lit.getClientId()).isMaster())
+            lit.executeFrontendCode(new ReadyToStartMessage(false));
 
         if (player != null) LitLogger.get().info("Player left: " + player.getName());
         else LitLogger.get().info("Player left: " + packet.getClientId());

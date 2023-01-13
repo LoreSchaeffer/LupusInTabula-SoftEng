@@ -207,6 +207,10 @@ public class LupusInTabula {
         net.sendPacket(packet);
     }
 
+    public Locale getLocale() {
+        return localizations.getOrDefault(config.language, localizations.get("en_us"));
+    }
+
     private void initConfigs() {
         if (!confDir.exists() || !confDir.isDirectory()) {
             if (!confDir.mkdir()) {

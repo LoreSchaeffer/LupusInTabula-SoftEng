@@ -1,3 +1,4 @@
+const mainContainer = $('#mainContainer');
 const clock = $('#clock');
 const clockText = $('#clockText');
 const chatHistory = $('#chatHistory');
@@ -19,9 +20,9 @@ function addPlayer(player) {
     const col = $(`<div class="col-3 col"></div>`);
 
     const playerContainer = $(playerFragment.replaceAll('{player}', player['uuid'])
-        .replaceAll('{icon}', player['alive'] ? (player['uuid'] === selfUUID ? player['role'].toLowerCase() : 'unknown') : 'dead')
+        .replaceAll('{icon}', player['alive'] ? (showRole(player) ? player['role'].toLowerCase() : 'unknown') : 'dead')
         .replaceAll('{name}', player['name'])
-        .replaceAll('{role}', player['uuid'] === selfUUID ? capitalize(player['role'].toLowerCase()) : 'Unknown')
+        .replaceAll('{role}', showRole(player) ? capitalize(player['role'].toLowerCase()) : 'Unknown')
     );
     if (!player['alive']) playerContainer.addClass('dead');
     col.append(playerContainer);
@@ -31,21 +32,27 @@ function addPlayer(player) {
     });
 }
 
-function updatePlayer(player, showRole) {
+function updatePlayer(player) {
     const playerContainer = $(`#${player['uuid']}`);
     if (!player['alive']) {
         playerContainer.addClass('dead');
         playerContainer.find('.player-icon').attr('src', 'local://assets/images/roles/dead.jpg');
     }
 
-    if (showRole) {
+    if (showRole(player)) {
         if (player['alive']) playerContainer.find('.player-icon').attr('src', `local://assets/images/roles/${player['role'].toLowerCase()}.jpg`);
         playerContainer.find('.player-role').text(capitalize(player['role'].toLowerCase()));
     }
 }
 
+function showRole(player) {
+    return player['uuid'] === selfUUID || player['role_known_by'].includes(selfUUID);
+}
+
 function onPlayerClick(playerContainer) {
     if (!active) return;
+
+    //TODO Preventi picking of self or known roles
 
     window.cefQuery({
         request: JSON.stringify({type: 'player_click', uuid: playerContainer.attr('id')}),
@@ -87,7 +94,13 @@ chatInput.on('keydown', (event) => {
 });
 
 listeners['timer'] = (data) => {
-    console.log(data);
+    const time = data['time'];
+    if (time >= 0) {
+        clockText.text(time);
+        clock.fadeTo('fast', 1);
+    } else {
+        clock.fadeTo('fast', 0);
+    }
 }
 
 listeners['chat_message'] = (message) => {
@@ -99,9 +112,20 @@ listeners['set_chat_icon'] = (icon) => {
 }
 
 listeners['update_player'] = (update) => {
-    updatePlayer(update['player'], update['show_role'], update['active']);
-    if (update['player']['uuid'] === selfUUID && update['active']) active = true;
-    else active = false;
+    updatePlayer(update['player'], update['active']);
+    active = update['player']['uuid'] === selfUUID && update['active'];
+}
+
+listeners['game_update'] = (update) => {
+    const game = update['game'];
+
+    if (game['night']) {
+        mainContainer.removeClass('day');
+        mainContainer.addClass('night');
+    } else {
+        mainContainer.removeClass('night');
+        mainContainer.addClass('day');
+    }
 }
 
 const chatFragment = `<div class="chat-message"><p><span class="chat-channel">{channel}</span><span class="chat-sender">{from}</span>{message}</p></div>`;
