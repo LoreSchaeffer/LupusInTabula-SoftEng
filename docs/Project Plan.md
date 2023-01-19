@@ -231,6 +231,7 @@ Funzionali <br>
 &emsp; &emsp; -	Possibilità di modificare le impostazioni e la grafica del gioco <br>
 &emsp; &emsp; -	Doppia autenticazione tramite codice OTP inviato al numero di telefono <br>
 ## Modelling
+
 &emsp; &emsp; -	State machine diagram <br>
 <table align="center">
  <tr>
@@ -267,4 +268,31 @@ Il secondo attore è il server che deve essere attivo per l’intero svolgimento
 &emsp; &emsp; -	Sequence diagram <br>
 &emsp; &emsp; -	Activity diagram <br>
 
+## Software Architecture
+L’architettura del nostro sistema è un’architettura client server basata sul pattern MVC (model - view - controller). Abbiamo quindi il client che si limita a fare da view in quanto mostra lo stato del gioco all’utente e da IO in quanti gestisci gli input. <br>
+Il client mostra la view all’utente o una rappresentazione del modello sotto una veste grafica e accetta le interazioni dall’utente che vengono poi inviate al server per essere elaborate. Il server fa da controller e model, in quanto si occupa di astrarre e manipolare i dati. Ovvero si occupa di gestire la partita, coordinare il funzionamento, decretare i vincitori. <br>
+La vista con connettori e componenti del nostro sistema è riassunta nel seguente schema: <br>
+<table align="center">
+ <tr>
+  <td>
+<img width="395" alt="image" src="https://user-images.githubusercontent.com/95120796/213514592-c9a28848-a791-400a-9d5e-7cf44fdc8305.png">
+  </td>
+ </tr>
+ </table>
+Abbiamo creato un’architettura modulare con bassa dipendenza tra i vari moduli. Le interazioni tra un modulo e l’altro sono gestite da delle interfacce adeguate. Il codice è strutturato in modo da migliorare la leggibilità e soprattutto la mantenibilità del codice. É bene sottolineare che al momento la struttura del lato server è monolitica, infatti gestisce tutti i servizi di interazione con gli utenti su un unico processo. In futuro è in programma la divisione di questi compiti in un’architettura basata su micro servizi. <br>
+
+## Software Design
+Per lo sviluppo dell’applicazione il team si è basato sul pattern Model-view-controller (MVC), allo scopo di suddividere il codice in parti che abbiano funzionalità distinte tra loro.  <br>
+I dati, la loro gestione e le interazioni con il database (presenti in futuro) sono gestiti dai livelli Model-Controller a lato back-end, che si occupa di gestire le query e la connessione alla database.  <br>
+Il livello che corrisponde alla View è l’output che presentiamo in front-end, ovvero le pagine vere e proprie che appaiono all’utente. <br>
+Il team si è inoltre preposto di scrivere codice basandosi sui concetti di astrazione e modularità, con l’obiettivo finale di avere un programma che abbia:  <br>
+● basso accoppiamento, ovvero avere moduli altamente indipendenti tra di loro; ad esempio:  <br>
+&emsp;○  common coupling: non ci sono variabili globali condivise tra i moduli;  <br>
+&emsp;○  control coupling: nessun modulo va ad utilizzare codice che appartiene a un altro modulo;  <br>
+&emsp;○  external coupling: il modulo relativo all’interfaccia grafica sarà presente nel codice del client, la parte di gestione del modello sul server  <br>
+&emsp;&emsp; e il modulo comune sarà sfruttato come libreria su entrambi i lati. Per il resto non ci sono file condivisi.  <br>
+● alta coesione, ovvero avere una alta correlazione delle funzionalità presenti dentro un singolo modulo; ad esempio:  <br>
+&emsp; ○ procedural cohesion: per ogni procedimento ci sono delle azioni che vengono sempre eseguite una dopo l’altra. Ad esempio, quando   <br>
+&emsp; &emsp; un’utente interagisce con l’interfaccia grafica il controller dell’interfaccia si occuperà di gestire se è un azione che può gestire  <br>
+&emsp; &emsp; autonomamente (come il cambio di scena) oppure se deve fare richiesta al server.  <br>
 
