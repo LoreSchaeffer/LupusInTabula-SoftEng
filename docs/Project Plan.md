@@ -86,7 +86,9 @@ L'intera documentazione riguardante il progetto sarà privata e disponibile per 
 Il team ha deciso di sviluppare un'applicazione per implementare il sistema descritto. L'applicazione sarà suddivisa in due parti:  <br>
 ○  Client: si occupa dell'interfaccia grafica e di interagire con il server;  <br>
 ○  Server: gestisce l’andamento di una o più partite/giochi. <br>
-La grafica del Client verrà sviluppato utilizzando linguaggi Web. <br>
+Per la comunicazione client - server abbiamo sfruttato la tecnologia basata su socket mediante l’utilizzo delle librerie MCLib-Network (sviluppata da noi) e Netty. <br>
+Per quanto riguarda invece la grafica del client abbiamo deciso di utilizzare JCEF, ovvero l’integrazione in Swing di un browser Chromium, in modo da semplificare lo sviluppo dell’interfaccia, permetterne una rapida modifica (anche da parte degli utenti) e gestire comodamente il rescaling dell’interfaccia. <br>
+
 ### 5.	Attività di gestione
 Abbiamo deciso di organizzarci secondo la filosofia della programmazione estrema, cioè (l’extreme programming). Ad esempio, la lettura del codice da parte dei colleghi, è un metodo di  test  molto  efficace, dunque nel metodo che utilizziamo noi lo si fa: due  programmatori  lavorano  insieme  sullo schermo di un computer. Uno fa la codifica, l'altro guarda alle spalle, dà consigli, nota  piccoli  errori,  fa  domande  e  così  via. In  qualsiasi momento, possiamo cambiare i ruoli. <br>
 Gli incontri saranno settimanali e relativamente brevi, della durata di un'ora circa. Durante gli stessi potranno essere effettuate sessioni di brainstorming per condividere idee e risolvere problemi.  <br>
@@ -132,3 +134,137 @@ Oltre alle feature base incluse inizialmente nel prodotto e descritte al punto u
 -	Dare la possibilità al master del gioco di decidere i ruoli disponibili per i giocatori <br>
 ### 14.	 Consegna
 Gli incontri sono fissati ogni settimana, il giorno può variare in base agli impegni, ma abbiamo comunque stabilito una frequenza settimanale in modo da rimanere aggiornati con lo sviluppo e concordare insieme i prossimi passi da svolgere. Per quanto riguarda la prima settimana di lavoro abbiamo deciso di trovarci tre volte per concordare come procedere e come suddividere il lavoro. <br>
+## Software Life Cycle
+Per il processo di sviluppo il team ha scelto un approccio di tipo Agile poiché meglio si adatta alla nostra metodologia di lavoro:  <br>
+
+•	Consideriamo importante il team, le abilità e le interazioni tra di noi. I lavori vengono assegnati in base alle capacità che ognuno possiede. Se un componente della squadra si accorge che il compito va oltre le sue competenze, avvisa gli altri e se ne discute insieme.   <br>
+•	Nel team non c’è una struttura di tipo gerarchico: ci consideriamo tutti allo stesso livello. Questo ci porta ad essere più compatti e motivati.   <br>
+•	Consideriamo più importante un prodotto software funzionante che spendere troppo tempo sui documenti: a sviluppo iniziato, se ci accorgiamo che ci sono punti da implementare che non avevamo in precedenza considerato, li andiamo ad aggiungere poi alla documentazione.   <br>
+•	Abbiamo deciso di organizzarci secondo la filosofia della programmazione estrema, cioè (l’extreme programming). Due programmatori  lavorano  insieme  sullo schermo di un computer: uno fa la codifica, l'altro guarda alle spalle, dà consigli, nota  piccoli  errori,  fa  domande  e  così  via. In  qualsiasi momento, possiamo cambiare i ruoli.  <br>
+•	Durante lo sviluppo del software utilizziamo la tecnica del timeboxing: suddividiamo lo sviluppo del codice in intervalli temporali entro i quali dobbiamo sviluppare determinate funzionalità, gli intervalli sono decisi di comune accordo con il resto del gruppo in base alla difficoltà e alla durata dell’attività da svolgere.   <br>
+•	Diamo molta importanza alla collaborazione con gli utenti, infatti dopo aver messo appunto le funzionalità base dell’applicazione mettiamo subito a disposizione il gioco in modo che gli utenti della community possano darci consigli su come migliorare le funzionalità. Gli utenti non collaborano con noi dal punto di vista organizzativo, ma ci aiutano nell’individuare alcune funzioni aggiuntive che vorrebbero fossero implementate.  <br>
+•	Il team è propenso al cambiamento e si impegna a dedicargli tempo in maniera adeguata. Quando gli utenti avanzano delle richieste, cerchiamo di fare in modo di accontentare tutti stando in ogni modo attenti a quello che si è sviluppato fino a quel momento.  <br>
+•	Nel caso in cui il nostro prodotto venga richiesto da possibili investitori saremo lieti di prendere in considerazioni le proposte. Se l’investitore vorrà poi avere delle funzionalità aggiuntive saremo lieti di prenderle in considerazione. Prima di un possibile finanziamento faremo provare l’applicazione anche al finanziatore.  <br>
+Come approccio di progettazione software per lo sviluppo del sistema ci siamo attenuti alla model-driven architecture (MDA), o architettura guidata dal modello.  <br>
+## Configuration menagement
+Tutto il lavoro svolto che si tratti di documentazione o di codice viene salvato in un repository su Github in condivisione con tutti i membri del team.  <br>
+Struttura del progetto <br>
+All’interno del repository sono presenti 2 cartelle: <br>
+-	La prima cartella chiamata code contiene all’interno tutto il codice del progetto. Le sottocartelle sono 3 più il file pom. Nella prima sottocartella abbiamo il codice appartenente al client, la seconda è in comune con client e server e la terza è appunto il server. La cartella common è stata importata come libreria in server e client. <br>
+-	La seconda chiamata docs contiene tutta la documentazione a riguardo. Esso conterrà tutta la documentazione effettuata e le linee guida per lo sviluppo del gioco, nonché la spiegazione del gioco. <br>
+Oltre alle due cartelle, nel repository vi è anche il file README contenente le informazioni principali del nostro codice. <br>
+#### Issue <br>
+Nei vari meeting settimanali vengono creati i macro task che dovranno essere sviluppati nel corso della settimana. Le varie attività sono create come issue su GitHub, aggiungendo una breve descrizione del lavoro e la persona di riferimento che si occuperà di portarla a termine. Durante la settimana ogni membro del team è libero di creare ulteriori issue se lo ritiene necessario.  <br>
+Le issue possono trovarsi in vari stati a seconda del loro avanzamento. Per tenere traccia dello stato si è utilizzata una Board su Monday suddividendo lo stato in: Not Started, Working on it, To Test, Testing, To Fix e Done: <br>
+•	Not Started: contiene i task che sono stati creati e che devono essere sviluppati. <br>
+•	Working on it: viene utilizzato per segnalare che si sta lavorando su una determinata funzionalità. Al termine del lavoro, il codice viene salvato su Github e la funzionalità viene marcata come to Test. <br>
+•	Testing: Una volta effettuato il push su Github, il codice deve essere testato. Il nostro tester si occuperà di verificare che il codice sviluppato soddisfi i requisiti descritti all’interno del task. Se tutto funziona correttamente allora passa allo stato successivo (Done), altrimenti lo stato torna in Working on it e viene segnalato a chi ha scritto il codice il problema. <br>
+#### Branch
+Il branch principale è il main. Tutta la documentazione si trova in versione stabile, mentre il branch dev che contiene il codice in fase di sviluppo. Esiste anche un terzo branch chiamato test all’interno del quale vengono effettuati i test con JUnit. <br>
+Il branch dev viene aggiornato con le versioni work in progress o snapshot e viene utilizzato come backup e cronologia delle versioni del codice. Una volta raggiunta una versione stabile viene fatto il merge sul branch main. <br>
+## People management
+L’azienda ha deciso di basarsi su una struttura organizzativa non gerarchica. Utilizzando questa, ha una grande capacità di adattamento e non ha una vera e propria divisione prefissata del lavoro; è infatti il team a decidere come dividere e assegnare i vari task. Inoltre, in caso di difficoltà durante lo sviluppo, due membri del team possono affiancarsi per risolvere il problema in coppia. Il vantaggio di utilizzare l'adhocrazia è che abbiamo un'organizzazione flessibile, adattabile e informale. <br>
+Il team è organizzato secondo il modello SWAT (skilled worker with advanced tools). Abbiamo quindi una squadra composta da tre persone che sviluppano utilizzando canali di comunicazione informali (issue su github e discord). Le riunioni tra i membri del team sono tutte informali ed abbiamo deciso di fissare con una frequenza settimanale una riunione per condividere idee e passi su come procedere. <br>
+A nostro parere, il vantaggio di rifarsi ad un’architettura non gerarchica e ad un modello SWAT è che ogni componente del team sviluppa software e implementa funzionalità di componenti che lo affascinano maggiormente. Vogliamo quindi non solo arrivare all'obiettivo finale di sviluppare software e svilupparlo bene, ma di costruirlo anche con piacere.  <br>
+Anche se non abbiamo una vera e propria distinzione del lavoro, possiamo riassumere in maniera più generale i settori di sviluppo e le persone che ne dedicano più tempo:  <br>
+<table align="center">
+ <tr>
+  <td>
+  <img width="951" alt="Screenshot 2023-01-19 alle 17 36 26" src="https://user-images.githubusercontent.com/95120796/213500291-3237d33c-fb85-43f0-a653-d8726e525bf4.png">
+  </td>
+ </tr>
+ </table>
+  <br>
+ 
+
+## Software quality <br>
+Il team si è prefissato l’obiettivo di sviluppare un’applicazione che rispetti i parametri e gli attributi di qualità definiti da McCall-Richards-Walters nel documento da loro redatto nel 1977, di seguito elencati e suddivisi in categorie come indicato dagli autori. <br>
+#### Parametri riguardanti l’operatività del software <br>
+•	Correttezza – L’applicazione da noi realizzato soddisfa i requisiti e le specifiche individuate all’inizio del lavoro. Le funzionalità da noi non sviluppate ma solo progettate saranno portate avanti dal team di sviluppo del futuro investitore che assumerà dopo che avremo consegnato il prototipo. <br>
+•	Affidabilità - L’applicazione è affidabile in quanto revisionato a livello di team e sottoposto a una lunga fase di testing prima del rilascio. <br>
+•	Efficienza - Le risorse utilizzate dal prodotto sono limitate in quanto si tratta di un’applicazione web e molte delle operazioni sono effettuate lato server. È quindi comunque necessaria una connessione internet e un browser per accedere ai servizi del software da noi sviluppato. <br>
+•	Integrità - Il prodotto che sviluppiamo è sicuro: <br>
+&emsp; o	I messaggi in chat sono criptati e nessun dato degli utenti è salvato sul server.<br>
+&emsp; o	Non sfruttiamo servizi esterni<br>
+•	Usabilità - Il prodotto è semplice da utilizzare, infatti non sono richieste particolari abilità per poterne usufruire. L’uso dei servizi è facilitato su tutti i tipi di piattaforma grazie all’utilizzo delle librerie che permette di avere componenti grafici semplici e facili da utilizzare. <br>
+I requisiti “base” includono: <br>
+&emsp; o	Avere una connessione internet <br>
+&emsp; o	Sapere come si gioca a Lupus in tabula (o dal manuale ufficiale o quello fornito nelle versioni future)<br>
+&emsp; o	Avere un pc funzionante (Linux, Mac o Windows) <br>
+
+#### Parametri riguardanti la revisione del software 
+•	Manutenibilità - La fase di individuazione degli errori è semplificata dalla nostra scelta di separare i lati server e client. Il processo è inoltre facilitato poiché si ha la parte grafica separata dalla parte di gestione dei dati: è semplice fare manutenzione avendo persone specializzate in ambiti differenti.  <br>
+•	Testabilità - Tutte le feature incluse nel prototipo sviluppato sono testabili (tramite test manuali e test automatici) prima del rilascio dell’applicazione al pubblico. Delle funzionalità che saranno invece da noi solo progettate si occuperanno in futuro i dipendenti della società dell’investitore: saranno loro a svilupparle e ad effettuare la fase di testing.  <br>
+•	Flessibilità - Come per la manutenibilità, anche il processo di modifica, adattamento e perfezionamento dell’applicazione è facilitato dalla scelta di separare i lati client e server.  <br>
+
+Parametri riguardanti la transizione verso un nuovo ambiente <br>
+•	Portabilità - È possibile utilizzare i servizi offerti dal nostro prodotto da qualsiasi dispositivo (Linux, Mac o Windows) dotato di una connessione internet. Il server opera su qualsiasi dispositivo senza limiti, mentre il client ha bisogno di scheda video (anche integrata). Sfruttiamo delle librerie native per i vari sistemi operativi che sono già integrati e disponibili nel programma.  <br>
+•	Riusabilità – sono state utilizzate delle librerie, da noi sviluppate contenenti codice per il software ma che possono essere riutilizzate anche in altri ambiti o contesti. <br>
+•	Interoperabilità - Nel futuro la nostra applicazione potrà essere integrata con altri servizi in quanto sviluppiamo in modo separato client e server. <br>
+## Requirements Engineering
+Uno dei passi più importanti prima della scrittura del codice è quello di analizzare i requisiti.<br>
+Nel nostro caso non ci siamo basati su dei requisiti chiesti da clienti, in quanto il nostro lavoro al momento non è stato acquistato e non è stato richiesto da nessuno. Per tale motivo siamo stati noi a decidere i requisiti che a nostro parere sono importanti per la nostra applicazione. Abbiamo scelto dei requisiti che potessero essere funzionali per il nostro gioco e che potessero inizialmente essere la base per diverse altre implementazioni. <br>
+Per la seconda parte del lavoro invece ci siamo basati sui pareri degli utenti della community che hanno giocato al gioco e che hanno voluto darci alcune recensioni e alcune idee per le migliorie. Alcuni di questi utenti hanno preso parte al nostro meeting settimanale per aiutarci a comprendere meglio i requisiti e le funzionalità aggiuntive da implementare. Abbiamo dunque svolto in questo meeting con alcuni utenti la fase di elicitation, capire dunque le funzionalità volute dagli utenti, la fase di negotiation, negoziare dunque le funzionalità volute con quelle a nostro parere realizzabili e infine la fase di requirements specification, cioè specificare i requisiti finali approvati sia dal team che dagli utenti della community.<br>
+Il documento finale contenente i requisiti può subire variazioni a fronte di modifiche richieste da ulteriori utenti oppure da futuri investitori. Queste richieste verranno presentate durante la fase di validazione in cui il team mostrerà agli utenti od a futuri investitori parte del prodotto finale tramite prototipi. Qualora il team avesse fatto errate supposizioni, può concordare con utenti della community o prossimi finanziatori una soluzione. <br>
+Inoltre, il project manager ha applicato un’ulteriore suddivisione dei requisiti secondo il modello MoSCoW. <br>
+Nel documento dei requisiti concordato con il cliente ci siamo accordati su quelli qui di seguito riportati. <br>
+Funzionali <br>
+● Must Have: <br>
+&emsp; &emsp; -	Sviluppo del gioco nella versione base funzionante <br>
+&emsp; &emsp; -	Inserimento della lingua italiana oltre alla lingua inglese <br>
+&emsp; &emsp; -	Networking <br>
+&emsp; &emsp; -	Interfaccia grafica <br>
+&emsp; &emsp; -	Inserimento della chat testuale <br>
+&emsp; &emsp; -	Grafica del giorno e della notte <br>
+&emsp; &emsp; -	Stabilità del software <br>
+●  Should have: <br>
+&emsp; &emsp; -	Altre lingue oltre all’italiano e all’inglese <br>
+&emsp; &emsp; -	Guida del gioco per una comprensione migliore <br>
+&emsp; &emsp; -	Crittografia chat testuale <br>
+&emsp; &emsp; -	Autenticazione utenti sicura <br>
+&emsp; &emsp; -	Consentire al game master di scegliere i ruoli da aggiungere <br>
+&emsp; &emsp; -	Timeout delle lobby <br>
+&emsp; &emsp; -	Possibilità di scegliere la lingua del gioco <br>
+&emsp; &emsp; -	Effetti sonori <br>
+●  Won’t have:  <br>
+&emsp; &emsp; -	Chat vocale <br>
+&emsp; &emsp; -	Possibilità di modificare le impostazioni e la grafica del gioco <br>
+&emsp; &emsp; -	Doppia autenticazione tramite codice OTP inviato al numero di telefono <br>
+## Modelling
+&emsp; &emsp; -	State machine diagram <br>
+<table align="center">
+ <tr>
+  <td>
+<img width="375" alt="image" src="https://user-images.githubusercontent.com/95120796/213513788-074a1e59-3c61-40b4-8423-583dcec9161a.png">
+  </td>
+ </tr>
+ </table>
+Abbiamo rappresentato con la macchina a stati il funzionamento della interfaccia del client. Dalla schermata di avvio a seguito del native download (operazione una tantum in cui vengono scaricate le librerie essenziali per il corretto funzionamento del programma) si arriva nella schermata di avvio e a seguire del caricamento si giunge nel menù principale, dal quale si può andare a controllare i crediti, le impostazioni, la lobby della partita o si può terminare. Arrivati alla schermata con i crediti si può tornare alla schermata del menù principale. Dalla lobby della partita si può o tornare indietro al menù principale o andare alla partita. Anche dalla partita si può andare al menù principale, alle impostazioni o alla fine della partita. Al termine della partita di può tornare alla lobby della partita oppure al menù principale. <br>
+
+&emsp; &emsp; -	Use case diagram <br>
+<table align="center">
+ <tr>
+  <td>
+<img width="381" alt="image" src="https://user-images.githubusercontent.com/95120796/213513870-e440de00-db34-4d1f-9870-b31c22d58c3c.png">
+  </td>
+ </tr>
+ </table>
+
+
+Per modellare i casi d’uso, ovvero le funzionalità degli attori nel sistema, abbiamo modellato uno use-case diagram. <br>
+L’attore principale è l’utente che effettua diverse azioni. Come prima cosa deve chiedere al server di creare la partita o chiedere di unirsi ad una già esistente. Una volta avviata la partita, cosa che richiede un minimo di 8 utenti, può iniziare a giocare. Nel gioco ci sono due fasi: giorno e notte (caratterizzate anche dal cambiamento della grafica). Al termine della fase di gioco la partita può terminare. Per lasciare la partita bisogna aver terminato il gioco oppure si può lasciare la partita anche durante lo svolgimento. Una volta lasciata la partita l’utente viene disconnesso in automatico. <br>
+Il secondo attore è il server che deve essere attivo per l’intero svolgimento delle azioni dell’utente. Esso risponde alle richieste dell’utente. <br>
+&emsp; &emsp; -	Class diagram <br>
+<table align="center">
+ <tr>
+  <td>
+<img width="479" alt="image" src="https://user-images.githubusercontent.com/95120796/213513983-d3a4447e-cdc5-4df5-823b-89a0c15f157d.png">
+  </td>
+ </tr>
+ </table>
+
+
+&emsp; &emsp; -	Sequence diagram <br>
+&emsp; &emsp; -	Activity diagram <br>
+
+
