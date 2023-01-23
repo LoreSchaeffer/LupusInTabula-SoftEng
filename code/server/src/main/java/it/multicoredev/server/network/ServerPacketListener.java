@@ -51,19 +51,31 @@ public class ServerPacketListener implements IServerPacketListener {
         try {
             netHandler.sendPacket(new S2CHandshakePacket(true, null, newClientId));
         } catch (PacketSendException e) {
-            LitLogger.get().error(e.getMessage(), e);
+            LitLogger.error(e.getMessage(), e);
             //TODO Manage exception
         }
 
         if (DEBUG)
-            LitLogger.get().info("Client '" + packet.getUsername() + "' (" + (newClientId != null ? newClientId : packet.getClientId()) + ") connected");
+            LitLogger.info("Client '" + packet.getUsername() + "' (" + (newClientId != null ? newClientId : packet.getClientId()) + ") connected");
         //TODO Change this
     }
 
     @Override
     public void handleMessage(C2SMessagePacket packet) {
         if (client == null) {
-            if (DEBUG) LitLogger.get().error("The client did not perform the handshake. Packet ignored");
+            if (DEBUG) LitLogger.error("The client did not perform the handshake. Packet ignored");
+            return;
+        }
+
+        ServerGame game = lit.getGame(client);
+        if (game == null) {
+            if (DEBUG) LitLogger.warn(client + " tried to send a message while not in a game");
+            return;
+        }
+
+        ServerPlayer sender = game.getPlayer(client.getUniqueId());
+        if (sender == null) {
+            if (DEBUG) LitLogger.warn(client + " tried to send a message while not in a game");
             return;
         }
 
@@ -81,27 +93,15 @@ public class ServerPacketListener implements IServerPacketListener {
 
         String censoredMessage = String.join(" ", split);
 
-        ServerGame game = lit.getGame(client);
-        if (game == null) {
-            if (DEBUG) LitLogger.get().warn(client + " tried to send a message while not in a game");
-            return;
-        }
-
-        ServerPlayer sender = game.getPlayer(client.getUniqueId());
-        if (sender == null) {
-            if (DEBUG) LitLogger.get().warn(client + " tried to send a message while not in a game");
-            return;
-        }
-
         game.broadcastMessage(new S2CMessagePacket(new StaticText(sender.getName()), new StaticText(censoredMessage), packet.getChannel()), sender);
 
-        LitLogger.get().info("CHAT: " + packet.getChannel().name() + " - " + sender + " > " + packet.getMessage());
+        LitLogger.info("CHAT: " + packet.getChannel().name() + " - " + sender + " > " + packet.getMessage());
     }
 
     @Override
     public void handleCreateGame(C2SCreateGame packet) {
         if (client == null) {
-            if (DEBUG) LitLogger.get().error("The client did not perform the handshake. Packet ignored");
+            if (DEBUG) LitLogger.error("The client did not perform the handshake. Packet ignored");
             return;
         }
 
@@ -112,17 +112,17 @@ public class ServerPacketListener implements IServerPacketListener {
             netHandler.sendPacket(new S2CGameCreatedPacket(game));
             netHandler.sendPacket(new S2CChangeScenePacket(SceneId.LOBBY));
         } catch (PacketSendException e) {
-            if (DEBUG) LitLogger.get().error(e.getMessage(), e);
+            if (DEBUG) LitLogger.error(e.getMessage(), e);
             return;
         }
 
-        if (DEBUG) LitLogger.get().info(client + " created game with code '" + game.getCode() + "'");
+        if (DEBUG) LitLogger.info(client + " created game with code '" + game.getCode() + "'");
     }
 
     @Override
     public void handleJoinGame(C2SJoinGamePacket packet) {
         if (client == null) {
-            if (DEBUG) LitLogger.get().error("The client did not perform the handshake. Packet ignored");
+            if (DEBUG) LitLogger.error("The client did not perform the handshake. Packet ignored");
             return;
         }
 
@@ -130,12 +130,12 @@ public class ServerPacketListener implements IServerPacketListener {
 
         if (game == null) {
             if (DEBUG)
-                LitLogger.get().info(client + " tried to join a non-existent game with code '" + packet.getCode() + "'");
+                LitLogger.info(client + " tried to join a non-existent game with code '" + packet.getCode() + "'");
 
             try {
                 disconnect(DisconnectReason.S2C_GAME_NOT_FOUND);
             } catch (PacketSendException e) {
-                if (DEBUG) LitLogger.get().error(e.getMessage(), e);
+                if (DEBUG) LitLogger.error(e.getMessage(), e);
             }
 
             return;
@@ -148,17 +148,17 @@ public class ServerPacketListener implements IServerPacketListener {
             netHandler.sendPacket(new S2CGameJoinedPacket(game));
             netHandler.sendPacket(new S2CChangeScenePacket(SceneId.LOBBY));
         } catch (PacketSendException e) {
-            if (DEBUG) LitLogger.get().error(e.getMessage(), e);
+            if (DEBUG) LitLogger.error(e.getMessage(), e);
             return;
         }
 
         try {
             game.broadcast(new S2CPlayerJoinPacket(player, Static.DEBUG || game.getOnlinePlayers().size() >= Game.MIN_PLAYERS));
         } catch (PacketSendException e) {
-            if (DEBUG) LitLogger.get().error(e.getMessage(), e);
+            if (DEBUG) LitLogger.error(e.getMessage(), e);
         }
 
-        if (DEBUG) LitLogger.get().info(client + " joined game with code '" + game.getCode() + "'");
+        if (DEBUG) LitLogger.info(client + " joined game with code '" + game.getCode() + "'");
     }
 
     @Override
@@ -173,36 +173,36 @@ public class ServerPacketListener implements IServerPacketListener {
         ServerGame game = lit.getGame(client);
         if (game != null) game.playerDisconnected(client);
 
-        LitLogger.get().info(client + " disconnected. Reason: " + packet.getReason().name()); //TODO Change enum name to something more readable
+        LitLogger.info(client + " disconnected. Reason: " + packet.getReason().name()); //TODO Change enum name to something more readable
     }
 
     @Override
     public void handleStartGame(C2SStartGamePacket packet) {
         if (client == null) {
-            if (DEBUG) LitLogger.get().error("The client did not perform the handshake. Packet ignored");
+            if (DEBUG) LitLogger.error("The client did not perform the handshake. Packet ignored");
             return;
         }
 
         ServerGame game = lit.getGame(client);
         if (game == null) {
-            if (DEBUG) LitLogger.get().warn(client + " tried to start a game he is not in");
+            if (DEBUG) LitLogger.warn(client + " tried to start a game he is not in");
             return;
         }
 
         ServerPlayer player = game.getPlayer(client.getUniqueId());
         if (player == null) {
-            if (DEBUG) LitLogger.get().warn(client + " tried to start a game he is not in");
+            if (DEBUG) LitLogger.warn(client + " tried to start a game he is not in");
             return;
         }
 
         if (!player.isMaster()) {
-            if (DEBUG) LitLogger.get().warn(client + " tried to start a game he is not the master of");
+            if (DEBUG) LitLogger.warn(client + " tried to start a game he is not the master of");
             return;
         }
 
         if (!Static.DEBUG && game.getPlayerCount() < Game.MIN_PLAYERS) {
             if (DEBUG)
-                LitLogger.get().warn(client + " tried to start a game with less than " + Game.MIN_PLAYERS + " players");
+                LitLogger.warn(client + " tried to start a game with less than " + Game.MIN_PLAYERS + " players");
 
             netHandler.sendPacket(new S2CModalPacket("insufficient_players", Text.MODAL_TITLE_INSUFFICIENT_PLAYERS.getText(), Text.MODAL_BODY_INSUFFICIENT_PLAYERS.getText()));
 
@@ -210,6 +210,40 @@ public class ServerPacketListener implements IServerPacketListener {
         }
 
         game.start();
+    }
+
+    @Override
+    public void handleSelect(C2SSelectPacket packet) {
+        if (client == null) {
+            if (DEBUG) LitLogger.error("The client did not perform the handshake. Packet ignored");
+            return;
+        }
+
+        ServerGame game = lit.getGame(client);
+        if (game == null) {
+            if (DEBUG) LitLogger.warn(client + " select a player while not in a game");
+            return;
+        }
+
+        ServerPlayer player = game.getPlayer(client.getUniqueId());
+        if (player == null) {
+            if (DEBUG) LitLogger.warn(client + " select a player while not in a game");
+            return;
+        }
+
+        ServerPlayer target = game.getPlayer(packet.getUuid());
+        if (target == null) {
+            if (DEBUG) LitLogger.warn(client + " tried to select a non-existent player");
+            return;
+        }
+
+        game.selectTarget(target);
+
+        try {
+            game.notify();
+        } catch (IllegalMonitorStateException e) {
+            LitLogger.warn(e.getMessage());
+        }
     }
 
     private void disconnect(@NotNull DisconnectReason reason) throws PacketSendException {

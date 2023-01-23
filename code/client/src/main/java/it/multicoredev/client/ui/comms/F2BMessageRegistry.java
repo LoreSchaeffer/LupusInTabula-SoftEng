@@ -13,6 +13,7 @@ public enum F2BMessageRegistry {
     JOIN_GAME(JoinGameMessage.class),
     LEAVE_GAME(LeaveGameMessage.class),
     NEW_GAME(NewGameMessage.class),
+    PLAYER_CLICK(PlayerClickMessage.class),
     SET_SCENE(SetSceneMessage.class),
     SET_USERNAME(SetUsernameMessage.class),
     START_GAME(StartGameMessage.class);

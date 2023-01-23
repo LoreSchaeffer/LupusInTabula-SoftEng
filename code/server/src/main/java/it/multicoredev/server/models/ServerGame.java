@@ -32,13 +32,14 @@ import static it.multicoredev.utils.Utils.sleep;
 
 @JsonAdapter(ServerGame.Adapter.class)
 public class ServerGame extends Game {
-    private static final long LONG_SLEEP = 2000;
-    private static final long MEDIUM_SLEEP = 1000;
-    private static final long SHORT_SLEEP = 500;
-    private static final int MIN_TURN_TIME = 2;
+    private static final long LONG_SLEEP = 3000;
+    private static final long MEDIUM_SLEEP = 2000;
+    private static final long SHORT_SLEEP = 1000;
+    private static final int MIN_TURN_TIME = 5;
 
     private final LupusInTabula lit;
     private ScheduledFuture<?> gameTask;
+    private int timer;
     private Thread waitThread;
     private ServerPlayer lastLynchedPlayer = null;
     private ServerPlayer owledPlayer = null;
@@ -55,20 +56,20 @@ public class ServerGame extends Game {
 
     public void init() {
         state = GameState.WAITING;
-        LitLogger.get().info("Game " + code + " initialized. Waiting for players...");
+        LitLogger.info("Game " + code + " initialized. Waiting for players...");
     }
 
     public void start() {
         state = GameState.STARTING;
-        LitLogger.get().info("Game " + code + " starting in seconds...");
+        LitLogger.info("Game " + code + " starting in seconds...");
 
         if (Static.DEBUG) {
-            LitLogger.get().info("Adding fake players...");
+            LitLogger.info("Adding fake players...");
 
             for (int i = players.size() + 1; i <= MIN_PLAYERS; i++) {
                 ServerPlayer p = new ServerPlayer(lit.getNewClientId(), "Player " + i, false, null);
                 addPlayer(p);
-                LitLogger.get().info("Added player " + Static.GSON.toJson(p));
+                LitLogger.info("Added player " + Static.GSON.toJson(p));
             }
 
         }
@@ -78,7 +79,7 @@ public class ServerGame extends Game {
                 play();
             } catch (Exception e) {
                 stop();
-                LitLogger.get().error(e.getMessage(), e);
+                LitLogger.error(e.getMessage(), e);
             }
         }, 0, TimeUnit.SECONDS);
     }
@@ -93,7 +94,7 @@ public class ServerGame extends Game {
         }
 
         state = GameState.RUNNING;
-        LitLogger.get().info("Game " + code + " started!");
+        LitLogger.info("Game " + code + " started!");
 
         assignRoles();
 
@@ -115,12 +116,14 @@ public class ServerGame extends Game {
         broadcast(new S2CGamePacket(this));
         broadcast(new S2CChangeScenePacket(SceneId.GAME));
 
-        wait(3);
+        sleep(MEDIUM_SLEEP);
 
         while (gameConditionsAreMet()) {
             if (!isNight()) {
                 setNight();
+                if (Static.DEBUG) LitLogger.info("Starting night " + day);
                 broadcast(new S2CGamePacket(this));
+                sendSysMessage(Text.TIME_NIGHT_START);
 
                 if (roleExists(MEDIUM) && day >= 2) medium();
                 if (roleExists(SEER)) seer();
@@ -130,7 +133,10 @@ public class ServerGame extends Game {
                 if (roleExists(WEREWOLF)) werewolf();
             } else {
                 setDay();
+                if (Static.DEBUG) LitLogger.info("Starting day " + day);
                 broadcast(new S2CGamePacket(this));
+
+                //TODO Send day message depending on deaths
 
                 sleep(10000);
             }
@@ -219,6 +225,10 @@ public class ServerGame extends Game {
         if (getOnlinePlayers().isEmpty()) stop();
 
         broadcast(new S2CPlayerLeavePacket(client.getUniqueId(), Static.DEBUG || players.size() >= MIN_PLAYERS));
+    }
+
+    public void selectTarget(ServerPlayer player) {
+        targets.add(player);
     }
 
     public void broadcast(Packet<?> packet) {
@@ -330,7 +340,7 @@ public class ServerGame extends Game {
     }
 
     private void wait(int seconds) {
-        for (int timer = seconds; timer >= -1; timer--) {
+        for (timer = seconds; timer >= -1; timer--) {
             S2CTimerPacket packet = new S2CTimerPacket(timer);
             broadcast(packet);
 
@@ -341,23 +351,35 @@ public class ServerGame extends Game {
         }
     }
 
-    private void threadWait(int seconds) {
-        waitThread = new Thread(() -> wait(seconds));
-        waitThread.start();
+    private void threadWait(int seconds, int players) {
+        timer = seconds;
 
-        try {
-            synchronized (this) {
-                this.wait(seconds * 1000L);
+        while (targets.size() < players && timer > 0) {
+            int dif = seconds - timer;
+            waitThread = new Thread(() -> wait(seconds));
+
+            LitLogger.info("Difference: " + dif);
+
+            try {
+                synchronized (this) {
+                    if (Static.DEBUG) LitLogger.info("Waiting for " + (seconds - dif) + "s started");
+
+                    waitThread.start();
+                    this.wait((seconds - dif) * 1000L);
+
+                    if (Static.DEBUG) LitLogger.info("End of wait");
+                }
+            } catch (InterruptedException | IllegalMonitorStateException e) {
+                LitLogger.error(e.getMessage(), e);
             }
-        } catch (InterruptedException | IllegalMonitorStateException e) {
-            LitLogger.get().error(e.getMessage(), e);
+
+            if (waitThread != null) {
+                waitThread.interrupt();
+                waitThread = null;
+            }
         }
 
-        if (waitThread != null) {
-            waitThread.interrupt();
-            waitThread = null;
-        }
-
+        timer = 0;
         broadcast(new S2CTimerPacket(-1));
     }
 
@@ -376,6 +398,8 @@ public class ServerGame extends Game {
     }
 
     private void medium() {
+        if (Static.DEBUG) LitLogger.info("Starting of Medium's turn");
+
         ServerPlayer medium = getPlayerByRole(MEDIUM);
         if (medium == null) throw new RuntimeException("Medium should not be null");
 
@@ -391,10 +415,13 @@ public class ServerGame extends Game {
         medium.sendPacket(new S2CGamePacket(this));
         medium.sendPacket(S2CTurnPacket.END);
 
-        sleep(MEDIUM_SLEEP);
+        sleep(LONG_SLEEP);
+        if (Static.DEBUG) LitLogger.info("End of Medium's turn");
     }
 
     private void seer() {
+        if (Static.DEBUG) LitLogger.info("Starting of Seers' turn");
+
         List<ServerPlayer> seers = getServerPlayersByRole(SEER);
         if (seers.isEmpty()) throw new RuntimeException("There should be at least one seer");
 
@@ -409,7 +436,7 @@ public class ServerGame extends Game {
         }
 
         if (seersArePlaying) {
-            threadWait(seers.size() == 1 ? lit.config().gameTurnDuration : lit.config().gameTurnDurationGroup);
+            threadWait(seers.size() == 1 ? lit.config().gameTurnDuration : lit.config().gameTurnDurationGroup, seers.size());
 
             if (targets.isEmpty()) targets.add(getRandomAlivePlayer(seers));
 
@@ -423,13 +450,16 @@ public class ServerGame extends Game {
                 seer.sendPacket(S2CTurnPacket.END);
             });
         } else {
-            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration));
+            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration), 1);
         }
 
         sleep(MEDIUM_SLEEP);
+
+        if (Static.DEBUG) LitLogger.info("End of Seers' turn");
     }
 
     private void owlman() {
+        if (Static.DEBUG) LitLogger.info("Starting of Owlman's turn");
         owledPlayer = null;
 
         ServerPlayer owlman = getPlayerByRole(OWL_MAN);
@@ -439,19 +469,22 @@ public class ServerGame extends Game {
 
         if (owlman.isAlive() && owlman.isConnected()) {
             startTurn(owlman);
-            threadWait(lit.config().gameTurnDuration);
+            threadWait(lit.config().gameTurnDuration, 1);
             owlman.sendPacket(S2CTurnPacket.END);
 
             if (targets.isEmpty()) targets.add(getRandomAlivePlayer(owlman));
             owledPlayer = targets.get(0);
         } else {
-            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration));
+            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration), 1);
         }
 
         sleep(MEDIUM_SLEEP);
+        if (Static.DEBUG) LitLogger.info("End of Owlman's turn");
     }
 
     private void mythomaniac() {
+        if (Static.DEBUG) LitLogger.info("Starting of Mythomaniac's turn");
+
         ServerPlayer mythomaniac = getPlayerByRole(MYTHOMANIAC);
         if (mythomaniac == null) throw new RuntimeException("Mythomaniac should not be null");
 
@@ -459,7 +492,7 @@ public class ServerGame extends Game {
 
         if (mythomaniac.isAlive() && mythomaniac.isConnected()) {
             startTurn(mythomaniac);
-            threadWait(lit.config().gameTurnDuration);
+            threadWait(lit.config().gameTurnDuration, 1);
 
             if (targets.isEmpty()) targets.add(getRandomAlivePlayer(mythomaniac));
 
@@ -472,13 +505,17 @@ public class ServerGame extends Game {
             mythomaniac.sendPacket(new S2CGamePacket(this));
             mythomaniac.sendPacket(S2CTurnPacket.END);
         } else {
-            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration));
+            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration), 1);
         }
 
         sleep(MEDIUM_SLEEP);
+
+        if (Static.DEBUG) LitLogger.info("End of Mythomaniac's turn");
     }
 
     private void bodyguard() {
+        if (Static.DEBUG) LitLogger.info("Starting of Bodyguard's turn");
+
         protectedPlayer = null;
 
         ServerPlayer bodyguard = getPlayerByRole(BODYGUARD);
@@ -488,19 +525,23 @@ public class ServerGame extends Game {
 
         if (bodyguard.isAlive() && bodyguard.isConnected()) {
             startTurn(bodyguard);
-            threadWait(lit.config().gameTurnDuration);
+            threadWait(lit.config().gameTurnDuration, 1);
             bodyguard.sendPacket(S2CTurnPacket.END);
 
             if (targets.isEmpty()) targets.add(getRandomAlivePlayer(bodyguard));
             protectedPlayer = targets.get(0);
         } else {
-            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration));
+            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration), 1);
         }
 
         sleep(MEDIUM_SLEEP);
+
+        if (Static.DEBUG) LitLogger.info("End of Bodyguard's turn");
     }
 
     private void werewolf() {
+        if (Static.DEBUG) LitLogger.info("Starting of Werewolves' turn");
+
         devouredPlayer = null;
 
         List<ServerPlayer> werewolves = getServerPlayersByRole(WEREWOLF);
@@ -517,7 +558,7 @@ public class ServerGame extends Game {
         }
 
         if (werewolvesArePlaying) {
-            threadWait(werewolves.size() == 1 ? lit.config().gameTurnDuration : lit.config().gameTurnDurationGroup);
+            threadWait(werewolves.size() == 1 ? lit.config().gameTurnDuration : lit.config().gameTurnDurationGroup, werewolves.size());
 
             if (targets.isEmpty()) targets.add(getRandomAlivePlayer(werewolves));
 
@@ -532,10 +573,12 @@ public class ServerGame extends Game {
                 werewolf.sendPacket(S2CTurnPacket.END);
             });
         } else {
-            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration));
+            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration), 1);
         }
 
         sleep(MEDIUM_SLEEP);
+
+        if (Static.DEBUG) LitLogger.info("End of Werewolves' turn");
     }
 
     public static class Adapter implements JsonSerializer<ServerGame> {

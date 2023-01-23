@@ -10,7 +10,7 @@ public class ClientNetHandler extends NetworkHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        LitLogger.get().error(cause.getMessage(), cause);
+        LitLogger.error(cause.getMessage(), cause);
         LupusInTabula.get().setScene(Scene.MAIN_MENU);
         //TODO Send modal
     }

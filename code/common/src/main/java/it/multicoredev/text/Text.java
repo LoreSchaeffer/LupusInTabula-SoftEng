@@ -21,6 +21,10 @@ public enum Text {
     CHANNEL_SEERS("channel.seers", "Seers"),
     CHANNEL_DEAD("channel.dead", "Dead"),
 
+    TIME_DAY_START("time.day.start", "It's morning and the sun is shining. The villagers wake up, they are all still alive"),
+    TIME_DAY_START_DEAD("time.day.start.dead", "It's morning, the sun is shining. The villagers wake up except {0}"),
+    TIME_NIGHT_START("time.night.start", "It's night, the moon is full and the villagers go to sleep"),
+
     GAME_TURN_MEDIUM("game.turn.medium", "The Medium wakes up and sees whether or not the lynched person was a werewolf"),
     GAME_TURN_MEDIUM_WEREWOLF("game.turn.medium.werewolf", "{0} WAS a werewolf"),
     GAME_TURN_MEDIUM_VILLAGER("game.turn.medium.villager", "{0} was NOT a werewolf"),
@@ -33,6 +37,11 @@ public enum Text {
     GAME_TURN_BODYGUARD("game.turn.bodyguard", "The Bodyguard wakes up and picks up someone to protect"),
     GAME_TURN_WEREWOLF("game.turn.werewolf", "The Werewolves wake up and pick up someone to devour"),
     GAME_TURN_WEREWOLF_CHOICE("game.turn.werewolf.choice", "The werewolves choose to devour {0}"),
+
+    SELECT_YOURSELF("select.yourself", "You can't select yourself"),
+    SELECT_DEAD("select.dead", "You can't select a dead player"),
+    SELECT_ALREADY_KNOWN("select.already_known", "You already know the role of this player"),
+    SELECT_WEREWOLF("select.werewolf", "You can't select an other werewolf"),
 
     MODAL_TITLE_INSUFFICIENT_PLAYERS("modal.title.insufficient_players", "Insufficient players"),
     MODAL_BODY_INSUFFICIENT_PLAYERS("modal.body.insufficient_players", "You need at least %d players to start a game");

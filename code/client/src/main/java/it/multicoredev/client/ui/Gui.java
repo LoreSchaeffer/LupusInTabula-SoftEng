@@ -138,23 +138,23 @@ public class Gui extends JFrame {
         client.addLoadHandler(new CefLoadHandler() {
             @Override
             public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
-                if (Static.DEBUG) LitLogger.get().info("Browser loading state changed to : " + isLoading);
+                if (Static.DEBUG) LitLogger.info("Browser loading state changed to : " + isLoading);
                 ready = !isLoading;
             }
 
             @Override
             public void onLoadStart(CefBrowser browser, CefFrame frame, CefRequest.TransitionType transitionType) {
-                if (Static.DEBUG) LitLogger.get().info("Browser loading started");
+                if (Static.DEBUG) LitLogger.info("Browser loading started");
             }
 
             @Override
             public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
-                if (Static.DEBUG) LitLogger.get().info("Browser loading ended");
+                if (Static.DEBUG) LitLogger.info("Browser loading ended");
             }
 
             @Override
             public void onLoadError(CefBrowser browser, CefFrame frame, ErrorCode errorCode, String errorText, String failedUrl) {
-                if (Static.DEBUG) LitLogger.get().info("Browser loading error: [" + errorCode + "] " + errorText + " (" + failedUrl + ")");
+                if (Static.DEBUG) LitLogger.info("Browser loading error: [" + errorCode + "] " + errorText + " (" + failedUrl + ")");
             }
         });
         client.addDisplayHandler(new CefDisplayHandler() {
@@ -184,9 +184,9 @@ public class Gui extends JFrame {
                     String log = "JS: [" + file + ":" + line + "] " + text;
 
                     switch (logSeverity) {
-                        case LOGSEVERITY_ERROR, LOGSEVERITY_FATAL -> LitLogger.get().error(log);
-                        case LOGSEVERITY_WARNING -> LitLogger.get().warn(log);
-                        default -> LitLogger.get().info(log);
+                        case LOGSEVERITY_ERROR, LOGSEVERITY_FATAL -> LitLogger.error(log);
+                        case LOGSEVERITY_WARNING -> LitLogger.warn(log);
+                        default -> LitLogger.info(log);
                     }
 
                     return true;
@@ -273,7 +273,7 @@ public class Gui extends JFrame {
         String message = Static.GSON.toJson(msg);
         browser.executeJavaScript("onMessage(" + message + ")", browser.getURL(), 0);
 
-        if (Static.DEBUG) LitLogger.get().info("Executing frontend code: " + message);
+        if (Static.DEBUG) LitLogger.info("Executing frontend code: " + message);
     }
 
     public void close() {
@@ -289,7 +289,7 @@ public class Gui extends JFrame {
 
         @Override
         public void handleProgress(EnumProgress progress, float percentage) {
-            if (Static.DEBUG) LitLogger.get().info(progress.name() + " browser " + percentage);
+            if (Static.DEBUG) LitLogger.info(progress.name() + " browser " + percentage);
 
             if (!progress.equals(EnumProgress.DOWNLOADING)) return;
 

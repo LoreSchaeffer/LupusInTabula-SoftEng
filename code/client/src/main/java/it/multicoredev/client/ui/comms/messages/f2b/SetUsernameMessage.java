@@ -18,7 +18,7 @@ public class SetUsernameMessage extends F2BMessage {
     @Override
     public boolean process(LupusInTabula lit, Gui gui, CefQueryCallback callback) {
         if (username == null || username.trim().isEmpty()) {
-            if (Static.DEBUG) LitLogger.get().error("Set username request has no data");
+            if (Static.DEBUG) LitLogger.error("Set username request has no data");
             return false;
         }
 

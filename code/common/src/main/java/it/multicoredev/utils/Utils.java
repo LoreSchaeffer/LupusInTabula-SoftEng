@@ -9,7 +9,7 @@ public class Utils {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
-            if (Static.DEBUG) LitLogger.get().error("Sleep interrupted", e);
+            if (Static.DEBUG) LitLogger.error("Sleep interrupted", e);
         }
     }
 

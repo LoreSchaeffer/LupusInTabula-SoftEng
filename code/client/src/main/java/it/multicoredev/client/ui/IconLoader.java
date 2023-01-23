@@ -12,7 +12,7 @@ public class IconLoader {
         try {
             return new ImageIcon(Objects.requireNonNull(IconLoader.class.getClassLoader().getResource(path))).getImage();
         } catch (Exception e) {
-            LitLogger.get().error("Failed to load icon: " + path, e);
+            LitLogger.error("Failed to load icon: " + path, e);
             return null;
         }
     }

@@ -36,7 +36,7 @@ public class ClientPacketListener implements IClientPacketListener {
     public void handleHandshake(S2CHandshakePacket packet) {
         if (!packet.isClientAccepted()) {
             net.disconnect();
-            LitLogger.get().info("Server rejected the connection: " + packet.getReason());
+            LitLogger.info("Server rejected the connection: " + packet.getReason());
 
             lit.showModal("connection_rejected", "Connection rejected", packet.getReason()); //TODO Localize
             return;
@@ -44,7 +44,7 @@ public class ClientPacketListener implements IClientPacketListener {
 
         if (packet.getNewClientId() != null) {
             net.changeId(packet.getNewClientId());
-            if (Static.DEBUG) LitLogger.get().info("Client id changed to " + packet.getNewClientId());
+            if (Static.DEBUG) LitLogger.info("Client id changed to " + packet.getNewClientId());
         }
 
         Encryption.setSecret(packet.getSecret());
@@ -55,7 +55,7 @@ public class ClientPacketListener implements IClientPacketListener {
     @Override
     public void handleDisconnect(S2CDisconnectPacket packet) {
         net.disconnect(true);
-        LitLogger.get().info("Disconnected from server: " + packet.getReason()); //TODO Change to a more readable form
+        LitLogger.info("Disconnected from server: " + packet.getReason()); //TODO Change to a more readable form
 
         if (packet.getReason().equals(DisconnectReason.S2C_GAME_NOT_FOUND)) {
             lit.showModal("game_not_found", "Game not found", "The game you tried to join does not exists"); //TODO Localize
@@ -66,22 +66,7 @@ public class ClientPacketListener implements IClientPacketListener {
 
     @Override
     public void handleMessage(S2CMessagePacket packet) {
-        Locale locale = lit.getLocale();
-
-        BaseText sender = packet.getSender();
-        BaseText message = packet.getMessage();
-
-        String senderText = sender instanceof StaticText ? sender.getText() : ((TranslatableText) sender).setLocalization(locale).getText();
-        String messageText = message instanceof StaticText ? message.getText() : ((TranslatableText) message).setLocalization(locale).getText();
-
-
-        lit.executeFrontendCode(new ChatMessageMessage(
-                new TranslatableText(Text.byPath("channel." + packet.getChannel().getId()).getPath()).setLocalization(locale).getText(),
-                senderText,
-                messageText
-        ));
-
-        LitLogger.get().info("CHAT: " + packet.getChannel().name() + " - " + packet.getSender().getText() + " > " + packet.getMessage().getText());
+        lit.sendChatMessage(packet.getSender(), packet.getMessage(), packet.getChannel());
     }
 
     @Override
@@ -92,7 +77,7 @@ public class ClientPacketListener implements IClientPacketListener {
     @Override
     public void handleCountdown(S2CGameStartCountdownPacket packet) {
         lit.executeFrontendCode(new GameStartCountdownMessage(packet.getSeconds()));
-        if (Static.DEBUG) LitLogger.get().info("Game starting in " + packet.getSeconds() + " seconds");
+        if (Static.DEBUG) LitLogger.info("Game starting in " + packet.getSeconds() + " seconds");
     }
 
     @Override
@@ -117,7 +102,7 @@ public class ClientPacketListener implements IClientPacketListener {
         lit.executeFrontendCode(new GameUpdateMessage(packet.getGame()));
         packet.getGame().getPlayers().forEach(player -> lit.executeFrontendCode(new UpdatePlayerMessage(player, null)));
 
-        if (Static.DEBUG) LitLogger.get().info(Static.GSON.toJson(packet.getGame()));
+        if (Static.DEBUG) LitLogger.info(Static.GSON.toJson(packet.getGame()));
     }
 
     @Override
@@ -132,13 +117,13 @@ public class ClientPacketListener implements IClientPacketListener {
 
     @Override
     public void handleGameCreated(S2CGameCreatedPacket packet) {
-        LitLogger.get().info("Game created: " + packet.getGame().getCode());
+        LitLogger.info("Game created: " + packet.getGame().getCode());
         lit.setCurrentGame(packet.getGame());
     }
 
     @Override
     public void handleGameJoined(S2CGameJoinedPacket packet) {
-        LitLogger.get().info("Game joined: " + packet.getGame().getCode());
+        LitLogger.info("Game joined: " + packet.getGame().getCode());
         lit.setCurrentGame(packet.getGame());
     }
 
@@ -149,7 +134,7 @@ public class ClientPacketListener implements IClientPacketListener {
         if (packet.isReadyToStart() && lit.getCurrentGame().getPlayer(lit.getClientId()).isMaster())
             lit.executeFrontendCode(new ReadyToStartMessage(true));
 
-        LitLogger.get().info("Player joined: " + packet.getPlayer().getName());
+        LitLogger.info("Player joined: " + packet.getPlayer().getName());
     }
 
     @Override
@@ -170,7 +155,7 @@ public class ClientPacketListener implements IClientPacketListener {
         if (!packet.isReadyToStart() && lit.getCurrentGame().getPlayer(lit.getClientId()).isMaster())
             lit.executeFrontendCode(new ReadyToStartMessage(false));
 
-        if (player != null) LitLogger.get().info("Player left: " + player.getName());
-        else LitLogger.get().info("Player left: " + packet.getClientId());
+        if (player != null) LitLogger.info("Player left: " + player.getName());
+        else LitLogger.info("Player left: " + packet.getClientId());
     }
 }

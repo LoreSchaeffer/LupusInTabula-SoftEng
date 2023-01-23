@@ -27,7 +27,7 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
 
     @Override
     public boolean processRequest(CefRequest request, CefCallback callback) {
-        if (Static.DEBUG) LitLogger.get().info(request.getMethod() + " : " + request.getURL());
+        if (Static.DEBUG) LitLogger.info(request.getMethod() + " : " + request.getURL());
 
         boolean handled = false;
         String url = request.getURL().substring(SCHEME.length() + 3);
@@ -91,7 +91,7 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
                 }
                 break;
             default:
-                LitLogger.get().warn("Unknown extension: " + extension);
+                LitLogger.warn("Unknown extension: " + extension);
                 break;
         }
 
@@ -140,7 +140,7 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
         File file = new File(path);
         boolean loadFromFile = file.exists() && file.isFile();
 
-        if (Static.DEBUG) LitLogger.get().info("Loading " + path + " from " + (loadFromFile ? "file" : "jar"));
+        if (Static.DEBUG) LitLogger.info("Loading " + path + " from " + (loadFromFile ? "file" : "jar"));
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(loadFromFile ? new FileInputStream(file) : Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(path)), StandardCharsets.UTF_8))) {
             StringBuilder content = new StringBuilder();
@@ -163,7 +163,7 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
 
             return content.toString();
         } catch (IOException | NullPointerException e) {
-            LitLogger.get().error("Failed to load resource '" + path + "': " + e.getMessage());
+            LitLogger.error("Failed to load resource '" + path + "': " + e.getMessage());
             return null;
         }
     }
@@ -180,7 +180,7 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
         File file = new File(path);
         boolean loadFromFile = file.exists() && file.isFile();
 
-        if (Static.DEBUG) LitLogger.get().info("Loading " + path + " from " + (loadFromFile ? "file" : "jar"));
+        if (Static.DEBUG) LitLogger.info("Loading " + path + " from " + (loadFromFile ? "file" : "jar"));
 
         try (InputStream is = loadFromFile ? new FileInputStream(file) : Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(path))) {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -193,7 +193,7 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
             data = os.toByteArray();
             return true;
         } catch (IOException | NullPointerException e) {
-            LitLogger.get().error("Failed to load resource '" + path + "'", e);
+            LitLogger.error("Failed to load resource '" + path + "'", e);
             return false;
         }
     }

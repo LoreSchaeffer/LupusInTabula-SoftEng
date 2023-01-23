@@ -31,7 +31,7 @@ public class ClientNetSocket {
             try {
                 socket.connect();
             } catch (InterruptedException e) {
-                LitLogger.get().error(e.getMessage(), e);
+                LitLogger.error(e.getMessage(), e);
                 disconnect();
             }
         });

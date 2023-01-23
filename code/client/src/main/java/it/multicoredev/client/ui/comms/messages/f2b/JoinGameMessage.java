@@ -18,7 +18,7 @@ public class JoinGameMessage extends F2BMessage {
     @Override
     public boolean process(LupusInTabula lit, Gui gui, CefQueryCallback callback) {
         if (code == null || code.trim().isEmpty()) {
-            if (Static.DEBUG) LitLogger.get().error("Join game request has no data");
+            if (Static.DEBUG) LitLogger.error("Join game request has no data");
             return false;
         }
 

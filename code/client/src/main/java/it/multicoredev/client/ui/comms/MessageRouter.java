@@ -27,7 +27,7 @@ public class MessageRouter extends CefMessageRouterHandlerAdapter {
             msg = GSON.fromJson(request, F2BMessage.class);
             if (msg == null || msg.getType() == null) throw new NullPointerException();
         } catch (Exception ignored) {
-            if (Static.DEBUG) LitLogger.get().warn("Unknown message: " + request);
+            if (Static.DEBUG) LitLogger.warn("Unknown message: " + request);
             return false;
         }
 

@@ -6,7 +6,6 @@ import it.multicoredev.enums.Role;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -67,7 +66,7 @@ public class Player extends Client {
         return this;
     }
 
-    public boolean knowsRole(@NotNull UUID uuid) {
+    public boolean roleIsKnownBy(@NotNull UUID uuid) {
         return roleKnownBy != null && roleKnownBy.contains(uuid);
     }
 

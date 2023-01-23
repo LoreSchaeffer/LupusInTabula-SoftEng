@@ -23,7 +23,7 @@ public class ChatMessageMessage extends F2BMessage {
         try {
             LupusInTabula.get().sendPacket(new C2SMessagePacket(message, player.getMessageChannel()));
         } catch (PacketSendException e) {
-            LitLogger.get().warn(e.getMessage(), e);
+            LitLogger.warn(e.getMessage(), e);
             return false;
         }
 

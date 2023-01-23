@@ -13,6 +13,7 @@ public enum Packets {
     C2S_HANDSHAKE(C2SHandshakePacket.class),
     C2S_JOIN_GAME(C2SJoinGamePacket.class),
     C2S_MESSAGE(C2SMessagePacket.class),
+    C2S_SELECT(C2SSelectPacket.class),
     C2S_START_GAME(C2SStartGamePacket.class),
 
     S2C_CHANGE_SCENE(S2CChangeScenePacket.class),
@@ -46,7 +47,7 @@ public enum Packets {
         for (Packets packet : values()) {
             registry.registerPacket(packet.getPacketClass());
             if (Static.DEBUG)
-                LitLogger.get().info("Registered packet " + packet.getPacketClass().getSimpleName() + " with id " + registry.getPacketId(packet.getPacketClass()));
+                LitLogger.info("Registered packet " + packet.getPacketClass().getSimpleName() + " with id " + registry.getPacketId(packet.getPacketClass()));
         }
     }
 }

@@ -21,13 +21,13 @@ public class SetSceneMessage extends F2BMessage {
     @Override
     public boolean process(LupusInTabula lit, Gui gui, CefQueryCallback callback) {
         if (sceneId == null || sceneId.trim().isEmpty()) {
-            if (Static.DEBUG) LitLogger.get().error("Set scene request has no data");
+            if (Static.DEBUG) LitLogger.error("Set scene request has no data");
             return false;
         }
 
         Scene scene = Scene.fromId(sceneId);
         if (scene == null) {
-            if (Static.DEBUG) LitLogger.get().error("Set scene request has invalid scene id");
+            if (Static.DEBUG) LitLogger.error("Set scene request has invalid scene id");
             return false;
         }
 

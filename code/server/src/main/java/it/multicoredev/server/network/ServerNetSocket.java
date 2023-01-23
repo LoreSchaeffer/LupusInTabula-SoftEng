@@ -26,7 +26,7 @@ public class ServerNetSocket {
             try {
                 socket.startServer();
             } catch (InterruptedException e) {
-                LitLogger.get().error(e.getMessage(), e);
+                LitLogger.error(e.getMessage(), e);
                 stop();
             }
         });

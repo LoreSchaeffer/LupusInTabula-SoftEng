@@ -108,7 +108,7 @@ public class LupusInTabula {
     private void initConfigs() {
         if (!confDir.exists() || !confDir.isDirectory()) {
             if (!confDir.mkdir()) {
-                LitLogger.get().error("Could not create conf directory!");
+                LitLogger.error("Could not create conf directory!");
                 System.exit(-1);
             }
         }
@@ -116,7 +116,7 @@ public class LupusInTabula {
         try {
             config = GSON.autoload(new File("conf", "config.json"), new Config().init(), Config.class);
         } catch (Exception e) {
-            LitLogger.get().error("Cannot create/load config file!", e);
+            LitLogger.error("Cannot create/load config file!", e);
             System.exit(-1);
         }
     }
