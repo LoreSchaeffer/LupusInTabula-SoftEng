@@ -18,6 +18,7 @@ public enum Packets {
 
     S2C_CHANGE_SCENE(S2CChangeScenePacket.class),
     S2C_DISCONNECT(S2CDisconnectPacket.class),
+    S2C_END_GAME(S2CEndGamePacket.class),
     S2C_GAME(S2CGamePacket.class),
     S2C_GAME_CREATED(S2CGameCreatedPacket.class),
     S2C_GAME_JOINED(S2CGameJoinedPacket.class),
@@ -27,7 +28,6 @@ public enum Packets {
     S2C_MODAL(S2CModalPacket.class),
     S2C_PLAYER_JOIN(S2CPlayerJoinPacket.class),
     S2C_PLAYER_LEAVE(S2CPlayerLeavePacket.class),
-    S2C_TIME(S2CTimePacket.class),
     S2C_TIMER(S2CTimerPacket.class),
     S2C_TURN_PACKET(S2CTurnPacket.class);
 

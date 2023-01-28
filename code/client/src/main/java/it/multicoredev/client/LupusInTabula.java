@@ -11,6 +11,7 @@ import it.multicoredev.client.ui.comms.messages.b2f.ShowModalMessage;
 import it.multicoredev.client.utils.ServerAddress;
 import it.multicoredev.enums.DisconnectReason;
 import it.multicoredev.enums.MessageChannel;
+import it.multicoredev.enums.Role;
 import it.multicoredev.enums.SceneId;
 import it.multicoredev.mclib.json.GsonHelper;
 import it.multicoredev.mclib.network.exceptions.PacketSendException;
@@ -48,11 +49,7 @@ public class LupusInTabula {
     private Gui gui;
     private final ClientNetSocket net;
     private Game currentGame;
-
-    // Placeholder vars
-    public int bootstrapProgress = 0;
-
-    //TODO Automatic update
+    private Role winner;
 
     private LupusInTabula() {
         net = new ClientNetSocket();
@@ -84,27 +81,13 @@ public class LupusInTabula {
 
         gui.setVisible(true);
 
-        //TODO Test code
-//        Utils.sleep(1000);
-
-//        for (int i = 0; i < 101; i++) {
-//            gui.executeFrontendCode("{\"type\":\"bootstrap\",\"data\": " + i + "}");
-//            bootstrapProgress++;
-//            Utils.sleep(100);
-//        }
-        //TODO End of test code
-
         setScene(Scene.MAIN_MENU);
         if (config.username == null || config.username.trim().isEmpty()) {
             while (!gui.isReady()) {
                 Utils.sleep(10);
             }
-            showModal(
-                    "username_selection",
-                    "Choose your name",
-                    "<input id=\"nameSelector\" class=\"form-control form-control-lg\" type=\"text\">",
-                    true
-            ); //TODO Localize
+
+            showModal("username_selection", Text.MODAL_TITLE_USERNAME_SELECTION.getText(), new StaticText("<input id=\"nameSelector\" class=\"form-control form-control-lg\" type=\"text\">"), true);
         }
     }
 
@@ -140,25 +123,42 @@ public class LupusInTabula {
         showModal(id, title, body, false, false);
     }
 
+    public void showModal(String id, BaseText title, BaseText body, boolean large, boolean custom) {
+        Locale locale = getLocale();
+
+        String titleText = title instanceof StaticText ? title.getText() : ((TranslatableText) title).setLocalization(locale).getText();
+        String bodyText = body instanceof StaticText ? body.getText() : ((TranslatableText) body).setLocalization(locale).getText();
+
+        showModal(id, titleText, bodyText, large, custom);
+    }
+
+    public void showModal(String id, BaseText title, BaseText body, boolean custom) {
+        showModal(id, title, body, false, custom);
+    }
+
+    public void showModal(String id, BaseText title, BaseText body) {
+        showModal(id, title, body, false, false);
+    }
+
     public void createGame() {
         if (!connectToServer()) {
             LitLogger.info("Connection to server " + config.serverAddress + " failed");
-            showModal("connection_error", "Connection error", "Failed to connect to server"); //TODO Localize
+            showModal("connection_error", Text.MODAL_TITLE_CONNECTION_ERROR.getText(), Text.MODAL_BODY_CONNECTION_ERROR.getText());
             return;
         }
-        LitLogger.info("Connected to server " + config.serverAddress);
 
+        LitLogger.info("Connected to server " + config.serverAddress);
         net.sendPacket(new C2SCreateGame());
     }
 
     public void joinGame(String code) {
         if (!connectToServer()) {
             LitLogger.info("Connection to server " + config.serverAddress + " failed");
-            showModal("connection_error", "Connection error", "Failed to connect to server"); //TODO Localize
+            showModal("connection_error", Text.MODAL_TITLE_CONNECTION_ERROR.getText(), Text.MODAL_BODY_CONNECTION_ERROR.getText());
             return;
         }
-        LitLogger.info("Connected to server " + config.serverAddress);
 
+        LitLogger.info("Connected to server " + config.serverAddress);
         net.sendPacket(new C2SJoinGamePacket(code));
     }
 
@@ -187,6 +187,10 @@ public class LupusInTabula {
         currentGame = game;
     }
 
+    public void setWinner(Role winner) {
+        this.winner = winner;
+    }
+
     @Nullable
     public Game getCurrentGame() {
         return currentGame;
@@ -198,6 +202,11 @@ public class LupusInTabula {
         if (game == null) return null;
 
         return game.getPlayer(getClientId());
+    }
+
+    @Nullable
+    public Role getWinner() {
+        return winner;
     }
 
     public UUID getClientId() {
@@ -318,8 +327,6 @@ public class LupusInTabula {
 
     private void checkForUpdates() {
         //TODO Check for updates
-        // Placeholder code
-
     }
 
     private boolean connectToServer() {

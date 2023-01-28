@@ -19,8 +19,6 @@ public interface IClientPacketListener extends PacketListener {
 
     void handleGame(S2CGamePacket packet);
 
-    void handleTime(S2CTimePacket packet);
-
     void handleTimer(S2CTimerPacket packet);
 
     void handleGameCreated(S2CGameCreatedPacket packet);
@@ -32,4 +30,6 @@ public interface IClientPacketListener extends PacketListener {
     void handlePlayerJoin(S2CPlayerJoinPacket packet);
 
     void handleTurn(S2CTurnPacket packet);
+
+    void handleEndGame(S2CEndGamePacket packet);
 }

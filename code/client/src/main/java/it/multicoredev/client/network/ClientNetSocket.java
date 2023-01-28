@@ -48,7 +48,6 @@ public class ClientNetSocket {
                     }
                     socket.disconnect();
 
-                    //TODO To test
                     while (socket.isConnected()) {
                         Utils.sleep(10);
                     }

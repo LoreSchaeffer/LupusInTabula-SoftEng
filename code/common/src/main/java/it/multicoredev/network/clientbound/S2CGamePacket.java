@@ -11,9 +11,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class S2CGamePacket implements Packet<IClientPacketListener> {
     private Game game;
+    private boolean updateUI;
+
+    public S2CGamePacket(@NotNull Game game, boolean updateUI) {
+        this.game = game;
+        this.updateUI = updateUI;
+    }
 
     public S2CGamePacket(@NotNull Game game) {
-        this.game = game;
+        this(game, true);
     }
 
     public S2CGamePacket() {
@@ -24,6 +30,7 @@ public class S2CGamePacket implements Packet<IClientPacketListener> {
         if (game == null) throw new EncoderException("Game is null");
 
         buf.writeObject(game);
+        buf.writeBoolean(updateUI);
     }
 
     @Override
@@ -33,6 +40,8 @@ public class S2CGamePacket implements Packet<IClientPacketListener> {
         } catch (IllegalArgumentException e) {
             throw new DecoderException("Error while reading game", e);
         }
+
+        updateUI = buf.readBoolean();
     }
 
     @Override
@@ -42,5 +51,9 @@ public class S2CGamePacket implements Packet<IClientPacketListener> {
 
     public Game getGame() {
         return game;
+    }
+
+    public boolean shouldUpdateUI() {
+        return updateUI;
     }
 }

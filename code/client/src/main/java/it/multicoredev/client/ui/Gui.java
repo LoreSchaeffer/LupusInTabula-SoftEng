@@ -6,6 +6,7 @@ import it.multicoredev.client.ui.comms.MessageRouter;
 import it.multicoredev.client.ui.comms.messages.b2f.B2FMessage;
 import it.multicoredev.client.ui.components.CircularProgressBar;
 import it.multicoredev.enums.SceneId;
+import it.multicoredev.text.Text;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Static;
 import me.friwi.jcefmaven.*;
@@ -294,7 +295,7 @@ public class Gui extends JFrame {
             if (!progress.equals(EnumProgress.DOWNLOADING)) return;
 
             if (frame == null) {
-                frame = new JFrame("Downloading natives..."); //TODO Localize message
+                frame = new JFrame(Text.DOWNLOADING_NATIVES.getText().setLocalization(LupusInTabula.get().getLocale()).getText());
                 frame.setSize(500, 500);
                 frame.setLocationRelativeTo(null);
                 frame.addWindowListener(new WindowAdapter() {

@@ -11,7 +11,10 @@ function onMessage(msg) {
         return;
     }
 
-    listeners[msg.type](msg);
+    try {
+        listeners[msg.type](msg);
+    } catch(e) {
+    }
 }
 
 function toBackend(data) {

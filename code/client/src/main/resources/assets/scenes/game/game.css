@@ -39,7 +39,7 @@
     position: absolute;
     bottom: 0;
     width: 100vw;
-    background-color: #212121ab;
+    background-color: #212121ab ;
     height: calc(100vh / 4.5);
     display: flex;
     flex-direction: column;

@@ -1,4 +1,3 @@
-const mainContainer = $('#mainContainer');
 const clock = $('#clock');
 const clockText = $('#clockText');
 const chatHistory = $('#chatHistory');
@@ -14,6 +13,7 @@ function newChatMessage(message) {
         .replaceAll("{from}", message['from'])
         .replaceAll("{message}", message['message']));
     chatHistory.append(chatMessage);
+    chatHistory.animate({ scrollTop: chatHistory.height() }, 1000);
 }
 
 function addPlayer(player) {
@@ -51,17 +51,7 @@ function showRole(player) {
 
 function onPlayerClick(playerContainer) {
     if (!active) return;
-
-    //TODO Preventi picking of self or known roles
-
-    window.cefQuery({
-        request: JSON.stringify({type: 'player_click', uuid: playerContainer.attr('id')}),
-        onSuccess: (response) => {
-            response = JSON.parse(response);
-            console.log(response);
-            //TODO
-        }
-    });
+    toBackend({type: 'player_click', id: playerContainer.attr('id')});
 }
 
 $(document).ready(() => {

@@ -11,9 +11,9 @@ import it.multicoredev.enums.SceneId;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.models.Client;
 import it.multicoredev.models.Game;
-import it.multicoredev.models.Player;
 import it.multicoredev.network.clientbound.*;
 import it.multicoredev.server.LupusInTabula;
+import it.multicoredev.server.utils.ServerUtils;
 import it.multicoredev.text.Text;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Static;
@@ -45,7 +45,10 @@ public class ServerGame extends Game {
     private ServerPlayer owledPlayer = null;
     private ServerPlayer protectedPlayer = null;
     private ServerPlayer devouredPlayer = null;
+    private final List<ServerPlayer> deadPlayers = new ArrayList<>();
+    private final List<ServerPlayer> votedPlayers = new ArrayList<>();
     private final List<ServerPlayer> targets = new ArrayList<>();
+    private Role winner = null;
 
     public ServerGame(@NotNull String code, @NotNull ServerPlayer master, @NotNull LupusInTabula lit) {
         super(code);
@@ -113,7 +116,7 @@ public class ServerGame extends Game {
             }
         }));
 
-        broadcast(new S2CGamePacket(this));
+        broadcast(new S2CGamePacket(this, true));
         broadcast(new S2CChangeScenePacket(SceneId.GAME));
 
         sleep(MEDIUM_SLEEP);
@@ -122,8 +125,10 @@ public class ServerGame extends Game {
             if (!isNight()) {
                 setNight();
                 if (Static.DEBUG) LitLogger.info("Starting night " + day);
-                broadcast(new S2CGamePacket(this));
+                broadcast(new S2CGamePacket(this, true));
                 sendSysMessage(Text.TIME_NIGHT_START);
+
+                resetData();
 
                 if (roleExists(MEDIUM) && day >= 2) medium();
                 if (roleExists(SEER)) seer();
@@ -134,23 +139,60 @@ public class ServerGame extends Game {
             } else {
                 setDay();
                 if (Static.DEBUG) LitLogger.info("Starting day " + day);
-                broadcast(new S2CGamePacket(this));
+                broadcast(new S2CGamePacket(this, true));
 
-                //TODO Send day message depending on deaths
+                checkDeaths();
+                if (deadPlayers.isEmpty()) {
+                    sendSysMessage(Text.TIME_DAY_START);
+                    if (Static.DEBUG) LitLogger.info("During this night no one died");
+                } else {
+                    sendSysMessage(Text.TIME_DAY_START_DEAD, deadPlayers.stream().map(ServerPlayer::getName).collect(Collectors.joining(", ")));
+                    if (Static.DEBUG) LitLogger.info("During this night the following players died: " + deadPlayers.stream().map(Client::toString).collect(Collectors.joining(", ")));
+                }
 
-                sleep(10000);
+                if (gameConditionsAreMet()) {
+                    firstDiscussion();
+
+                    if (!firstVote()) {
+                        sendSysMessage(Text.GAME_TURN_LYNCHING_SKIPPED);
+                        if (Static.DEBUG) LitLogger.info("No one voted, skipping the lynching");
+                        continue;
+                    }
+
+                    secondDiscussion();
+                    secondVote();
+                } else {
+                    end();
+                }
             }
         }
+
+        end();
     }
 
     public void stop() {
-        gameTask.cancel(true);
+        LitLogger.info("Game " + code + " stopped");
+
+        if (!gameTask.isCancelled()) gameTask.cancel(true);
         state = GameState.STOPPED;
         lit.removeGame(this.code);
+
+        broadcast(new S2CChangeScenePacket(SceneId.MAIN_MENU));
+        broadcast(new S2CModalPacket("game_stop", Text.MODAL_TITLE_GAME_STOPPED.getText(), Text.MODAL_BODY_GAME_STOPPED.getText()));
+        getOnlinePlayers().forEach(ServerPlayer::disconnect);
     }
 
     public void end() {
+        LitLogger.info("Game " + code + " ending...");
         state = GameState.ENDING;
+
+        broadcast(new S2CEndGamePacket(winner));
+        broadcast(new S2CChangeScenePacket(SceneId.ENDING));
+
+        sleep(SHORT_SLEEP);
+        if (!gameTask.isCancelled()) gameTask.cancel(true);
+        reset();
+        init();
     }
 
     @Override
@@ -207,9 +249,7 @@ public class ServerGame extends Game {
     }
 
     public void playerDisconnected(Client client) {
-        //TODO Handle player disconnection
-
-        Player player = getPlayer(client.getUniqueId());
+        ServerPlayer player = getPlayer(client.getUniqueId());
         if (player == null) return;
 
         if (player.isMaster()) player.setMaster(false);
@@ -219,12 +259,22 @@ public class ServerGame extends Game {
             return;
         }
 
-        // Differentiate behaviour based on game state
+        if (state == GameState.WAITING) {
+            broadcast(new S2CPlayerLeavePacket(client.getUniqueId(), Static.DEBUG || players.size() >= MIN_PLAYERS));
+        } else if (state == GameState.STARTING) {
+            player.setDisconnected();
+        } else if (state == GameState.RUNNING) {
+            player.setDisconnected();
 
+            if (!gameConditionsAreMet()) {
+                end();
+                return;
+            }
 
-        if (getOnlinePlayers().isEmpty()) stop();
+            //TODO Notify other players of the disconnection ?
+        }
 
-        broadcast(new S2CPlayerLeavePacket(client.getUniqueId(), Static.DEBUG || players.size() >= MIN_PLAYERS));
+        broadcast(new S2CGamePacket(this, true));
     }
 
     public void selectTarget(ServerPlayer player) {
@@ -351,39 +401,45 @@ public class ServerGame extends Game {
         }
     }
 
-    private void threadWait(int seconds, int players) {
+    private void threadWait(int seconds, int fakeSeconds) {
+        try {
+            synchronized (this) {
+                if (Static.DEBUG) LitLogger.info("Waiting for " + seconds + "s started");
+
+                waitThread = new Thread(() -> wait(fakeSeconds));
+                waitThread.start();
+                this.wait(seconds * 1000L);
+
+                if (Static.DEBUG) LitLogger.info("End of wait");
+            }
+        } catch (InterruptedException | IllegalMonitorStateException e) {
+            LitLogger.error(e.getMessage(), e);
+        }
+
+        if (waitThread != null) {
+            waitThread.interrupt();
+            waitThread = null;
+        }
+    }
+
+    private void multipleThreadWait(int seconds, int players) {
         timer = seconds;
 
         while (targets.size() < players && timer > 0) {
-            int dif = seconds - timer;
-            waitThread = new Thread(() -> wait(seconds));
-
-            LitLogger.info("Difference: " + dif);
-
-            try {
-                synchronized (this) {
-                    if (Static.DEBUG) LitLogger.info("Waiting for " + (seconds - dif) + "s started");
-
-                    waitThread.start();
-                    this.wait((seconds - dif) * 1000L);
-
-                    if (Static.DEBUG) LitLogger.info("End of wait");
-                }
-            } catch (InterruptedException | IllegalMonitorStateException e) {
-                LitLogger.error(e.getMessage(), e);
-            }
-
-            if (waitThread != null) {
-                waitThread.interrupt();
-                waitThread = null;
-            }
+            seconds = seconds - (seconds - timer);
+            threadWait(seconds, seconds);
         }
+    }
+
+    private void threadWait(int seconds, int fakeSeconds, int players) {
+        if (players > 1) multipleThreadWait(seconds, players);
+        else threadWait(seconds, fakeSeconds);
 
         timer = 0;
         broadcast(new S2CTimerPacket(-1));
     }
 
-    private ServerPlayer pickTarget() { //TODO To test
+    private ServerPlayer pickTarget() {
         return targets.stream()
                 .collect(Collectors.groupingBy(p -> p, Collectors.counting()))
                 .entrySet()
@@ -394,7 +450,47 @@ public class ServerGame extends Game {
     }
 
     private boolean gameConditionsAreMet() {
-        return true; //TODO
+        if (getOnlinePlayers().isEmpty()) return false;
+
+        List<ServerPlayer> alivePlayers = getOnlinePlayers().stream().filter(ServerPlayer::isAlive).toList();
+        int werewolves = (int) alivePlayers.stream().filter(p -> p.getRole().equals(WEREWOLF)).count();
+        int villagers = (int) alivePlayers.stream().filter(p -> p.getRole().equals(VILLAGER)).count();
+
+        if (werewolves == 0) {
+            sendSysMessage(Text.GAME_WIN_VILLAGERS);
+            winner = VILLAGER;
+            return false;
+        }
+
+        if (werewolves >= villagers) {
+            sendSysMessage(Text.GAME_WIN_WEREWOLVES);
+            winner = WEREWOLF;
+            return false;
+        }
+
+        return true;
+    }
+
+    private void resetData() {
+        owledPlayer = null;
+        protectedPlayer = null;
+        devouredPlayer = null;
+        deadPlayers.clear();
+        votedPlayers.clear();
+    }
+
+    public void reset() {
+        gameTask = null;
+        timer = -1;
+        waitThread = null;
+        lastLynchedPlayer = null;
+        owledPlayer = null;
+        protectedPlayer = null;
+        devouredPlayer = null;
+        deadPlayers.clear();
+        votedPlayers.clear();
+        targets.clear();
+        winner = null;
     }
 
     private void medium() {
@@ -410,6 +506,8 @@ public class ServerGame extends Game {
         if (medium.isAlive()) {
             sendSysMessage(medium, lastLynchedPlayer.getRole().equals(WEREWOLF) ? Text.GAME_TURN_MEDIUM_WEREWOLF : Text.GAME_TURN_MEDIUM_VILLAGER, lastLynchedPlayer.getName());
         }
+
+        if (Static.DEBUG) LitLogger.info(lastLynchedPlayer + " " + (lastLynchedPlayer.getRole().equals(WEREWOLF) ? "was" : "wasn't") + " a werewolf");
 
         lastLynchedPlayer.addRoleKnownBy(medium);
         medium.sendPacket(new S2CGamePacket(this));
@@ -436,7 +534,7 @@ public class ServerGame extends Game {
         }
 
         if (seersArePlaying) {
-            threadWait(seers.size() == 1 ? lit.config().gameTurnDuration : lit.config().gameTurnDurationGroup, seers.size());
+            threadWait(lit.config().gameTurnDuration, seers.size());
 
             if (targets.isEmpty()) targets.add(getRandomAlivePlayer(seers));
 
@@ -444,13 +542,16 @@ public class ServerGame extends Game {
             if (target == null) throw new RuntimeException("Target should not be null");
 
             sendSysMessage(seers, target.getRole().equals(WEREWOLF) ? Text.GAME_TURN_SEER_WEREWOLF : Text.GAME_TURN_SEER_VILLAGER, target.getName());
+
+            if (Static.DEBUG) LitLogger.info(target + " " + (target.getRole().equals(WEREWOLF) ? "is" : "isn't") + " a werewolf");
+
             seers.forEach(seer -> {
                 target.addRoleKnownBy(seer);
                 seer.sendPacket(new S2CGamePacket(this));
                 seer.sendPacket(S2CTurnPacket.END);
             });
         } else {
-            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration), 1);
+            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration), lit.config().gameTurnDuration, 1);
         }
 
         sleep(MEDIUM_SLEEP);
@@ -474,8 +575,10 @@ public class ServerGame extends Game {
 
             if (targets.isEmpty()) targets.add(getRandomAlivePlayer(owlman));
             owledPlayer = targets.get(0);
+
+            if (Static.DEBUG) LitLogger.info("Owled player: " + owledPlayer);
         } else {
-            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration), 1);
+            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration), lit.config().gameTurnDuration, 1);
         }
 
         sleep(MEDIUM_SLEEP);
@@ -504,8 +607,10 @@ public class ServerGame extends Game {
             sendSysMessage(mythomaniac, Text.GAME_TURN_MYTHOMANIAC_ROLE, Text.byPath("role." + target.getRole().getId()));
             mythomaniac.sendPacket(new S2CGamePacket(this));
             mythomaniac.sendPacket(S2CTurnPacket.END);
+
+            if (Static.DEBUG) LitLogger.info(mythomaniac + " (mythomaniac) new role is: " + mythomaniac.getRole());
         } else {
-            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration), 1);
+            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration), lit.config().gameTurnDuration, 1);
         }
 
         sleep(MEDIUM_SLEEP);
@@ -530,8 +635,10 @@ public class ServerGame extends Game {
 
             if (targets.isEmpty()) targets.add(getRandomAlivePlayer(bodyguard));
             protectedPlayer = targets.get(0);
+
+            if (Static.DEBUG) LitLogger.info("Protected player: " + protectedPlayer);
         } else {
-            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration), 1);
+            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration), lit.config().gameTurnDuration, 1);
         }
 
         sleep(MEDIUM_SLEEP);
@@ -558,27 +665,133 @@ public class ServerGame extends Game {
         }
 
         if (werewolvesArePlaying) {
-            threadWait(werewolves.size() == 1 ? lit.config().gameTurnDuration : lit.config().gameTurnDurationGroup, werewolves.size());
+            threadWait(lit.config().gameTurnDuration, werewolves.size());
 
             if (targets.isEmpty()) targets.add(getRandomAlivePlayer(werewolves));
 
 
             devouredPlayer = pickTarget();
             if (devouredPlayer == null) throw new RuntimeException("Target should not be null");
-            devouredPlayer.kill();
 
             sendSysMessage(werewolves, Text.GAME_TURN_WEREWOLF_CHOICE, devouredPlayer.getName());
             werewolves.forEach(werewolf -> {
                 werewolf.sendPacket(new S2CGamePacket(this));
                 werewolf.sendPacket(S2CTurnPacket.END);
             });
+
+            if (Static.DEBUG) LitLogger.info("Devoured player: " + devouredPlayer);
         } else {
-            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration), 1);
+            threadWait(Utils.randInt(MIN_TURN_TIME, lit.config().gameTurnDuration), lit.config().gameTurnDuration, 1);
         }
 
         sleep(MEDIUM_SLEEP);
 
         if (Static.DEBUG) LitLogger.info("End of Werewolves' turn");
+    }
+
+    private void checkDeaths() {
+        if (devouredPlayer == null) return;
+        if (devouredPlayer.equals(protectedPlayer)) return;
+
+        deadPlayers.add(devouredPlayer);
+        devouredPlayer.kill();
+
+        broadcast(new S2CGamePacket(this, true));
+    }
+
+    private void firstDiscussion() {
+        if (Static.DEBUG) LitLogger.info("Starting of first discussion");
+
+        sendSysMessage(Text.GAME_TURN_DISCUSSION_1);
+        wait(lit.config().firstDiscussionDuration);
+        sendSysMessage(Text.GAME_TURN_DISCUSSION_1_END);
+
+        if (Static.DEBUG) LitLogger.info("End of first discussion");
+    }
+
+    private boolean firstVote() {
+        if (Static.DEBUG) LitLogger.info("Starting of first vote");
+
+        List<ServerPlayer> votingPlayers = new ArrayList<>(getOnlinePlayers().stream().filter(ServerPlayer::isAlive).toList());
+        votingPlayers.add(devouredPlayer);
+
+        sendSysMessage(Text.GAME_TURN_VOTE_1);
+
+        targets.clear();
+        votingPlayers.forEach(player -> player.sendPacket(S2CTurnPacket.START));
+
+        threadWait(lit.config().firstVoteDuration, lit.config().firstVoteDuration, votingPlayers.size());
+
+        votingPlayers.forEach(player -> player.sendPacket(S2CTurnPacket.END));
+
+        if (targets.isEmpty()) {
+            if (Static.DEBUG) LitLogger.info("End of first vote");
+            return false;
+        }
+
+        Map<ServerPlayer, Integer> votes = ServerUtils.counter(targets);
+        ServerPlayer votedPlayer = ServerUtils.getMostFrequent(votes);
+        if (votedPlayer == null) throw new RuntimeException("Voted player should not be null");
+
+        votedPlayers.add(votedPlayer);
+        votes.remove(votedPlayer);
+        if (Static.DEBUG) LitLogger.info("Voted player 1: " + votedPlayer);
+
+        votedPlayer = ServerUtils.getMostFrequent(votes);
+        if (votedPlayer == null) throw new RuntimeException("Voted player should not be null");
+
+        votedPlayers.add(votedPlayer);
+        votes.remove(votedPlayer);
+        if (Static.DEBUG) LitLogger.info("Voted player 2: " + votedPlayer);
+
+        if (owledPlayer != null && !votedPlayers.contains(owledPlayer)) {
+            votedPlayers.add(owledPlayer);
+            if (Static.DEBUG) LitLogger.info("Voted player 3 (owled): " + owledPlayer);
+        }
+
+        sendSysMessage(Text.GAME_TURN_VOTE_1_END, votedPlayers.stream().map(ServerPlayer::getName).collect(Collectors.joining(", ")));
+
+        if (Static.DEBUG) LitLogger.info("End of first vote");
+        return true;
+    }
+
+    private void secondDiscussion() {
+        if (Static.DEBUG) LitLogger.info("Starting of second discussion");
+
+        sendSysMessage(Text.GAME_TURN_DISCUSSION_2);
+        wait(votedPlayers.size() == 3 ? lit.config().secondDiscussionDuration3 : lit.config().secondDiscussionDuration);
+        sendSysMessage(Text.GAME_TURN_DISCUSSION_2_END);
+
+        if (Static.DEBUG) LitLogger.info("End of second discussion");
+    }
+
+    private void secondVote() {
+        if (Static.DEBUG) LitLogger.info("Starting of second vote");
+
+        List<ServerPlayer> votingPlayers = new ArrayList<>(getOnlinePlayers().stream().filter(ServerPlayer::isAlive).toList());
+
+        sendSysMessage(Text.GAME_TURN_VOTE_2, votedPlayers.stream().map(ServerPlayer::getName).collect(Collectors.joining(", ")));
+
+        targets.clear();
+        votingPlayers.forEach(player -> player.sendPacket(S2CTurnPacket.START));
+
+        threadWait(lit.config().firstVoteDuration, lit.config().firstVoteDuration, votingPlayers.size());
+
+        votingPlayers.forEach(player -> player.sendPacket(S2CTurnPacket.END));
+
+        if (targets.isEmpty()) {
+            if (Static.DEBUG) LitLogger.info("End of second vote");
+            return;
+        }
+
+        lastLynchedPlayer = pickTarget();
+        lastLynchedPlayer.kill();
+
+        broadcast(new S2CGamePacket(this, true));
+        sendSysMessage(Text.GAME_TURN_VOTE_2_END, lastLynchedPlayer.getName());
+        if (Static.DEBUG) LitLogger.info(lastLynchedPlayer + " was lynched");
+
+        if (Static.DEBUG) LitLogger.info("End of second vote");
     }
 
     public static class Adapter implements JsonSerializer<ServerGame> {

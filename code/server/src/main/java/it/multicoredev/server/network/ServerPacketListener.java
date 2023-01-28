@@ -240,9 +240,11 @@ public class ServerPacketListener implements IServerPacketListener {
         game.selectTarget(target);
 
         try {
-            game.notify();
+            synchronized (game) {
+                game.notify();
+            }
         } catch (IllegalMonitorStateException e) {
-            LitLogger.warn(e.getMessage());
+            LitLogger.error(e.getMessage(), e);
         }
     }
 

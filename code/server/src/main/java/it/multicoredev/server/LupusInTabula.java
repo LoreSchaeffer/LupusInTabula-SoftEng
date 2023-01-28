@@ -8,7 +8,7 @@ import it.multicoredev.server.assets.Config;
 import it.multicoredev.server.models.ServerGame;
 import it.multicoredev.server.models.ServerPlayer;
 import it.multicoredev.server.network.ServerNetSocket;
-import it.multicoredev.server.utils.Utils;
+import it.multicoredev.server.utils.ServerUtils;
 import it.multicoredev.utils.Encryption;
 import it.multicoredev.utils.LitLogger;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +25,7 @@ public class LupusInTabula {
 
     private static final GsonHelper GSON = new GsonHelper();
     private static final int CODE_LENGTH = 6;
-    private static final int MAX_GAMES = Integer.MAX_VALUE; //TODO
+    private static final int MAX_GAMES = Integer.MAX_VALUE;
 
     private static LupusInTabula instance;
 
@@ -34,14 +34,6 @@ public class LupusInTabula {
 
     private ServerNetSocket net;
     private final Map<String, ServerGame> games = new HashMap<>();
-
-    //TODO Should have: limit game number
-    //TODO Should have: voice chat
-    //TODO Should have: retry sending packets on error
-    //TODO Should have: allow master to choose special roles to add
-    //TODO Should have: lobby timeout
-
-    //TODO Must have: update other players when a player join your lobby
 
     private LupusInTabula() {
 
@@ -125,7 +117,7 @@ public class LupusInTabula {
         String code;
 
         do {
-            code = Utils.createRandomCode(CODE_LENGTH);
+            code = ServerUtils.createRandomCode(CODE_LENGTH);
         } while (getGame(code) != null);
 
         return code;

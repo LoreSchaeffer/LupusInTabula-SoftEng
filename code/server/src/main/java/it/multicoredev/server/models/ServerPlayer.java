@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @JsonAdapter(ServerPlayer.Adapter.class)
 public class ServerPlayer extends Player {
-    private final ServerNetHandler netHandler;
+    private ServerNetHandler netHandler;
 
     // ServerNetHandler is null only for fake players
     public ServerPlayer(@NotNull UUID uuid, @NotNull String name, boolean gameMaster, ServerNetHandler netHandler) {
@@ -43,6 +43,10 @@ public class ServerPlayer extends Player {
 
     public void disconnect() {
         netHandler.disconnect();
+    }
+
+    public void setDisconnected() {
+        netHandler = null;
     }
 
     public static class Adapter implements JsonSerializer<ServerPlayer> {

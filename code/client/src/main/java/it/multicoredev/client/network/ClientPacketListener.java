@@ -37,8 +37,7 @@ public class ClientPacketListener implements IClientPacketListener {
         if (!packet.isClientAccepted()) {
             net.disconnect();
             LitLogger.info("Server rejected the connection: " + packet.getReason());
-
-            lit.showModal("connection_rejected", "Connection rejected", packet.getReason()); //TODO Localize
+            lit.showModal("connection_rejected", Text.MODAL_TITLE_CONNECTION_REJECTED.getText(), Text.MODAL_BODY_CONNECTION_REJECTED.getText());
             return;
         }
 
@@ -55,13 +54,15 @@ public class ClientPacketListener implements IClientPacketListener {
     @Override
     public void handleDisconnect(S2CDisconnectPacket packet) {
         net.disconnect(true);
-        LitLogger.info("Disconnected from server: " + packet.getReason()); //TODO Change to a more readable form
+        LitLogger.info("Disconnected from server: " + packet.getReason());
 
         if (packet.getReason().equals(DisconnectReason.S2C_GAME_NOT_FOUND)) {
-            lit.showModal("game_not_found", "Game not found", "The game you tried to join does not exists"); //TODO Localize
+            lit.showModal("game_not_found", Text.MODAL_TITLE_GAME_NOT_FOUND.getText(), Text.MODAL_BODY_GAME_NOT_FOUND.getText());
+        } else if (packet.getReason().equals(DisconnectReason.S2C_SERVER_CLOSING)) {
+            lit.showModal("server_closing", Text.MODAL_TITLE_SERVER_CLOSING.getText(), Text.MODAL_BODY_SERVER_CLOSING.getText());
+        } else {
+            lit.showModal("generic_disconnection", Text.MODAL_TITLE_GENERIC_DISCONNECTION.getText(), Text.MODAL_BODY_GENERIC_DISCONNECTION.getText());
         }
-
-        //TODO Handle disconnection
     }
 
     @Override
@@ -100,14 +101,9 @@ public class ClientPacketListener implements IClientPacketListener {
     public void handleGame(S2CGamePacket packet) {
         lit.setCurrentGame(packet.getGame());
         lit.executeFrontendCode(new GameUpdateMessage(packet.getGame()));
-        packet.getGame().getPlayers().forEach(player -> lit.executeFrontendCode(new UpdatePlayerMessage(player, null)));
+        if (packet.shouldUpdateUI()) packet.getGame().getPlayers().forEach(player -> lit.executeFrontendCode(new UpdatePlayerMessage(player, null)));
 
         if (Static.DEBUG) LitLogger.info(Static.GSON.toJson(packet.getGame()));
-    }
-
-    @Override
-    public void handleTime(S2CTimePacket packet) {
-
     }
 
     @Override
@@ -143,6 +139,11 @@ public class ClientPacketListener implements IClientPacketListener {
         if (player == null) return;
 
         lit.executeFrontendCode(new UpdatePlayerMessage(player, packet.isTurnStart()));
+    }
+
+    @Override
+    public void handleEndGame(S2CEndGamePacket packet) {
+        lit.setWinner(packet.getWinner());
     }
 
     @Override
