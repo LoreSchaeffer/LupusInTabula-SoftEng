@@ -10,10 +10,12 @@ public enum F2BMessageRegistry {
     GET_GAME_CODE(GetGameCodeMessage.class),
     GET_PLAYERS(GetPlayersMessage.class),
     GET_SELF(GetSelfMessage.class),
+    GET_WINNER(GetWinnerMessage.class),
     JOIN_GAME(JoinGameMessage.class),
     LEAVE_GAME(LeaveGameMessage.class),
     NEW_GAME(NewGameMessage.class),
     PLAYER_CLICK(PlayerClickMessage.class),
+    REPLAY(ReplayMessage.class),
     SET_SCENE(SetSceneMessage.class),
     SET_USERNAME(SetUsernameMessage.class),
     START_GAME(StartGameMessage.class);

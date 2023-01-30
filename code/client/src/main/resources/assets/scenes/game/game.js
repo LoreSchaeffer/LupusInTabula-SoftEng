@@ -22,7 +22,7 @@ function addPlayer(player) {
     const playerContainer = $(playerFragment.replaceAll('{player}', player['uuid'])
         .replaceAll('{icon}', player['alive'] ? (showRole(player) ? player['role'].toLowerCase() : 'unknown') : 'dead')
         .replaceAll('{name}', player['name'])
-        .replaceAll('{role}', showRole(player) ? capitalize(player['role'].toLowerCase()) : 'Unknown')
+        .replaceAll('{role}', showRole(player) ? capitalize(player['role'].toLowerCase()) : '${role.unknown}')
     );
     if (!player['alive']) playerContainer.addClass('dead');
     col.append(playerContainer);

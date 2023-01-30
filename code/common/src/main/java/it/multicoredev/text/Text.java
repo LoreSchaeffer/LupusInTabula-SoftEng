@@ -14,6 +14,7 @@ public enum Text {
     OWL_MAN("role.owl_man", "Owl-man"),
     WEREHAMSTER("role.werehamster", "Werehamster"),
     MYTHOMANIAC("role.mythomaniac", "Mythomaniac"),
+    UNKNOWN("role.unknown", "Unknown"),
 
     CHANNEL_ALL("channel.all", "All"),
     CHANNEL_SYSTEM("channel.system", "System"),
@@ -28,7 +29,7 @@ public enum Text {
     GAME_TURN_MEDIUM("game.turn.medium", "The Medium wakes up and sees whether or not the lynched person was a werewolf"),
     GAME_TURN_MEDIUM_WEREWOLF("game.turn.medium.werewolf", "{0} WAS a werewolf"),
     GAME_TURN_MEDIUM_VILLAGER("game.turn.medium.villager", "{0} was NOT a werewolf"),
-    GAME_TURN_SEER("game.turn.seer", "The seer wakes up picks someone to ask about"),
+    GAME_TURN_SEER("game.turn.seer", "The Seer wakes up picks someone to ask about"),
     GAME_TURN_SEER_WEREWOLF("game.turn.seer.werewolf", "{0} is a werewolf"),
     GAME_TURN_SEER_VILLAGER("game.tur.seer.villager", "{0} is NOT a werewolf"),
     GAME_TURN_OWL_MAN("game.turn.owl_man", "The Owl-man wakes up and picks up someone to send to the lynching"),
@@ -49,6 +50,8 @@ public enum Text {
 
     GAME_WIN_VILLAGERS("game.win.villagers", "All the werewolves have been killed. The villagers won"),
     GAME_WIN_WEREWOLVES("game.win.werewolves", "The werewolves devoured all the villagers"),
+    WIN_VILLAGERS("win.villagers", "The villagers won!"),
+    WIN_WEREWOLVES("win.werewolves", "The werewolves won!"),
 
     SELECT_YOURSELF("select.yourself", "You can't select yourself"),
     SELECT_DEAD("select.dead", "You can't select a dead player"),
@@ -56,7 +59,7 @@ public enum Text {
     SELECT_WEREWOLF("select.werewolf", "You can't select an other werewolf"),
 
     MODAL_TITLE_INSUFFICIENT_PLAYERS("modal.title.insufficient_players", "Insufficient players"),
-    MODAL_BODY_INSUFFICIENT_PLAYERS("modal.body.insufficient_players", "You need at least %d players to start a game"),
+    MODAL_BODY_INSUFFICIENT_PLAYERS("modal.body.insufficient_players", "You need at least {0} players to start a game"),
     MODAL_TITLE_GAME_STOPPED("modal.title.game_stopped", "Game interrupted"),
     MODAL_BODY_GAME_STOPPED("modal.body.game_stopped", "An error caused the game to stop. Please create a new game to play"),
     MODAL_TITLE_CONNECTION_ERROR("modal.title.connection_error", "Connection error"),
@@ -73,6 +76,23 @@ public enum Text {
     MODAL_BODY_NETWORK_EXCEPTION("modal.body.network_exception", "An error occurred while communicating with the server.<br>{0}"),
     MODAL_TITLE_USERNAME_SELECTION("modal.title.username_selection", "Chose your name"),
 
+    TITLE_PLAYERS("title.players", "Players"),
+    TITLE_SETTINGS("title.settings", "Settings"),
+
+    BUTTON_CREATE_GAME("btn.create_game", "Create Game"),
+    BUTTON_JOIN_GAME("btn.join_game", "Join Game"),
+    BUTTON_CLOSE("btn.close", "Close"),
+    BUTTON_SETTINGS("btn.settings", "Settings"),
+    BUTTON_HELP("btn.help", "Help"),
+    BUTTON_CREDITS("btn.credits", "Credits"),
+    BUTTON_START("btn.start", "Start"),
+    BUTTON_REPLAY("btn.replay", "Play Again"),
+    BUTTON_QUIT("btn.quit", "Quit"),
+
+    IN_SEND_MESSAGE("in.send_message", "Send a message"),
+
+    MAIN_MENU_VERSION("main_menu.version", "Version "),
+    LOBBY_SETTINGS_INFO("lobby.settings_info", "Settings will be available in a future version"),
 
     DOWNLOADING_NATIVES("system.downloading_natives", "Downloading natives...");
 

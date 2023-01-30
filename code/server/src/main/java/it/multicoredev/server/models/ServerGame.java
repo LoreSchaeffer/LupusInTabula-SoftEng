@@ -450,9 +450,12 @@ public class ServerGame extends Game {
     }
 
     private boolean gameConditionsAreMet() {
-        if (getOnlinePlayers().isEmpty()) return false;
+        if (!Static.DEBUG && getOnlinePlayers().isEmpty()) return false;
 
-        List<ServerPlayer> alivePlayers = getOnlinePlayers().stream().filter(ServerPlayer::isAlive).toList();
+        List<ServerPlayer> alivePlayers = !Static.DEBUG ?
+                getOnlinePlayers().stream().filter(ServerPlayer::isAlive).toList() :
+                getPlayers().stream().map(p -> (ServerPlayer) p).filter(ServerPlayer::isAlive).toList();
+
         int werewolves = (int) alivePlayers.stream().filter(p -> p.getRole().equals(WEREWOLF)).count();
         int villagers = (int) alivePlayers.stream().filter(p -> p.getRole().equals(VILLAGER)).count();
 

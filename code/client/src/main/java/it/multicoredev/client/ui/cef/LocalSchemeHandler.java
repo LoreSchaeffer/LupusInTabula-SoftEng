@@ -1,5 +1,10 @@
 package it.multicoredev.client.ui.cef;
 
+import it.multicoredev.client.LupusInTabula;
+import it.multicoredev.client.assets.Locale;
+import it.multicoredev.text.BaseText;
+import it.multicoredev.text.Text;
+import it.multicoredev.text.TranslatableText;
 import it.multicoredev.utils.LitLogger;
 import it.multicoredev.utils.Static;
 import org.cef.callback.CefCallback;
@@ -20,6 +25,7 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
     public static final String SCHEME = "local";
     private static final String PATH = "assets/";
     private static final Pattern INCLUDE_PATTERN = Pattern.compile("<!--include\\(.*\\)-->");
+    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\$\\{.*?\\}");
 
     private byte[] data;
     private String mimeType;
@@ -78,13 +84,7 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
                     mimeType = "image/svg+xml";
                     handled = true;
                 }
-            case "ttf":
-                if (loadFile(path)) {
-                    mimeType = "application/octet-stream";
-                    handled = true;
-                }
-                break;
-            case "woff2":
+            case "ttf", "otf", "woff2":
                 if (loadFile(path)) {
                     mimeType = "application/octet-stream";
                     handled = true;
@@ -146,16 +146,27 @@ public class LocalSchemeHandler extends CefResourceHandlerAdapter {
             StringBuilder content = new StringBuilder();
             String line;
 
+            Locale locale = LupusInTabula.get().getLocale();
+
             while ((line = reader.readLine()) != null) {
-                Matcher matcher = INCLUDE_PATTERN.matcher(line);
-                if (matcher.find()) {
-                    String include = matcher.group();
+                Matcher m1 = INCLUDE_PATTERN.matcher(line);
+                while (m1.find()) {
+                    String include = m1.group();
                     include = include.substring(include.indexOf("(") + 1, include.indexOf(")"));
                     include = PATH + (include.startsWith("/") ? include.substring(1) : include);
 
                     String included = readTextFile(include);
                     if (included != null) content.append(included).append("\n");
                     continue;
+                }
+
+                Matcher m2 = PLACEHOLDER_PATTERN.matcher(line);
+                while (m2.find()) {
+                    String placeholder = m2.group();
+                    String textPath = placeholder.substring(2, placeholder.length() - 1);
+
+                    Text text = Text.byPath(textPath);
+                    if (text != null) line = line.replace(placeholder, text.getText().setLocalization(locale).getText());
                 }
 
                 content.append(line).append("\n");

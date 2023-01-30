@@ -285,9 +285,8 @@ public class LupusInTabula {
                     if (locale == null) continue;
 
                     try {
-                        if (locale.completeMissing()) {
-                            GSON.save(locale, file);
-                        }
+                        locale.completeMissing();
+                        GSON.save(locale, file);
                     } catch (Exception e) {
                         LitLogger.error("Cannot save localization file " + file.getName() + "!", e);
                     }
