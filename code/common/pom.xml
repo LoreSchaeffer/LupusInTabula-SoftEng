@@ -7,7 +7,7 @@
     <parent>
         <groupId>it.multicoredev</groupId>
         <artifactId>LupusInTabula</artifactId>
-        <version>0.0.1</version>
+        <version>0.1.0</version>
     </parent>
 
     <artifactId>LupusInTabula-Common</artifactId>
@@ -34,14 +34,14 @@
             <url>https://github.com/LoreSchaeffer</url>
         </developer>
         <developer>
-            <id>1074800</id>
-            <name>Saif Bouchemal</name>
-            <url>https://github.com/LoreSchaeffer</url>
-        </developer>
-        <developer>
             <id>1072382</id>
             <name>Marianna Romelli</name>
             <url>https://github.com/MariRomelli</url>
+        </developer>
+        <developer>
+            <id>1074800</id>
+            <name>Saif Bouchemal</name>
+            <url>https://github.com/LoreSchaeffer</url>
         </developer>
     </developers>
 

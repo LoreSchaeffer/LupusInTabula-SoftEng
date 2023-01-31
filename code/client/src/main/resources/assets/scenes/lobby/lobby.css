@@ -1,0 +1,108 @@
+#mainContainer {
+    background: url("local://assets/images/menu_bg.jpg") center center no-repeat;
+    padding: 0;
+}
+
+#lobbyContent {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    padding-left: 12px;
+    padding-right: 12px;
+    background-color: #00000040;
+}
+
+#exitBtn {
+    position: absolute;
+    top: 0;
+    right: 12px;
+    margin: 0;
+    font-size: 30px;
+    cursor: pointer;
+    color: var(--btn-secondary);
+    text-shadow: 2px 0 transparent, -2px 0 transparent, 0 2px transparent, 0 -2px transparent,
+    1px 1px transparent, -1px -1px transparent, 1px -1px transparent, -1px 1px transparent;
+}
+
+#exitBtn:hover {
+    color: var(--btn-secondary-hover);
+}
+
+#exitBtn:active {
+    color: var(--btn-secondary-hover);
+    text-shadow: 2px 0 black, -2px 0 black, 0 2px black, 0 -2px black,
+    1px 1px black, -1px -1px black, 1px -1px black, -1px 1px black;
+}
+
+#gameCode {
+    position: absolute;
+    bottom: 12px;
+    margin-bottom: 0;
+    left: 50%;
+    transform: translate(-50%);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-primary {
+    min-height: 60px;
+    font-size: 30px;
+    line-height: 30px;
+}
+
+#startGame {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+}
+
+#mainContainer h1 {
+    text-transform: uppercase;
+    text-shadow: 0 0 5px black;
+}
+
+#mainContainer h2 {
+    text-align: center;
+    text-shadow: 0 0 5px black;
+    margin-top: 1em
+}
+
+.row h1 {
+    text-align: center;
+}
+
+#players {
+    height: 100vh;
+    background-color: #00000050;
+}
+
+.player {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    border: 3px solid white;
+    border-radius: 12px;
+    margin-bottom: 5px;
+}
+
+.self {
+    border-color: var(--yellow);
+}
+
+.crown {
+    justify-self: flex-end;
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+.crown i {
+    color: var(--yellow);
+}
+
+.player-icon {
+    max-width: 60px;
+    margin-right: 5px;
+}

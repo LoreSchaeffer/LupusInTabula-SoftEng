@@ -1,7 +1,13 @@
 .idea/
 target/
+run/
+build/
 /code/.idea/
 /code/target/
+/code/run/
+/code/build/
+/code/server/build/
+/code/client/build/
 
 *.iml
 *.ini

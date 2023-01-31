@@ -11,13 +11,25 @@ public enum Packets {
     C2S_CREATE_GAME(C2SCreateGame.class),
     C2S_DISCONNECT(C2SDisconnectPacket.class),
     C2S_HANDSHAKE(C2SHandshakePacket.class),
-    C2S_JOIN_GAME(C2SJoinGame.class),
+    C2S_JOIN_GAME(C2SJoinGamePacket.class),
     C2S_MESSAGE(C2SMessagePacket.class),
+    C2S_SELECT(C2SSelectPacket.class),
+    C2S_START_GAME(C2SStartGamePacket.class),
 
     S2C_CHANGE_SCENE(S2CChangeScenePacket.class),
     S2C_DISCONNECT(S2CDisconnectPacket.class),
+    S2C_END_GAME(S2CEndGamePacket.class),
+    S2C_GAME(S2CGamePacket.class),
+    S2C_GAME_CREATED(S2CGameCreatedPacket.class),
+    S2C_GAME_JOINED(S2CGameJoinedPacket.class),
+    S2C_GAME_START_COUNTDOWN(S2CGameStartCountdownPacket.class),
     S2C_HANDSHAKE(S2CHandshakePacket.class),
-    S2C_MESSAGE(S2CMessagePacket.class);
+    S2C_MESSAGE(S2CMessagePacket.class),
+    S2C_MODAL(S2CModalPacket.class),
+    S2C_PLAYER_JOIN(S2CPlayerJoinPacket.class),
+    S2C_PLAYER_LEAVE(S2CPlayerLeavePacket.class),
+    S2C_TIMER(S2CTimerPacket.class),
+    S2C_TURN_PACKET(S2CTurnPacket.class);
 
     private final Class<? extends Packet<?>> packetClass;
 
@@ -35,7 +47,7 @@ public enum Packets {
         for (Packets packet : values()) {
             registry.registerPacket(packet.getPacketClass());
             if (Static.DEBUG)
-                LitLogger.get().info("Registered packet " + packet.getPacketClass().getSimpleName() + " with id " + registry.getPacketId(packet.getPacketClass()));
+                LitLogger.info("Registered packet " + packet.getPacketClass().getSimpleName() + " with id " + registry.getPacketId(packet.getPacketClass()));
         }
     }
 }

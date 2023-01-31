@@ -11,9 +11,11 @@ public interface IServerPacketListener extends PacketListener {
 
     void handleCreateGame(C2SCreateGame packet);
 
-    void handleJoinGame(C2SJoinGame packet);
+    void handleJoinGame(C2SJoinGamePacket packet);
 
     void handleDisconnect(C2SDisconnectPacket packet);
 
     void handleStartGame(C2SStartGamePacket packet);
+
+    void handleSelect(C2SSelectPacket packet);
 }

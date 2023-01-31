@@ -8,6 +8,6 @@ public class ServerNetHandler extends NetworkHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        LitLogger.get().error(cause.getMessage(), cause);
+        LitLogger.error(cause.getMessage(), cause);
     }
 }

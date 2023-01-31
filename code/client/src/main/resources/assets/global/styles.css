@@ -1,0 +1,162 @@
+:root {
+    --background: #212121;
+    --btn-primary: #008a44;
+    --btn-primary-hover: #0a964f;
+    --btn-secondary: #e3e3e3;
+    --btn-secondary-hover: #ffffff;
+    --dark-blue: #0D47A1;
+    --blue: #4285F4;
+    --indigo: #283593;
+    --purple: #4527A0;
+    --pink: #E91E63;
+    --pure-red: #ff0000;
+    --red: #DB4437;
+    --dark-red: #B71C1C;
+    --orange: #FB8C00;
+    --yellow: #F4B400;
+    --light-yellow: #FFEB3B;
+    --green: #008a44;
+    --teal: #009688;
+    --cyan: #00ACC1;
+    --white: #FFFFFF;
+    --light: #F8F9FA;
+    --light-gray: #BCBCBC;
+    --gray: #757575;
+    --gray-dark: #424242;
+    --almost-black: #212121;
+    --black: #000000;
+    --bluish-gray: #CFD8DC;
+    --primary: #007BFF;
+    --secondary: #9E9E9E;
+    --success: #28A745;
+    --info: #17A2B8;
+    --warning: #FFC107;
+    --danger: #DC3545;
+    --dark: #212121;
+    --multicore-light: #2196F3;
+    --multicore-dark: #2962FF;
+    --d-blue: #64B5F6;
+    --d-indigo: #7986CB;
+    --d-purple: #9575CD;
+    --d-pink: #F06292;
+    --d-red: #E57373;
+    --d-orange: #FFB74D;
+    --d-yellow: #ffce2b;
+    --d-green: #81C784;
+    --d-teal: #80CBC4;
+    --d-cyan: #4DD0E1;
+    --blurple: #7289DA;
+}
+
+p, h1, h2, h3, h4, h5 {
+    color: white;
+}
+
+body {
+    background-color: var(--background);
+    user-select: none;
+}
+
+#mainContainer {
+    width: 100vw;
+    height: 100vh;
+}
+
+.blur-background {
+    backdrop-filter: blur(8px);
+}
+
+.btn-primary {
+    background-color: var(--btn-primary);
+    border: 2px solid transparent;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--btn-primary-hover);
+    border: 2px solid transparent;
+}
+
+.btn-primary:active {
+    border: 2px solid black !important;
+    background-color: var(--btn-primary-hover) !important;
+}
+
+.btn-primary:disabled {
+    background-color: var(--btn-primary);
+    border: 2px solid transparent;
+    opacity: 0.5;
+}
+
+.form-control:focus,
+.form-control:active {
+    outline: none !important;
+    box-shadow: none;
+}
+
+.modal-lg {
+    min-width: 80vw;
+}
+
+.modal-content {
+    background-color: #212121f5;
+    min-height: 200px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 500;
+}
+
+.modal-header {
+    border-bottom: none;
+    padding-top: 8px;
+    padding-bottom: 6px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.modal-header i {
+    font-size: 20px;
+    color: var(--light-gray);
+}
+
+.modal-header i:hover,
+.modal-header i:focus {
+    color: white;
+}
+
+.modal-body {
+    padding: 0 10px 10px;
+}
+
+.btn-close {
+    background: none;
+}
+
+.btn-close:focus,
+.btn-close:active {
+    outline: none !important;
+    box-shadow: none;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #21212150;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--btn-primary);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--btn-primary-hover);
+}

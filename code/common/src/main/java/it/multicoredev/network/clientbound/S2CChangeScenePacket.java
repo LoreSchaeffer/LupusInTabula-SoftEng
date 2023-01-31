@@ -5,14 +5,14 @@ import it.multicoredev.mclib.network.exceptions.DecoderException;
 import it.multicoredev.mclib.network.exceptions.EncoderException;
 import it.multicoredev.mclib.network.exceptions.ProcessException;
 import it.multicoredev.mclib.network.protocol.Packet;
-import it.multicoredev.models.SceneIds;
+import it.multicoredev.enums.SceneId;
 import it.multicoredev.network.IClientPacketListener;
 import org.jetbrains.annotations.NotNull;
 
 public class S2CChangeScenePacket implements Packet<IClientPacketListener> {
-    private SceneIds scene;
+    private SceneId scene;
 
-    public S2CChangeScenePacket(@NotNull SceneIds scene) {
+    public S2CChangeScenePacket(@NotNull SceneId scene) {
         this.scene = scene;
     }
 
@@ -28,7 +28,7 @@ public class S2CChangeScenePacket implements Packet<IClientPacketListener> {
 
     @Override
     public void decode(PacketByteBuf buf) throws DecoderException {
-        scene = SceneIds.values()[buf.readInt()];
+        scene = SceneId.values()[buf.readInt()];
 
         if (scene == null) throw new DecoderException("Scene is null");
     }
@@ -36,5 +36,9 @@ public class S2CChangeScenePacket implements Packet<IClientPacketListener> {
     @Override
     public void processPacket(IClientPacketListener handler) throws ProcessException {
         handler.handleChangeScene(this);
+    }
+
+    public SceneId getScene() {
+        return scene;
     }
 }

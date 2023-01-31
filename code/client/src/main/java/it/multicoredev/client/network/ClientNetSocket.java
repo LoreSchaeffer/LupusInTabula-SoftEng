@@ -1,11 +1,14 @@
 package it.multicoredev.client.network;
 
+import it.multicoredev.enums.DisconnectReason;
 import it.multicoredev.mclib.network.client.ClientSocket;
 import it.multicoredev.mclib.network.client.ServerAddress;
 import it.multicoredev.mclib.network.exceptions.PacketSendException;
 import it.multicoredev.mclib.network.protocol.Packet;
 import it.multicoredev.network.Packets;
+import it.multicoredev.network.serverbound.C2SDisconnectPacket;
 import it.multicoredev.utils.LitLogger;
+import it.multicoredev.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -14,6 +17,7 @@ public class ClientNetSocket {
     private ClientSocket socket;
     private Thread connectionThread;
     private UUID clientId;
+    private boolean handshakeDone = false;
 
     public ClientNetSocket() {
         clientId = UUID.randomUUID();
@@ -27,19 +31,26 @@ public class ClientNetSocket {
             try {
                 socket.connect();
             } catch (InterruptedException e) {
-                LitLogger.get().error(e.getMessage(), e);
+                LitLogger.error(e.getMessage(), e);
                 disconnect();
             }
         });
         connectionThread.start();
     }
 
-    public void disconnect() {
+    public void disconnect(boolean forced, DisconnectReason reason) {
         if (connectionThread != null) {
             if (socket != null) {
                 if (socket.isConnected()) {
-                    //TODO Send disconnect packet
+                    if (!forced) {
+                        if (reason == null) reason = DisconnectReason.C2S_QUIT_GAME;
+                        socket.sendPacket(new C2SDisconnectPacket(reason));
+                    }
                     socket.disconnect();
+
+                    while (socket.isConnected()) {
+                        Utils.sleep(10);
+                    }
                 }
 
                 socket = null;
@@ -48,10 +59,32 @@ public class ClientNetSocket {
             connectionThread.interrupt();
             connectionThread = null;
         }
+
+        handshakeDone = false;
+    }
+
+    public void disconnect(@NotNull DisconnectReason reason) {
+        disconnect(false, reason);
+    }
+
+    public void disconnect(boolean forced) {
+        disconnect(forced, null);
+    }
+
+    public void disconnect() {
+        disconnect(DisconnectReason.C2S_QUIT_GAME);
     }
 
     public UUID getClientId() {
         return clientId;
+    }
+
+    public void setHandshakeDone() {
+        handshakeDone = true;
+    }
+
+    public boolean isHandshakeDone() {
+        return handshakeDone;
     }
 
     public boolean isConnected() {

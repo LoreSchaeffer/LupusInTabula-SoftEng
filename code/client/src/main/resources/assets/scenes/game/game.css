@@ -1,0 +1,193 @@
+#mainContainer {
+    padding: 0;
+    transition: background-image 1s ease-in-out;
+}
+
+#mainContainer.day {
+    background: url("local://assets/images/menu_bg.jpg") center center no-repeat;
+}
+
+#mainContainer.night {
+    background: url("local://assets/images/menu_bg_dark.jpg") center center no-repeat;
+}
+
+#game {
+    width: 100vw;
+    height: 100vh;
+}
+
+#clock {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    border: 5px solid var(--almost-black);
+    min-width: 80px;
+    min-height: 80px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+}
+
+#clockText {
+    color: var(--white);
+    font-weight: bold;
+}
+
+#chat {
+    position: absolute;
+    bottom: 0;
+    width: 100vw;
+    background-color: #212121ab ;
+    height: calc(100vh / 4.5);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -2px 12px 0 #000000bc;
+}
+
+#chatHistory {
+    overflow-y: auto;
+    padding-top: 8px;
+    margin-bottom: 8px;
+}
+
+.chat-message {
+    margin: 0 55px 5px;
+}
+
+.chat-message p {
+    font-size: 16px;
+    line-height: 14px;
+}
+
+#chatIn {
+    justify-self: flex-end;
+    margin-top: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#chatIcon {
+    width: 30px;
+    margin: 4px 4px 4px 8px;
+}
+
+#chatInput {
+    margin-bottom: 6px;
+    margin-left: 8px;
+    margin-right: 8px;
+    background-color: #21212150;
+    border: 3px solid #bcbcbc50;
+    border-radius: 16px;
+    color: white;
+    transition: border-color .5s ease;
+}
+
+#chatInput:hover,
+#chatInput:focus,
+#chatInput:active {
+    border-color: #bcbcbc70;
+    transition: border-color .5s ease;
+}
+
+#chatInput::placeholder {
+    color: var(--light-gray);
+    opacity: 1;
+}
+
+.chat-channel {
+    margin-right: 4px;
+    color: var(--yellow);
+    font-weight: bold;
+}
+
+.chat-channel::after {
+    content: "•";
+    margin-left: 4px;
+    color: var(--light-gray);
+}
+
+.chat-sender {
+    color: var(--light-yellow);
+    font-weight: bold;
+    margin-right: 3px;
+}
+
+.chat-sender::after {
+    content: ">";
+    margin-left: 3px;
+    color: var(--light-gray);
+}
+
+#playersContainer {
+    height: calc(100vh - (100vh / 4.5));
+    margin: 0 0 0 400px;
+    overflow: hidden;
+}
+
+.col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 6px 20px;
+    width: 130px;
+    height: fit-content;
+    border-radius: 12px;
+    background-color: var(--d-yellow);
+    box-shadow: 0 0 6px 5px rgba(0,0,0,0.2);
+    transition: background-color 250ms ease-in-out;
+}
+
+.player.dead {
+    background-color: var(--danger);
+}
+
+.player.dead:hover {
+    background-color: var(--dark-red);
+}
+
+.player.dead .player-icon {
+    border-color: var(--dark-red);
+}
+
+.player.active {
+    border: 4px solid var(--success);
+    transition: background-color 250ms ease-in-out;
+}
+
+.player:hover {
+    background-color: #ffbd14;
+}
+
+.player p {
+    color: var(--almost-black);
+    margin: 0;
+    text-align: center;
+}
+
+.player-icon {
+    max-width: 100px;
+    border-radius: 12px;
+    margin-bottom: 4px;
+    border: 1px solid var(--yellow);
+}
+
+.player-name {
+    font-size: 110%;
+    font-weight: 500;
+}
+
+.player-role {
+    font-variant: small-caps;
+    line-height: 100%;
+    margin-top: 4px;
+}
