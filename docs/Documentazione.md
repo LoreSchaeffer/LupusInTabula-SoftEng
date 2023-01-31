@@ -13,36 +13,36 @@
 ## Indice
 - __0. Il progetto__
 - __1. Project plan__
-  1.1 Introduzione
-  1.2 Modello di processo
-  1.3 Organizzazione del progetto
-  1.4 Standards, linee guida e procedure
-  1.5 Attività di gestione
-  1.6 Rischi
-  1.7 Membri
-  1.8 Metodi e tecniche
-  1.9 Garanzie di qualità
-  1.10 Package di lavoro
-  1.11 Risorse
-  1.12 Budget e pianificazione
-  1.13 Cambiamenti
-  1.14 Consegna
+  - 1.1 Introduzione
+  - 1.2 Modello di processo
+  - 1.3 Organizzazione del progetto
+  - 1.4 Standards, linee guida e procedure
+  - 1.5 Attività di gestione
+  - 1.6 Rischi
+  - 1.7 Membri
+  - 1.8 Metodi e tecniche
+  - 1.9 Garanzie di qualità
+  - 1.10 Package di lavoro
+  - 1.11 Risorse
+  - 1.12 Budget e pianificazione
+  - 1.13 Cambiamenti
+  - 1.14 Consegna
 - __2. Software lifecycle__
 - __3. Configuration management__
-  3.1 Struttura del progetto
-  3.2 Issues
+  - 3.1 Struttura del progetto
+  - 3.2 Issues
 - __4. People management__
 - __5. Software quality__
-  5.1 Operatività del software
-  5.2 Revisione del software
-  5.3 Transizione verso un nuovo ambiente
+  - 5.1 Operatività del software
+  - 5.2 Revisione del software
+  - 5.3 Transizione verso un nuovo ambiente
 - __6. Requirement engineering__
 - __7. Modelling__
-  7.1 State machine diagram
-  7.2 Use case diagram
-  7.3 Class diagram
-  7.4 Sequence diagram
-  7.5 Acrtivity diagram
+  - 7.1 State machine diagram
+  - 7.2 Use case diagram
+  - 7.3 Class diagram
+  - 7.4 Sequence diagram
+  - 7.5 Acrtivity diagram
 - __8. Software architecture__
 - __9. Software design__
 - __10. Software testing e manutenibilità__

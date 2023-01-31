@@ -26,7 +26,7 @@ Realizzazione in Java di un gioco di ruolo multiplayer online basato sul noto gi
 - __.github/workflows__: Utilizzato per la configurazione dei workflow di GitHub Actions, testing, compilazione e distribuzione automatica
 
 ### Requisiti
-- __[Java 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)__
+- __[Java 17+](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)__
 
 ### Guida all'uso
 
