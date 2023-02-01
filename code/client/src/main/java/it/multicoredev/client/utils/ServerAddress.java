@@ -73,4 +73,15 @@ public class ServerAddress extends it.multicoredev.mclib.network.client.ServerAd
             return defValue;
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (! (obj instanceof ServerAddress sa)) return false;
+        return sa.getIp().equals(getIp()) && sa.getPort() == getPort();
+    }
+
+    @Override
+    public int hashCode() {
+        return getIp().hashCode() + getPort();
+    }
 }

@@ -82,5 +82,4 @@ public class Encryption {
 
         return cipher;
     }
-
 }

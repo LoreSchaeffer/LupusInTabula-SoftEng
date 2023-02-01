@@ -8,6 +8,8 @@ build/
 /code/build/
 /code/server/build/
 /code/client/build/
+/code/client/conf/
+/code/server/conf/
 
 *.iml
 *.ini
