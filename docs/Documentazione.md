@@ -38,14 +38,10 @@
   - 5.3 Transizione verso un nuovo ambiente
 - __6. Requirement engineering__
 - __7. Modelling__
-  - 7.1 State machine diagram
-  - 7.2 Use case diagram
-  - 7.3 Class diagram
-  - 7.4 Sequence diagram
-  - 7.5 Acrtivity diagram
+  - 7.1 Grafica
+  - 7.2 Funzionamento del backend
 - __8. Software architecture__
-- __9. Software design__
-- __10. Software testing e manutenibilità__
+- __9. Software testing e manutenibilità__
 
 ## Il progetto
 Realizzazione in Java di un gioco di ruolo multiplayer online basato sul noto gioco da tavolo [Lupus in Tabula](https://www.dvgiochi.com/catalogo/lupus-in-tabula).<br>
@@ -146,7 +142,7 @@ La modalità di lavoro *agile* fa si che non ci sia una netta distinzione tra i 
 La prima fase della progettazione è stata dedicata alla creazione di *use case diagrams* in modo da comprendere le funzionalità necessarie per la nostra applicazione.
 
 <p align="center">
-  <img style="max-width: 800px;" src="resources/use_case.png">
+  <img src="resources/use_case.png">
 </p>
 
 L'attore principale è l'utente che può interagire in vari modi con l'applicazione. Nel caso in cui voglia avviare una partita, per prima cosa deve fare richiesta al server (attore passivo) di creare la partita, nel caso in cui voglia unirsi ad una partita già esistente deve fare richiesta di unirsi. Una volta creata una partita, affinché questa possa essere avviata sono necessari un minimo di 8 giocatori. Il gioco è composto da 2 fasi alternate distinguibili da una differente grafica e annunciate da un messaggio nella chat del gioco. Al raggiungimento delle condizioni imposte dal gioco, la partita termina e dopo essere stata mostrato il vincitore, l'utente può decidre se giocare nuovamente oppure uscire dalla partita ed essere disconnesso dal server.
@@ -192,7 +188,7 @@ Tra queste quelle preventivate fin dall'inizio sono:
 ### 1.14 Consegna
 Una volta pronta la versione alpha, prima di essere pubblicato, verrà inviata una segnalazione tramite issue a tutti i membri del team in modo tale da poter effettuare un'ultima revisione prima della pubblicazione.
 
-## 2. Software lyfecicle
+## 2. Software lifecylce
 Per il processo di sviluppo il team ha scelto un approccio di tipo *agile* poiché meglio si adatta alla metodologia di lavoro desiderata:
 - Si considera importante il gruppo, le abilità dei sui membri e le loro interazioni. I lavori vengono assegnati in base alle capacità personali riducendo il tempo necessario allo studio di una competenza non conosciuta. Nel caso in cui un componente della squadra non sia in grado di portare a termine un task, il team si riunisce per trovare una soluzione.
 - Nel team non c'è una struttura di tipo gerarchico, tutti i membri hanno la stessa importanza e possono esprimere le loro opinioni. Cià rende il gruppo più coeso.
@@ -302,8 +298,118 @@ I requisiti base del software sono i seguenti:
 - __Flessibilità__: Come per la manutenibilità, la scelta della struttura del progetto semplifica la fase di modifica o implementazione di nuove funzionalità rendendolo molto flessibile.
 
 ### 5.3 Transizione verso un nuovo ambiente
-- __Portabilità__: Il gioco è nativamente eseguibile sui più diffusi sistemi operativi desktop (Window, Linux, MacOS) dotati di una connessione internet e un hardware relativamente recente. Il server è in grado di funzionare su qualsiasi titpo di dispositivo senza particolari limiti. La scelta di basare la grafica su linguaggi web è anche vantaggiosa nel caso in cui si volesse portare il gioco su altre piattaforme quali smarthpone e tablet, console o in versione web senza la necessità di effettuare troppe modifiche.
+- __Portabilità__: Il gioco è nativamente eseguibile sui più diffusi sistemi operativi desktop (Windows, Linux, MacOS) dotati di una connessione internet e un hardware relativamente recente. Il server è in grado di funzionare su qualsiasi titpo di dispositivo senza particolari limiti. La scelta di basare la grafica su linguaggi web è anche vantaggiosa nel caso in cui si volesse portare il gioco su altre piattaforme quali smarthpone e tablet, console o in versione web senza la necessità di effettuare troppe modifiche.
 - __Riusabilità__: Sono state sfruttate e scritte librerie ad hoc per la scrittura dell'applicazione. Tali librerie possono essere riutilizzate in altri ambiti in quanto sono state sviluppate in modo indipendente dal contesto del gioco.
 
 
 ## 6. Requirement engineering
+La fase iniziale dello sviluppo è stata dedicata alla definizione dei requisiti del software richiesti da parte del committente. Dal momento che la produzione del gioco non è stata commissionata bensì è stata un'idea spontanea, i requisiti sono stati definiti in base a quello che era ritenuto imporante per il team e alla conoscenza del gioco di ruolo dal quale il software ha origine.<br>
+Al contrario, in seguito alla prima pubblicazione, i requisiti potranno essere ridefiniti o modificati anche sulla base delle critiche e dei suggerimenti dei giocatori. È già stata preventivata la possibilità di effettuare eventi in diretta sulle piattaforme social durante i quali i giocatori avranno modo di interagire direttamente con il team di sviluppo e discutere insieme a loro del gioco e di eventuali modifiche da apportare. Un evento di questo tipo permetterebbe di svolgere in un ambiente informale le fasi di *elicitation* e *negotiation* necessarie per la definizione di nuovi requisiti (*requirements specification*) che verrebbe poi conclusa in una riunione del team.<br>
+
+Oltre a quanto già detto, il project manager ha definito i requisiti sulla base del modello MoSCoW come segue:
+- __Must Have__:
+  - Sviluppo di una versione base del gioco funzionante
+  - Inserimento della traduzione italiana e inglese
+  - Multigiocatore online
+  - Interfaccia grafica semplice e intuitiva
+  - Chat testuale
+  - Grafica diversificata per le fasi giorno e notte
+  - Stabilità e sicurezza del software
+- __Should have__:
+  - Traduzione in altre lingue
+  - Guida al gioco interna all'applicazione
+  - Chat testuale crittografata e moderata
+  - Autenticazione degli utenti per fornirgli un nickname fisso e statistiche sui risultati delle partite
+  - Consentire la modifica delle impostazioni della partita
+  - Timeout delle lobby dopo un periodo di inattività
+  - Impostazioni di gioco
+  - Effetti sonori
+  - Aggiornamento automatico
+  - Chat vocale
+- __Won't have__:
+  - Impostazioni per modificare la grafica
+  - Doppia autenticazione tramite codice OTP inviato al numero di telefono
+  - Lobby pubbliche
+
+## 7. Modelling
+### 7.1 Grafica
+Durante la fase di studio dell'interfaccia grafica, il punto di maggiore interesse era di ottenere un risultato che potesse essere gradevole e allo stesso tempo semplice da usare per tutti gli utenti. Si è optato per la creazione di diverse scene alternate in base alle necessità.
+
+<p align="center">
+  <img src="resources/state_diagram.png">
+</p>
+
+Durante il primo avvio del client mancheranno le librerie native necessarie per la visualizzazione della grafica, in questo caso si aprirà una finestra nella quale è mostrato l'avanzamento del download al termine del quale l'interfaccia grafica standard verrà mostrata. L'utente riceverà il benvenuto con una breve schermata di caricamento, durante la quale il gioco carica tutti i dati necessari per il funzionamento e verificherà la presenza di aggiornamenti. L'utente si troverà quindi all'interno del menù principale dal quale potrà accedere alle varie funzionalità del gioco o uscire. Se l'utente decide di creare una nuova partita o di unirsi ad una già esistente verrà inviato nella schermata della lobby nella quale potrà vedere l'elenco degli altri giocatori e le regole della partita. Una volta avviatà tutti gli utenti della partita saranno inviati alla schermata con il gioco al cui termine verrà mostrato il risultato e avranno modo di tornare al menù principale o alla lobby per ricominciarne una nuova. Fatta eccezione per le impostazioni a cui si può accedere anche durante il gioco e che quindi, quando chiuse, riportano alla schermata precedente, da tutte le scene è possibile sempre ritornare al menù principale.
+
+<table>
+    <tr>
+    <td><img src="resources/main_menu.png"></td>
+    <td><img src="resources/lobby.png"></td>
+    </tr>
+    <tr>
+    <td><img src="resources/caricamento.png"></td>
+    <td><img src="resources/game_day.png"></td>
+    </tr>
+</table>
+
+Dopo aver stabilito come sarebbe dovuta essere la grafica, è stato possibile stabilire il comportamento che avrebbe dovuto avere in base alle azioni degli utenti. Di seguito è riportato l'*activity diagram* di un utente che chiede di unirsi ad una lobby.
+
+<p align="center">
+  <img src="resources/activity_diagram.png">
+</p>
+
+All'interno del diagramma sono riportati i principali controlli che vengono svolti (in parte dal client, in parte dal server) per permettere di passare dalla schermata del menù a quella del gioco. Tutti gli errori vengono mostrati all'utente sotto forma di *dismissable modal* ovvero una finestra che si apre in primo piano oscurando lo sfondo e che è chiudibile dall'utente.
+
+### 7.2 Funzionamento del backend
+Una volta noti i requisiti e scelta la grafica, si è passati alla fase di progettazione del codice del software. Il progetto è stato abbozzato inizialmente con dei *class diagram* specifici per il client e per il server che mostrassero le classi da implementare e le loro relazioni. Durante la fase di sviluppo questi diagrammi sono stati modificati più volte per adeguarli alle esigenze sorte, alle modifiche effettuate ai requisiti e per aggirare dei vincoli posti dal linguaggio di programmazione scelto.<br>
+I diagrammi seguenti mostrano la struttura di classi che è stata implementata al termine dello sviluppo della versione alpha.
+
+##### Server
+<p align="center">
+  <img src="resources/class_diagram_server.png">
+</p>
+
+##### Client
+Struttura classi principale del client
+<p align="center">
+  <img src="resources/class_diagram_client_1.png">
+</p>
+
+Classi responsabili all'invio di dati e comandi tramite Json all'interfaccia grafica (Java -> JavaScript)
+<p align="center">
+  <img src="resources/class_diagram_client_2.png">
+</p>
+
+Classi responsabili alla ricezione di dati e comandi tramite Json dall'interfaccia grafica (JavaScript -> Java)
+<p align="center">
+  <img src="resources/class_diagram_client_3.png">
+</p>
+
+Come si evince dai diagrammi, pur avento gran parte del carico computazionale, il server ha una struttura molto più semplice rispetto al client. La gestione della grafica ha richiesto un numero di oggetti non indifferente per gestire comodamente la comunicazione della grafica. Inoltre gran parte delle classi necessarie alla comunicazione tra client e server è stato racchiuso nel modulo *common* usato come libreria in entrambi i lati.<br><br>
+La comunicazione tra client e server è effettuata tramite l'invio di pacchetti tcp/ip. Gli oggetti contenuti nei pacchetti vengono convertiti in un array di bit al quale viene anteposto un id che identifica il tipo di pacchetto e la lunghezza del pacchetto, in modo che possa essere ricostruito se diviso da tcp. Giunti a destinazione i pacchetti sono riconosciuti e riconvertiti da array di bit a oggetti Java.<br>
+Di seguito è riportato un *sequence diagram* che mostra il comportamento del software e della comunicazioen client-server dello svolgimento di una partita da quando viene avviata fino al suo termine.
+
+<p align="center">
+  <img src="resources/sequence_diagram.png">
+</p>
+
+Nella fase iniziale il click dell'utente su un pulsante fa si che il server avvii la partita aggiornando il client delle modifiche effettuate al model e aggiornando la grafica in accordo. Durante lo svolgimento del gioco il server aggiorna i client informandoli delle modifiche al modello o dello stato di avanzamento del gioco, questa operazione viene effettuata in un thread separato di conseguenza, il server non deve attendere la risposta dei client per continuare a gestire la partita (risposta che si limita ad un semplice ack tcp). Caso differente si ha quando si giunge in una fase in cui è necessaria l'azione di uno o più utenti per proseguire. In quel caso il server si mette in attesa della risposta dei giocatori che arriva mediante un pacchetto al *ServerPacketListener*.
+
+## 8. Software architecture e design
+Il software è stato progettato sfruttando il pattern *MVC* che permette di separare le responsabilità di gestione dei dati, della grafica e della logica del programma. Il pattern è stato applicato sia al client che al server con la seguente divisione dei compiti:
+- Il client gestisce la grafica (view) e le comunicazioni con il server e gli input dell'utente.
+- Il server gestisce la logica del gioco (controller) e mantiene le informazioni riguardanti le partite in corso (model), nonchè eventuali iterazioni con database per la gestione di login.
+Sulla base dei concetti di astrazione e modularità, il software è stato progettato in modo da avere una bassa dipendenza tra i vari moduli. Per fare ciò si è scelto di evitare l'uso di variabili globali condivise tra moduli diversi e di non utilizzare all'interno dei moduli codice di altri. Inoltre per far fede al principio dell'*external coupling* si è affidato al client la gestione dell'interfaccia onde possibile, spostando l'incarico al server soltanto quando necessario.<br>
+La vista tramite connettori e componenti del sistema creatosi è quindi quella riportata di seguito.
+
+<p align="center">
+  <img src="resources/connections.png">
+</p>
+
+Come si può vedere dal precedente grafico e dai class diagram è stata creata un'architettura modulare con una bassa dipendenza tra i vari moduli. Le interazioni tra di essi sono gestite da delle interfacce. Il codice è strutturato in modo da migliorarne la leggibilità e soprattutto la mantenibilità. È tuttavia necessario specificare che la struttura del server è attualmente monolitica, infatti esso gestisce tutti i servizi di interazione con gli utenti su un unico processo. In futuro si pianifica di dividere questi compiti in un'architettura basata su micro-servizi.
+
+## 9. Testing
+Durante lo sviluppo il corretto funzionamento del codice è stato testato costantemente con test pratici di esecuzione del programma e delle sue funzionalità. Questo processo è stato aiutato particolarmente dalla scelta di inserire all'interno del codice un gran numero di messaggi di debug (attivabili mediante il parametro di avvio `-d`) che mostrano in molti momenti lo stato del modell, e le azioni che vengono svolte da giocatori e dal server.<br>
+Nel caso in cui durante lo sviluppo si fosse notata la presenza di un bug, si è proceduto alla sua correzione, onde possibile, e si è poi ripetuto il test per verificare che il bug fosse stato corretto. In alcuni casi, insieme alla correzione del bug è stato necessario fare anche delle modifiche più sostanziali al programma con un conseguente *refactoring* del codice per adattarlo alle nuove funzionalità.<br>
+Una volta scritto lo scheletro del codice e ottenuta una versione più o meno definitiva/funzionante del gioco sono stati implementati dei test automatici mediante JUnit per poter verificare il corretto funzionamento del codice anche in presenza di casi limite. La scrittura di questo tipo di test è, tuttavia, stata resa più complessa dalla necessità di simulare l'interazione tra client e server. Questo non è stato possibile per il rispetto della deadline e quindi è stato programmato per il futuro.<br>
+Per fare ciò si farà uso del framework *Mockito* che permette di simulare l'interazione tra oggetti Java. In particolare si sarà possibile simulare il comportamento del client e del server tramite e delle loro interazioni e testare quindi il comportamento dei moduli legati al networking.
