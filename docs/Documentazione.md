@@ -2,7 +2,7 @@
   <img style="max-width: 800px;" src="resources/unibg.png">
 </p>
 
-# Progetto di ingegneria del software (rev. 4.1)
+# Progetto di ingegneria del software (rev. 4.2)
 ### Anno accademico 2022-2023
 
 ### Membri del team
@@ -362,14 +362,13 @@ All'interno del diagramma sono riportati i principali controlli che vengono svol
 
 ### 7.2 Funzionamento del back-end
 Una volta noti i requisiti e scelta la grafica, si è passati alla fase di progettazione del codice del software. Il progetto è stato abbozzato inizialmente con dei *class diagram* specifici per il client e per il server che mostrassero le classi da implementare e le loro relazioni. Durante la fase di sviluppo questi diagrammi sono stati modificati più volte per adeguarli alle esigenze sorte, alle modifiche effettuate ai requisiti e per aggirare dei vincoli posti dal linguaggio di programmazione scelto.<br>
-I diagrammi seguenti mostrano la struttura di classi che è stata implementata al termine dello sviluppo della versione alpha.
-
-##### Server
+I diagrammi seguenti mostrano la struttura di classi che è stata implementata al termine dello sviluppo della versione alpha.<br><br>
+__Server__
 <p align="center">
   <img src="resources/class_diagram_server.png">
 </p>
 
-##### Client
+__Client__<br>
 Struttura classi principale del client
 <p align="center">
   <img src="resources/class_diagram_client_1.png">
